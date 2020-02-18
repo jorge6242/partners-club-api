@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\UserService;
+use App\Services\SportService;
 
-class UserController extends Controller
+class SportController extends Controller
 {
-    public function __construct(UserService $userService)
+    public function __construct(SportService $sportService)
 	{
-		$this->userService = $userService;
+		$this->sportService = $sportService;
     }
     /**
      * Display a listing of the resource.
@@ -18,10 +18,10 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = $this->userService->index();
+        $sports = $this->sportService->index();
         return response()->json([
             'success' => true,
-            'data' => $user
+            'data' => $sports
         ]);
     }
 
@@ -33,20 +33,9 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $userRequest = $request->all();
-        if ($this->userService->checkUser($request['email'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User already exist'
-            ])->setStatusCode(400);
-        }
-        $user = $this->userService->create($userRequest);
-        if ($user) {
-            return response()->json([
-                'success' => true,
-                'data' => $user
-            ])->setStatusCode(200);
-        }
+        $sportRequest = $request->all();
+        $sport = $this->sportService->create($sportRequest);
+        return $sport;
     }
 
     /**
@@ -57,11 +46,11 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = $this->userService->read($id);
-        if($user) {
+        $sport = $this->sportService->read($id);
+        if($sport) {
             return response()->json([
                 'success' => true,
-                'data' => $user
+                'data' => $sport
             ]);
         }
     }
@@ -75,12 +64,12 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $userRequest = $request->all();
-        $user = $this->userService->update($userRequest, $id);
-        if($user) {
+        $sportRequest = $request->all();
+        $sport = $this->sportService->update($sportRequest, $id);
+        if($sport) {
             return response()->json([
                 'success' => true,
-                'data' => $user
+                'data' => $sport
             ]);
         }
     }
@@ -93,22 +82,29 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = $this->userService->delete($id);
-        if($user) {
+        $sport = $this->sportService->delete($id);
+        if($sport) {
             return response()->json([
                 'success' => true,
-                'data' => $user
+                'data' => $sport
             ]);
         }
     }
 
-        /**
-     * Show login user available
+    /**
+     * Get the specified resource by search.
      *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function checkLogin()
-    {
-        return $this->userService->checkLogin();
+    public function search(Request $request) {
+        $sport = $this->sportService->search($request);
+        if($sport) {
+            return response()->json([
+                'success' => true,
+                'data' => $sport
+            ]);
+        }
     }
 }

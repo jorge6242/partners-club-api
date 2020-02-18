@@ -3,16 +3,14 @@
 namespace App\Repositories;
 
 use App\User;
-use App\TeamUser;
 
 class UserRepository  {
   
     protected $user;
     protected $teamUser;
 
-    public function __construct(User $user, TeamUser $teamUser) {
+    public function __construct(User $user) {
       $this->user = $user;
-      $this->teamUser = $teamUser;
     }
 
     public function find($id) {
@@ -29,18 +27,6 @@ class UserRepository  {
 
     public function all() {
       return $this->user->all();
-    }
-  
-    public function availableToTeam() {
-      $arrayUsers = array();
-      $users = $this->user->all();
-      foreach ($users as $key => $user) {
-       $userTeam = $this->teamUser->where('user_id',$user['id'])->get();
-        if (count($userTeam) === 0) {
-          array_push($arrayUsers,$user);
-        }
-      }
-      return $arrayUsers;
     }
 
     public function delete($id) {

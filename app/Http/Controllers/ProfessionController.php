@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\UserService;
+use App\Services\ProfessionService;
 
-class UserController extends Controller
+class ProfessionController extends Controller
 {
-    public function __construct(UserService $userService)
+    public function __construct(ProfessionService $professionService)
 	{
-		$this->userService = $userService;
+		$this->professionService = $professionService;
     }
     /**
      * Display a listing of the resource.
@@ -18,10 +18,10 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = $this->userService->index();
+        $profession = $this->professionService->index();
         return response()->json([
             'success' => true,
-            'data' => $user
+            'data' => $profession
         ]);
     }
 
@@ -33,20 +33,9 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $userRequest = $request->all();
-        if ($this->userService->checkUser($request['email'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User already exist'
-            ])->setStatusCode(400);
-        }
-        $user = $this->userService->create($userRequest);
-        if ($user) {
-            return response()->json([
-                'success' => true,
-                'data' => $user
-            ])->setStatusCode(200);
-        }
+        $professionRequest = $request->all();
+        $profession = $this->professionService->create($professionRequest);
+        return $profession;
     }
 
     /**
@@ -57,11 +46,11 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = $this->userService->read($id);
-        if($user) {
+        $profession = $this->professionService->read($id);
+        if($profession) {
             return response()->json([
                 'success' => true,
-                'data' => $user
+                'data' => $profession
             ]);
         }
     }
@@ -75,12 +64,12 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $userRequest = $request->all();
-        $user = $this->userService->update($userRequest, $id);
-        if($user) {
+        $professionRequest = $request->all();
+        $profession = $this->professionService->update($professionRequest, $id);
+        if($profession) {
             return response()->json([
                 'success' => true,
-                'data' => $user
+                'data' => $profession
             ]);
         }
     }
@@ -93,22 +82,29 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = $this->userService->delete($id);
-        if($user) {
+        $profession = $this->professionService->delete($id);
+        if($profession) {
             return response()->json([
                 'success' => true,
-                'data' => $user
+                'data' => $profession
             ]);
         }
     }
 
         /**
-     * Show login user available
+     * Get the specified resource by search.
      *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function checkLogin()
-    {
-        return $this->userService->checkLogin();
+    public function search(Request $request) {
+        $profession = $this->professionService->search($request);
+        if($profession) {
+            return response()->json([
+                'success' => true,
+                'data' => $profession
+            ]);
+        }
     }
 }

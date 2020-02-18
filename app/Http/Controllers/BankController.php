@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\BankService;
+use App\Http\Requests\BankValidator;
 
 class BankController extends Controller
 {
@@ -23,16 +24,6 @@ class BankController extends Controller
             'success' => true,
             'data' => $banks
         ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -56,18 +47,13 @@ class BankController extends Controller
      */
     public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        $bank = $this->bankService->read($id);
+        if($bank) {
+            return response()->json([
+                'success' => true,
+                'data' => $bank
+            ]);
+        }
     }
 
     /**
@@ -79,7 +65,14 @@ class BankController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $bankRequest = $request->all();
+        $bank = $this->bankService->update($bankRequest, $id);
+        if($bank) {
+            return response()->json([
+                'success' => true,
+                'data' => $bank
+            ]);
+        }
     }
 
     /**
@@ -90,6 +83,29 @@ class BankController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $bank = $this->bankService->delete($id);
+        if($bank) {
+            return response()->json([
+                'success' => true,
+                'data' => $bank
+            ]);
+        }
+    }
+
+    /**
+     * Get the specified resource by search.
+     *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request) {
+        $bank = $this->bankService->search($request);
+        if($bank) {
+            return response()->json([
+                'success' => true,
+                'data' => $bank
+            ]);
+        }
     }
 }

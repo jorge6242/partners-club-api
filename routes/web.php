@@ -17,10 +17,17 @@ Route::prefix('api/v1')->group(function () {
     Route::middleware('auth:api')->group(function () {
         Route::resource('/product', 'ProductController');
         Route::resource('/bank', 'BankController');
+        Route::get('/bank-search', 'BankController@search');
+        Route::resource('/sport', 'SportController');
+        Route::get('/sport-search', 'SportController@search');
+        Route::resource('/profession', 'ProfessionController');
+        Route::get('/profession-search', 'ProfessionController@search');
+        Route::resource('/country', 'CountryController');
+        Route::get('/country-search', 'CountryController@search');
+        Route::resource('/person', 'PersonController');
+        Route::get('/person-search', 'PersonController@search');
+        Route::get('/check-login', 'UserController@checkLogin');
         Route::get('/product-search', 'ProductController@search');
         Route::resource('/user', 'UserController');
-        Route::resource('/category', 'CategoryController');
-        Route::resource('/cart', 'CartController');
-        Route::put('/purchase', 'CartController@purchase');
     });
 });

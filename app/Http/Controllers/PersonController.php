@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\UserService;
+use App\Services\PersonService;
 
-class UserController extends Controller
+class PersonController extends Controller
 {
-    public function __construct(UserService $userService)
+    public function __construct(PersonService $personService)
 	{
-		$this->userService = $userService;
+		$this->personService = $personService;
     }
     /**
      * Display a listing of the resource.
@@ -18,10 +18,10 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = $this->userService->index();
+        $persons = $this->personService->index();
         return response()->json([
             'success' => true,
-            'data' => $user
+            'data' => $persons
         ]);
     }
 
@@ -33,20 +33,9 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $userRequest = $request->all();
-        if ($this->userService->checkUser($request['email'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User already exist'
-            ])->setStatusCode(400);
-        }
-        $user = $this->userService->create($userRequest);
-        if ($user) {
-            return response()->json([
-                'success' => true,
-                'data' => $user
-            ])->setStatusCode(200);
-        }
+        $personRequest = $request->all();
+        $person = $this->personService->create($personRequest);
+        return $person;
     }
 
     /**
@@ -57,11 +46,11 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = $this->userService->read($id);
-        if($user) {
+        $person = $this->personService->read($id);
+        if($person) {
             return response()->json([
                 'success' => true,
-                'data' => $user
+                'data' => $person
             ]);
         }
     }
@@ -75,12 +64,12 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $userRequest = $request->all();
-        $user = $this->userService->update($userRequest, $id);
-        if($user) {
+        $personRequest = $request->all();
+        $person = $this->bankService->update($personRequest, $id);
+        if($person) {
             return response()->json([
                 'success' => true,
-                'data' => $user
+                'data' => $person
             ]);
         }
     }
@@ -93,22 +82,29 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = $this->userService->delete($id);
-        if($user) {
+        $person = $this->personService->delete($id);
+        if($person) {
             return response()->json([
                 'success' => true,
-                'data' => $user
+                'data' => $person
             ]);
         }
     }
 
-        /**
-     * Show login user available
+    /**
+     * Get the specified resource by search.
      *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function checkLogin()
-    {
-        return $this->userService->checkLogin();
+    public function search(Request $request) {
+        $person = $this->personService->search($request);
+        if($person) {
+            return response()->json([
+                'success' => true,
+                'data' => $person
+            ]);
+        }
     }
 }

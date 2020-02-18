@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\UserService;
+use App\Services\CountryService;
 
-class UserController extends Controller
+class CountryController extends Controller
 {
-    public function __construct(UserService $userService)
+    public function __construct(CountryService $countryService)
 	{
-		$this->userService = $userService;
+		$this->countryService = $countryService;
     }
     /**
      * Display a listing of the resource.
@@ -18,10 +18,10 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = $this->userService->index();
+        $country = $this->countryService->index();
         return response()->json([
             'success' => true,
-            'data' => $user
+            'data' => $country
         ]);
     }
 
@@ -33,20 +33,8 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $userRequest = $request->all();
-        if ($this->userService->checkUser($request['email'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User already exist'
-            ])->setStatusCode(400);
-        }
-        $user = $this->userService->create($userRequest);
-        if ($user) {
-            return response()->json([
-                'success' => true,
-                'data' => $user
-            ])->setStatusCode(200);
-        }
+        $countryRequest = $request->all();
+        return $this->countryService->create($countryRequest);
     }
 
     /**
@@ -57,11 +45,11 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = $this->userService->read($id);
-        if($user) {
+        $country = $this->countryService->read($id);
+        if($country) {
             return response()->json([
                 'success' => true,
-                'data' => $user
+                'data' => $country
             ]);
         }
     }
@@ -75,12 +63,12 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $userRequest = $request->all();
-        $user = $this->userService->update($userRequest, $id);
-        if($user) {
+        $countryRequest = $request->all();
+        $country = $this->countryService->update($countryRequest, $id);
+        if($country) {
             return response()->json([
                 'success' => true,
-                'data' => $user
+                'data' => $country
             ]);
         }
     }
@@ -93,22 +81,29 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = $this->userService->delete($id);
-        if($user) {
+        $country = $this->countryService->delete($id);
+        if($country) {
             return response()->json([
                 'success' => true,
-                'data' => $user
+                'data' => $country
             ]);
         }
     }
 
         /**
-     * Show login user available
+     * Get the specified resource by search.
      *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function checkLogin()
-    {
-        return $this->userService->checkLogin();
+    public function search(Request $request) {
+        $country = $this->countryService->search($request);
+        if($country) {
+            return response()->json([
+                'success' => true,
+                'data' => $country
+            ]);
+        }
     }
 }

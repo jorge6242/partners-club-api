@@ -31,4 +31,27 @@ class BankRepository  {
     public function delete($id) {
      return $this->bank->find($id)->delete();
     }
+
+    public function checkBank($name)
+    {
+      $bank = $this->bank->where('description', $name)->first();
+      if ($bank) {
+        return true;
+      }
+      return false; 
+    }
+
+        /**
+     * get banks by query params
+     * @param  object $queryFilter
+    */
+    public function search($queryFilter) {
+      $search;
+      if($queryFilter->query('term') === null) {
+        $search = $this->bank->all();  
+      } else {
+        $search = $this->bank->where('description', 'like', '%'.$queryFilter->query('term').'%')->get();
+      }
+     return $search;
+    }
 }
