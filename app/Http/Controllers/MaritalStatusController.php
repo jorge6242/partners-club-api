@@ -3,9 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\MaritalStatusService;
 
 class MaritalStatusController extends Controller
 {
+    public function __construct(MaritalStatusService $service)
+    {
+        $this->service = $service;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -13,17 +18,11 @@ class MaritalStatusController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $response = $this->service->index();
+        return response()->json([
+            'success' => true,
+            'data' => $response
+        ]);
     }
 
     /**
@@ -34,7 +33,8 @@ class MaritalStatusController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $body = $request->all();
+        return $this->service->create($body);
     }
 
     /**
@@ -45,18 +45,13 @@ class MaritalStatusController extends Controller
      */
     public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        $response = $this->service->read($id);
+        if($response) {
+            return response()->json([
+                'success' => true,
+                'data' => $response
+            ]);
+        }
     }
 
     /**
@@ -68,7 +63,14 @@ class MaritalStatusController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $body = $request->all();
+        $response = $this->service->update($body, $id);
+        if($response) {
+            return response()->json([
+                'success' => true,
+                'data' => $response
+            ]);
+        }
     }
 
     /**
@@ -79,6 +81,29 @@ class MaritalStatusController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $response = $this->service->delete($id);
+        if($response) {
+            return response()->json([
+                'success' => true,
+                'data' => $response
+            ]);
+        }
+    }
+
+        /**
+     * Get the specified resource by search.
+     *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request) {
+        $response = $this->service->search($request);
+        if($response) {
+            return response()->json([
+                'success' => true,
+                'data' => $response
+            ]);
+        }
     }
 }

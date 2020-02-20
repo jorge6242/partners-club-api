@@ -11,7 +11,9 @@ class PersonRepository  {
     }
 
     public function find($id) {
-      return $this->person->find($id);
+      $person = $this->person->find($id);
+      $person->picture = url('storage/partners/'.$person->picture);
+      return $person;
     }
 
     public function create($attributes) {
@@ -34,7 +36,7 @@ class PersonRepository  {
     {
       $person = $this->person->where('rif_ci', $name)->first();
       if ($person) {
-        return true;
+        return $person;
       }
       return false; 
     }

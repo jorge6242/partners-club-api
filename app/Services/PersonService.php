@@ -21,11 +21,33 @@ class PersonService {
                 'success' => false,
                 'message' => 'Person already exist'
             ])->setStatusCode(400);
-        }
-		return $this->person->create($request);
+		}
+		$image = $request['picture'];
+		if($image !== null) {
+			\Image::make($request['picture'])->save(public_path('storage/partners/').$request['rif_ci'].'.png');
+			$request['picture'] = $request['rif_ci'].'.png';
+		} else {
+			$request['picture'] = "partner-empty.png";
+		}
+		$response = $this->person->create($request);
+		if ($response) {
+			$partner = $this->person->checkPerson($request['rif_ci']);
+			return response()->json([
+				'success' => true,
+				'data' => $partner
+			]);
+		}
+
 	}
 
 	public function update($request, $id) {
+	$image = $request['picture'];
+	if($image !== null) {
+		\Image::make($request['picture'])->save(public_path('storage/partners/').$request['rif_ci'].'.png');
+		$request['picture'] = $request['rif_ci'].'.png';
+	} else {
+		$request['picture'] = "partner-empty.png";
+	}
       return $this->person->update($id, $request);
 	}
 

@@ -1,27 +1,27 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Services\GenderService;
 
 use Illuminate\Http\Request;
-use App\Services\PersonService;
 
-class PersonController extends Controller
+class GenderController extends Controller
 {
-    public function __construct(PersonService $service)
-	{
-		$this->service = $service;
+    public function __construct(GenderService $service)
+    {
+        $this->service = $service;
     }
-    /**
+  /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $persons = $this->service->index();
+        $response = $this->service->index();
         return response()->json([
             'success' => true,
-            'data' => $persons
+            'data' => $response
         ]);
     }
 
@@ -33,9 +33,8 @@ class PersonController extends Controller
      */
     public function store(Request $request)
     {
-        $personRequest = $request->all();
-        $person = $this->service->create($personRequest);
-        return $person;
+        $body = $request->all();
+        return $this->service->create($body);
     }
 
     /**
@@ -46,11 +45,11 @@ class PersonController extends Controller
      */
     public function show($id)
     {
-        $person = $this->service->read($id);
-        if($person) {
+        $response = $this->service->read($id);
+        if($response) {
             return response()->json([
                 'success' => true,
-                'data' => $person
+                'data' => $response
             ]);
         }
     }
@@ -64,12 +63,12 @@ class PersonController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $personRequest = $request->all();
-        $person = $this->service->update($personRequest, $id);
-        if($person) {
+        $body = $request->all();
+        $response = $this->service->update($body, $id);
+        if($response) {
             return response()->json([
                 'success' => true,
-                'data' => $person
+                'data' => $response
             ]);
         }
     }
@@ -82,16 +81,16 @@ class PersonController extends Controller
      */
     public function destroy($id)
     {
-        $person = $this->service->delete($id);
-        if($person) {
+        $response = $this->service->delete($id);
+        if($response) {
             return response()->json([
                 'success' => true,
-                'data' => $person
+                'data' => $response
             ]);
         }
     }
 
-    /**
+        /**
      * Get the specified resource by search.
      *
      * @param  string $term
@@ -99,11 +98,11 @@ class PersonController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function search(Request $request) {
-        $person = $this->service->search($request);
-        if($person) {
+        $response = $this->service->search($request);
+        if($response) {
             return response()->json([
                 'success' => true,
-                'data' => $person
+                'data' => $response
             ]);
         }
     }
