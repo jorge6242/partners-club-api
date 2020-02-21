@@ -27,6 +27,7 @@ class Person extends Model
         'fax',
         'city',
         'state',
+        'type_person',
         'postal_code',
         'status_person_id',
         'marital_statuses_id',
@@ -64,5 +65,13 @@ class Person extends Model
     public function country()
     {
         return $this->belongsTo('App\Country', 'countries_id', 'id');
+    }
+
+        /**
+     * The professions that belong to the person.
+     */
+    public function professions()
+    {
+        return $this->belongsToMany('App\Profession', 'person_professions', 'people_id', 'profession_id');
     }
 }

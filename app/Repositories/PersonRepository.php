@@ -11,7 +11,7 @@ class PersonRepository  {
     }
 
     public function find($id) {
-      $person = $this->person->find($id);
+      $person = $this->person->where('id', $id)->with('professions')->first();
       $person->picture = url('storage/partners/'.$person->picture);
       return $person;
     }
