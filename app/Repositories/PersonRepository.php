@@ -41,7 +41,7 @@ class PersonRepository  {
       return false; 
     }
 
-        /**
+    /**
      * get persons by query params
      * @param  object $queryFilter
     */
@@ -51,6 +51,20 @@ class PersonRepository  {
         $search = $this->person->all();  
       } else {
         $search = $this->person->where('description', 'like', '%'.$queryFilter->query('term').'%')->get();
+      }
+     return $search;
+    }
+
+    /**
+     * get persons by query params
+     * @param  object $queryFilter
+    */
+    public function searchByCompany($queryFilter) {
+      $search;
+      if($queryFilter->query('term') === null) {
+        $search = $this->person->all();  
+      } else {
+        $search = $this->person->where('type_person', 2)->where('description', 'like', '%'.$queryFilter->query('term').'%')->get();
       }
      return $search;
     }

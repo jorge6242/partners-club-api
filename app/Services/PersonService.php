@@ -86,5 +86,13 @@ class PersonService {
 	*/
 	public function search($queryFilter) {
 		return $this->person->search($queryFilter);
+	 }
+	 
+    /**
+	 *  Search resource from repository
+	 * @param  object $queryFilter
+	*/
+	public function searchByCompany($queryFilter) {
+		return $this->person->searchByCompany($queryFilter);
  	}
 }

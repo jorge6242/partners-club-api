@@ -10,6 +10,14 @@ class PersonProfessionRepository  {
       $this->model = $model;
     }
 
+    public function find($peopleId, $professionId) {
+      $data = $this->model->query()->where('people_id', $peopleId)->where('profession_id', $professionId)->first();
+      if($data) {
+          return true;
+      }
+      return false;
+    }
+
     public function findPartner($id) {
       $data = $this->model->query()->where('people_id', $id)->first();
       if($data) {
