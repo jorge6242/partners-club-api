@@ -24,8 +24,8 @@ class BankRepository  {
       return $this->bank->find($id)->update($attributes);
     }
   
-    public function all() {
-      return $this->bank->all();
+    public function all($perPage) {
+      return $this->bank->query()->paginate($perPage);
     }
 
     public function delete($id) {
@@ -50,7 +50,7 @@ class BankRepository  {
       if($queryFilter->query('term') === null) {
         $search = $this->bank->all();  
       } else {
-        $search = $this->bank->where('description', 'like', '%'.$queryFilter->query('term').'%')->get();
+        $search = $this->bank->where('description', 'like', '%'.$queryFilter->query('term').'%')->paginate(3);
       }
      return $search;
     }

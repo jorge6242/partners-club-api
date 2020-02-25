@@ -11,8 +11,8 @@ class BankService {
 		$this->bank = $bank ;
 	}
 
-	public function index() {
-		return $this->bank->all();
+	public function index($perPage) {
+		return $this->bank->all($perPage);
 	}
 
 	public function create($request) {

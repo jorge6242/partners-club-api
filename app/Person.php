@@ -67,11 +67,27 @@ class Person extends Model
         return $this->belongsTo('App\Country', 'countries_id', 'id');
     }
 
-        /**
+    /**
      * The professions that belong to the person.
      */
     public function professions()
     {
         return $this->belongsToMany('App\Profession', 'person_professions', 'people_id', 'profession_id');
+    }
+
+    /**
+     * The nationalities that belong to the person.
+     */
+    public function nacionalities()
+    {
+        return $this->belongsToMany('App\Nacionality', 'person_nationalities', 'people_id', 'nationalities_id');
+    }
+
+    /**
+     * The sports that belong to the person.
+     */
+    public function sports()
+    {
+        return $this->belongsToMany('App\Sport', 'person_sports', 'people_id', 'sports_id');
     }
 }

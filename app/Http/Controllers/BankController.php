@@ -17,9 +17,9 @@ class BankController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $banks = $this->bankService->index();
+        $banks = $this->bankService->index($request->query('perPage'));
         return response()->json([
             'success' => true,
             'data' => $banks
