@@ -19,6 +19,12 @@ class BankController extends Controller
      */
     public function index(Request $request)
     {
+        if(auth()->user()->can('create-post')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tiene permiso'
+            ])->setStatusCode(400);
+        }
         $banks = $this->bankService->index($request->query('perPage'));
         return response()->json([
             'success' => true,
