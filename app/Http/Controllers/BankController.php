@@ -19,8 +19,7 @@ class BankController extends Controller
      */
     public function index(Request $request)
     {
-        //
-        if(auth()->user()->can('create-post')) {
+        if(!auth()->user()->can('maestro-banco-ver')) {
             return response()->json([
                 'success' => false,
                 'message' => 'No tiene permiso'
@@ -41,6 +40,12 @@ class BankController extends Controller
      */
     public function store(Request $request)
     {
+        if(!auth()->user()->can('maestro-banco-crear')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tiene permiso'
+            ])->setStatusCode(400);
+        }
         $bankRequest = $request->all();
         $bank = $this->bankService->create($bankRequest);
         return $bank;
@@ -72,6 +77,12 @@ class BankController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if(!auth()->user()->can('maestro-banco-editar')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tiene permiso'
+            ])->setStatusCode(400);
+        }
         $bankRequest = $request->all();
         $bank = $this->bankService->update($bankRequest, $id);
         if($bank) {
@@ -90,6 +101,12 @@ class BankController extends Controller
      */
     public function destroy($id)
     {
+        if(!auth()->user()->can('maestro-banco-borrar')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tiene permiso'
+            ])->setStatusCode(400);
+        }
         $bank = $this->bankService->delete($id);
         if($bank) {
             return response()->json([
