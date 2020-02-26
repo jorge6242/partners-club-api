@@ -19,6 +19,7 @@ class BankController extends Controller
      */
     public function index(Request $request)
     {
+        //
         if(auth()->user()->can('create-post')) {
             return response()->json([
                 'success' => false,
