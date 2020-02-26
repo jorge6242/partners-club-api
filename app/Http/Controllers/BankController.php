@@ -10,7 +10,8 @@ class BankController extends Controller
 {
     public function __construct(BankService $bankService)
 	{
-		$this->bankService = $bankService;
+        $this->bankService = $bankService;
+        $this->middleware('auth'); 
     }
     /**
      * Display a listing of the resource.
@@ -19,6 +20,13 @@ class BankController extends Controller
      */
     public function index(Request $request)
     {
+        dd($request->user()->can('create-tasks'));
+        if (!$request->user()->can('create-tasks')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tiene permisos'
+            ])->setStatusCode(401);
+        }
         $banks = $this->bankService->index($request->query('perPage'));
         return response()->json([
             'success' => true,
