@@ -32,6 +32,10 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/marital-status-search', 'MaritalStatusController@search');
         Route::resource('/gender', 'GenderController');
         Route::get('/gender-search', 'GenderController@search');
+        Route::resource('/role', 'RoleController');
+        Route::get('/role-search', 'RoleController@search');
+        Route::resource('/permission', 'PermissionController');
+        Route::get('/permission-search', 'PermissionController@search');
         Route::get('/check-login', 'UserController@checkLogin');
         Route::get('/product-search', 'ProductController@search');
         Route::resource('/user', 'UserController');

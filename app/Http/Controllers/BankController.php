@@ -19,6 +19,12 @@ class BankController extends Controller
      */
     public function index(Request $request)
     {
+        if(!auth()->user()->can('acl.maestro-banco-ver')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tiene permisos'
+            ])->setStatusCode(400);
+        }
         $banks = $this->bankService->index($request->query('perPage'));
         return response()->json([
             'success' => true,
@@ -34,6 +40,12 @@ class BankController extends Controller
      */
     public function store(Request $request)
     {
+        if(!auth()->user()->can('acl.maestro-banco-crear')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tiene permisos'
+            ])->setStatusCode(400);
+        }
         $bankRequest = $request->all();
         $bank = $this->bankService->create($bankRequest);
         return $bank;
@@ -47,6 +59,12 @@ class BankController extends Controller
      */
     public function show($id)
     {
+        if(!auth()->user()->can('acl.maestro-banco-ver')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tiene permisos'
+            ])->setStatusCode(400);
+        }
         $bank = $this->bankService->read($id);
         if($bank) {
             return response()->json([
@@ -65,6 +83,12 @@ class BankController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if(!auth()->user()->can('acl.maestro-banco-editar')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tiene permisos'
+            ])->setStatusCode(400);
+        }
         $bankRequest = $request->all();
         $bank = $this->bankService->update($bankRequest, $id);
         if($bank) {
@@ -83,6 +107,12 @@ class BankController extends Controller
      */
     public function destroy($id)
     {
+        if(!auth()->user()->can('acl.maestro-banco-borrar')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tiene permisos'
+            ])->setStatusCode(400);
+        }
         $bank = $this->bankService->delete($id);
         if($bank) {
             return response()->json([
