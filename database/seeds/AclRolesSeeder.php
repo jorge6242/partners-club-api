@@ -35,8 +35,8 @@ class AclRolesSeeder extends Seeder
 // $user = User::find(1);
 // $user->assignRole($roleAdmin->id);
 
-// $user = User::find(2);
-// $user->assignRole($roleModerator->id);
+$user = User::find(2);
+$user->assignRole('administrator');
 
 
 
@@ -49,8 +49,8 @@ class AclRolesSeeder extends Seeder
 //     'description' => 'manage user permissions'
 // ]);
 
-$roleAdmin = Role::find(7); // administrator
-$roleAdmin->assignPermission('maestro-banco-crear');
+// $roleAdmin = Role::find(7); // administrator
+// $roleAdmin->assignPermission('maestro-banco-crear');
 
 
 $user = User::find(1);

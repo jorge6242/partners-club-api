@@ -16,10 +16,12 @@ class PermissionService {
 	}
 
 	public function create($request) {
-		if ($this->repository->checkRecord($request['description'])) {
+		$slug = json_encode([ 'acl' => true ]);
+		$request['slug'] = $slug;
+		if ($this->repository->checkRecord($request['name'])) {
             return response()->json([
                 'success' => false,
-                'message' => 'Record already exist'
+                'message' => 'Palabra clave ya existe'
             ])->setStatusCode(400);
         }
 		return $this->repository->create($request);

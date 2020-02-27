@@ -11,13 +11,18 @@ class RoleRepository  {
     }
 
     public function find($id) {
-      $value = $this->model->find($id);
-      return $value->getPermissions();
-
+      return $this->model->where('id', $id)->with('permissions')->first();
     }
 
     public function create($attributes) {
-      return $this->model->create($attributes);
+      $role = $this->model->create($attributes);
+      $permissions = json_decode($attributes['permissions']);
+      if($permissions && count($permissions)) {
+        foreach ($permissions as $permission) {
+          $role->assignPermission($permission);
+        }
+      }
+      return $role;
     }
 
     public function update($id, array $attributes) {

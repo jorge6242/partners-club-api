@@ -8,33 +8,43 @@ use Illuminate\Http\Request;
 
 class UserService {
 
-		public function __construct(UserRepository $user) {
-			$this->user = $user ;
+		public function __construct(UserRepository $repository) {
+			$this->repository = $repository ;
 		}
 
 		public function index() {
-			return $this->user->all();
+			return $this->repository->all();
 		}
 		
 		public function create($request) {
 			$request['password'] = bcrypt($request['password']);
-			return $this->user->create($request);
+			return $this->repository->create($request);
 		}
 
 		public function update($request, $id) {
-							return $this->user->update($id, $request);
+			$user = $this->repository->find($id);
+			$user->revokeAllRoles();
+			$user = $this->repository->find($id);
+			$roles = json_decode($request['roles']);
+			
+			if(count($roles)) {
+				foreach ($roles as $role) {
+					$user->assignRole($role);
+				}
+			}
+			return $this->repository->update($id, $request);
 		}
 
 		public function read($id) {
-						return $this->user->find($id);
+						return $this->repository->find($id);
 		}
 
 		public function delete($id) {
-							return $this->user->delete($id);
+							return $this->repository->delete($id);
 		}
 
 		public function checkUser($user) {
-			return $this->user->checkUser($user);
+			return $this->repository->checkUser($user);
 		}
 
 		public function checkLogin() {

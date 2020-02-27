@@ -32,7 +32,7 @@ class PermissionRepository  {
 
     public function checkRecord($name)
     {
-      $response = $this->model->where('description', $name)->first();
+      $response = $this->model->where('name', $name)->first();
       if ($response) {
         return $response;
       }

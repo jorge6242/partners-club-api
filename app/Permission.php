@@ -13,4 +13,5 @@ class Permission extends Model
         'slug',
         'description',
     ];
+
 }

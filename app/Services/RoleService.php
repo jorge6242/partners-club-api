@@ -2,13 +2,16 @@
 
 namespace App\Services;
 
+use App\Permission;
 use App\Repositories\RoleRepository;
+use App\Repositories\PermissionRepository;
 use Illuminate\Http\Request;
 
 class RoleService {
 
-	public function __construct(RoleRepository $repository) {
+	public function __construct(RoleRepository $repository, PermissionRepository $permissionRepository) {
 		$this->repository = $repository ;
+		$this->permissionRepository = $permissionRepository ;
 	}
 
 	public function index() {
@@ -21,12 +24,24 @@ class RoleService {
                 'success' => false,
                 'message' => 'Record already exist'
             ])->setStatusCode(400);
-        }
+		}
 		return $this->repository->create($request);
 	}
 
 	public function update($request, $id) {
-      return $this->repository->update($id, $request);
+
+	$role = $this->repository->find($id);
+	$role->revokeAllPermissions();
+	$role = $this->repository->find($id);
+	$permissions = json_decode($request['permissions']);
+	
+	if(count($permissions)) {
+		foreach ($permissions as $permission) {
+			$role->assignPermission($permission);
+		}
+	}
+
+	return $this->repository->update($id, $request);
 	}
 
 	public function read($id) {
