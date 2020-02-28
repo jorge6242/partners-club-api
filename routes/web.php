@@ -39,5 +39,9 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/check-login', 'UserController@checkLogin');
         Route::get('/product-search', 'ProductController@search');
         Route::resource('/user', 'UserController');
+        Route::get('/person-report', 'PersonController@report');
     });
 });
+
+/* Reports */
+Route::get('/person-report', 'PersonController@report');

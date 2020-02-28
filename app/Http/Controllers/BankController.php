@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Bank;
 use Illuminate\Http\Request;
 use App\Services\BankService;
+use Barryvdh\DomPDF\Facade as PDF;
 use App\Http\Requests\BankValidator;
 
 class BankController extends Controller
@@ -137,5 +139,16 @@ class BankController extends Controller
                 'data' => $bank
             ]);
         }
+    }
+
+    public function generatePdf()
+    {        
+
+        $bank = Bank::all();
+        $data = [
+            'data' => $bank
+        ];
+        $pdf = PDF::loadView('reports/expiration_cards', $data);
+        return $pdf->download('archivo.pdf');
     }
 }

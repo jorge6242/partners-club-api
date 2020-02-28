@@ -24,6 +24,10 @@ class PersonRepository  {
       return $this->person->find($id)->update($attributes);
     }
   
+    public function reportAll() {
+      return $this->person->all();
+    }
+
     public function all() {
       return $this->person->all();
     }

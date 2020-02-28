@@ -18,6 +18,10 @@ class PersonService {
 		return $this->person->all();
 	}
 
+	public function reportAll() {
+		return $this->person->reportAll();
+	}
+
 	public function create($request) {
 		if ($this->person->checkPerson($request['rif_ci'])) {
             return response()->json([

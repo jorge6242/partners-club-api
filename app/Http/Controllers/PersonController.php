@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\PersonService;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class PersonController extends Controller
 {
@@ -23,6 +24,21 @@ class PersonController extends Controller
             'success' => true,
             'data' => $persons
         ]);
+    }
+
+        /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function report()
+    {
+        $persons = $this->service->reportAll();
+        $data = [
+            'data' => $persons
+        ];
+        $pdf = PDF::loadView('reports/expiration_cards', $data);
+        return $pdf->download('archivo.pdf');
     }
 
     /**
