@@ -98,5 +98,27 @@ class PersonService {
 	*/
 	public function searchByCompany($queryFilter) {
 		return $this->person->searchByCompany($queryFilter);
- 	}
+	 }
+	 
+	 	/**
+	 *  Search resource from repository
+	 * @param  object $queryFilter
+	*/
+	public function searchPersonsToAssign($queryFilter) {
+		return $this->person->searchPersonsToAssign($queryFilter);
+	 }
+
+	public function assignPerson($attributes) {
+		$this->person->assignPerson($attributes);
+	}
+
+	    /**
+	 *  Search resource from repository
+	 * @param  object $queryFilter
+	*/
+	public function searchFamilyByPerson($queryFilter) {
+		return $this->person->searchFamilyByPerson($queryFilter);
+	 }
+	 
+	 
 }

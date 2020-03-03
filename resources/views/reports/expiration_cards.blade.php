@@ -72,7 +72,7 @@
                <thead>
                 <tbody>
                     @foreach ($data as $element)
-                        <tr>
+                        <!-- <tr>
                     <td>Dummy</td> 
                     <td>{{ $element->name }} {{ $element->last_name }}</td> 
                     <td>{{ $element->rif_ci }}</td> 
@@ -84,8 +84,8 @@
                     <td>{{ $element->telephone2 }}</td> 
                     <td>{{ $element->phone_mobile1 }}</td> 
                     <td>{{ $element->phone_mobile2 }}</td> 
-                </tr>
-                {{-- <tr>
+                </tr> -->
+                <tr>
                     <td>063810</td> 
                     <td>Rigoberto Lanz</td>
                     <td>18945678</td>
@@ -1254,7 +1254,7 @@
                     <td>023952858</td> 
                     <td>0416225858</td> 
                     <td>0416225858</td> 
-                  </tr> --}}
+                  </tr>
                     @endforeach
                     <tbody>
             </table>

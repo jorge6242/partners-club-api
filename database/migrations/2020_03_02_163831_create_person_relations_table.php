@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRelationTypesTable extends Migration
+class CreatePersonRelationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateRelationTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('relation_types', function (Blueprint $table) {
+        Schema::create('person_relations', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('description');
-            $table->string('inverse_relation');
+            $table->bigInteger('base_id');
+            $table->bigInteger('related_id');
+            $table->bigInteger('relation_type_id');
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ class CreateRelationTypesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('relation_types');
+        Schema::dropIfExists('person_relations');
     }
 }

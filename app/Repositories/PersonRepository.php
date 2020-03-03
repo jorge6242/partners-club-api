@@ -3,42 +3,48 @@
 namespace App\Repositories;
 
 use App\Person;
+use App\PersonRelation;
+use Illuminate\Database\Eloquent\Builder;
+use App\Repositories\RelationTypeRepository;
+use App\Repositories\PersonRelationRepository;
 
 class PersonRepository  {
 
-    public function __construct(Person $person) {
-      $this->person = $person;
+    public function __construct(Person $model, PersonRelationRepository $personRelationRepository, RelationTypeRepository $relationTypeRepository) {
+      $this->model = $model;
+      $this->personRelationRepository = $personRelationRepository;
+      $this->relationTypeRepository = $relationTypeRepository;
     }
 
     public function find($id) {
-      $person = $this->person->where('id', $id)->with('professions')->first();
+      $person = $this->model->where('id', $id)->with('professions')->first();
       $person->picture = url('storage/partners/'.$person->picture);
       return $person;
     }
 
     public function create($attributes) {
-      return $this->person->create($attributes);
+      return $this->model->create($attributes);
     }
 
     public function update($id, array $attributes) {
-      return $this->person->find($id)->update($attributes);
+      return $this->model->find($id)->update($attributes);
     }
   
     public function reportAll() {
-      return $this->person->all();
+      return $this->model->all();
     }
 
     public function all() {
-      return $this->person->all();
+      return $this->model->all();
     }
 
     public function delete($id) {
-     return $this->person->find($id)->delete();
+     return $this->model->find($id)->delete();
     }
 
     public function checkPerson($name)
     {
-      $person = $this->person->where('rif_ci', $name)->first();
+      $person = $this->model->where('rif_ci', $name)->first();
       if ($person) {
         return $person;
       }
@@ -52,9 +58,9 @@ class PersonRepository  {
     public function search($queryFilter) {
       $search;
       if($queryFilter->query('term') === null) {
-        $search = $this->person->all();  
+        $search = $this->model->all();  
       } else {
-        $search = $this->person->where('description', 'like', '%'.$queryFilter->query('term').'%')->get();
+        $search = $this->model->where('description', 'like', '%'.$queryFilter->query('term').'%')->get();
       }
      return $search;
     }
@@ -66,10 +72,49 @@ class PersonRepository  {
     public function searchByCompany($queryFilter) {
       $search;
       if($queryFilter->query('term') === null) {
-        $search = $this->person->all();  
+        $search = $this->model->all();  
       } else {
-        $search = $this->person->where('type_person', 2)->where('description', 'like', '%'.$queryFilter->query('term').'%')->get();
+        $search = $this->model->where('type_person', 2)->where('description', 'like', '%'.$queryFilter->query('term').'%')->get();
       }
      return $search;
+    }
+    /**
+     * get persons by query params
+     * @param  object $queryFilter
+    */
+    public function searchPersonsToAssign($queryFilter) {
+      $search;
+      if($queryFilter->query('term') === null) {
+        $search = $this->model->query()->where('id', '!=', $queryFilter->query('id'))->where('type_person', 1)->paginate($queryFilter->query('perPage'));  
+      } else {
+        $search = $this->model->where('id', '!=', $queryFilter->query('id'))->where('type_person', 1)->where('name', 'like', '%'.$queryFilter->query('term').'%')->paginate($queryFilter->query('perPage'));
+      }
+     return $search;
+    }
+
+        /**
+     * get persons by query params
+     * @param  object $queryFilter
+    */
+    public function searchFamilyByPerson($queryFilter) {
+      $search;
+      if($queryFilter->query('term') === null) {
+        $person = $this->model->query()->where('id', $queryFilter->query('id'))->with('family')->first();
+        $familys = $person->family()->get();
+        foreach ( $familys as $key => $family) {
+          $currentPerson = PersonRelation::query()->where('base_id', $queryFilter->query('id'))->where('related_id', $family->id)->first();
+          $relation = $this->relationTypeRepository->find($currentPerson->relation_type_id);
+          $familys[$key]->relationType = $relation;
+          $familys[$key]->id = $currentPerson->id;
+        }
+       return $person->family = $familys;
+      } else {
+        $search = $this->model->where('id', '!=', 1)->where('type_person', 1)->where('name', 'like', '%'.$queryFilter->query('term').'%')->paginate($queryFilter->query('perPage'));
+      }
+     return $search;
+    }
+
+    public function assignPerson($attributes) {
+      return $this->personRelationRepository->create($attributes);
     }
 }
