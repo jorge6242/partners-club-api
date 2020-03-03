@@ -90,4 +90,13 @@ class Person extends Model
     {
         return $this->belongsToMany('App\Sport', 'person_sports', 'people_id', 'sports_id');
     }
+
+    /**
+     * The sports that belong to the person.
+     */
+    public function family()
+    {
+        return $this->belongsToMany('App\Person', 'person_relations', 'base_id', 'related_id');
+    }
+
 }

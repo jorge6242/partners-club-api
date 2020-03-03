@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class RelationType extends Model
 {
     protected $fillable = [
-        'description', 
+        'description',
+        'inverse_relation',
     ];
 }

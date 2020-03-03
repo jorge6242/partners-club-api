@@ -1,13 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Services\RelationTypeService;
+use App\Services\PersonRelationService;
 
 use Illuminate\Http\Request;
 
-class RelationTypeController extends Controller
+class PersonRelationController extends Controller
 {
-    public function __construct(RelationTypeService $service)
+    public function __construct(PersonRelationService $service)
     {
         $this->service = $service;
     }

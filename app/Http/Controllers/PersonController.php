@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\PersonService;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class PersonController extends Controller
 {
@@ -23,6 +24,21 @@ class PersonController extends Controller
             'success' => true,
             'data' => $persons
         ]);
+    }
+
+        /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function report()
+    {
+        $persons = $this->service->reportAll();
+        $data = [
+            'data' => $persons
+        ];
+        $pdf = PDF::loadView('reports/expiration_cards', $data);
+        return $pdf->download('archivo.pdf');
     }
 
     /**
@@ -100,6 +116,54 @@ class PersonController extends Controller
      */
     public function search(Request $request) {
         $person = $this->service->search($request);
+        if($person) {
+            return response()->json([
+                'success' => true,
+                'data' => $person
+            ]);
+        }
+    }
+
+
+    /**
+     * Get the specified resource by search.
+     *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function searchPersonsToAssign(Request $request) {
+        $person = $this->service->searchPersonsToAssign($request);
+        if($person) {
+            return response()->json([
+                'success' => true,
+                'data' => $person
+            ]);
+        }
+    }
+
+    /**
+     * create relation type.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function assignPerson(Request $request)
+    {
+        $personRequest = $request->all();
+        $person = $this->service->assignPerson($personRequest);
+        return $person;
+    }
+
+        /**
+     * Get the specified family by person
+     *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function searchFamilyByPerson(Request $request) {
+        $person = $this->service->searchFamilyByPerson($request);
         if($person) {
             return response()->json([
                 'success' => true,
