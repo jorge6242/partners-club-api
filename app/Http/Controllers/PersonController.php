@@ -41,6 +41,23 @@ class PersonController extends Controller
         return $pdf->download('archivo.pdf');
     }
 
+
+        /**
+     * PDF Report.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function partnerReport()
+    {
+        $persons = $this->service->reportAll();
+        $data = [
+            'data' => $persons
+        ];
+        
+        $pdf = PDF::loadView('reports/partner', $data);
+        return $pdf->download('archivo.pdf');
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -170,5 +187,23 @@ class PersonController extends Controller
                 'data' => $person
             ]);
         }
+    }
+
+        /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getReportByPartner(Request $request)
+    {
+        $requestBody = $request->all();
+        $partner = $this->service->getReportByPartner($requestBody['id']);
+        $data = [
+            'data' => $partner
+        ];
+        
+        $pdf = PDF::loadView('reports/partner', $data);
+        return $pdf->download('archivo.pdf');
     }
 }

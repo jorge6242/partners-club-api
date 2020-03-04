@@ -29,6 +29,7 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/person-search', 'PersonController@search');
         Route::get('/search-person-to-assign', 'PersonController@searchPersonsToAssign');
         Route::get('/search-family-by-person', 'PersonController@searchFamilyByPerson');
+        Route::get('/report-by-partner', 'PersonController@getReportByPartner');
         Route::post('/assign-person', 'PersonController@assignPerson');
         Route::resource('/status-person', 'StatusPersonController');
         Route::get('/status-person-search', 'StatusPersonController@search');
@@ -51,3 +52,4 @@ Route::prefix('api/v1')->group(function () {
 
 /* Reports */
 Route::get('/person-report', 'PersonController@report');
+Route::get('/partner-report', 'PersonController@getReportByPartner');

@@ -117,4 +117,33 @@ class PersonRepository  {
     public function assignPerson($attributes) {
       return $this->personRelationRepository->create($attributes);
     }
+
+    public function getReportByPartner($id) {
+        $person = $this->model->query()->where('id', $id)->with(['family', 'statusPerson', 'maritalStatus', 'gender', 'country','professions'])->first();
+        $person['professionList'] = $this->parseProfessions($person->professions()->get());
+        if($person->family()) {
+          $familys = $person->family()->with(['statusPerson', 'maritalStatus', 'gender', 'country','professions'])->get();
+          foreach ( $familys as $key => $family) {
+            $professions = $this->parseProfessions($family->professions()->get());
+            $currentPerson = PersonRelation::query()->where('base_id', $id)->where('related_id', $family->id)->first();
+            $relation = $this->relationTypeRepository->find($currentPerson->relation_type_id);
+            $familys[$key]->relationType = $relation;
+            $familys[$key]->id = $currentPerson->id;
+            $familys[$key]->professionList = $professions;
+          }
+          $person['familyMembers'] = $familys;
+        }
+        return $person;
+    }
+
+    public function parseProfessions($professions) {
+      $str = '';
+      $count = 0;
+      foreach ( $professions as $profession) {
+        $count = $count + 1;
+        $coma = count($professions) == $count ? '' : ', ';
+        $str .= $profession->description.''.$coma; 
+      }
+      return $str;
+    }
 }

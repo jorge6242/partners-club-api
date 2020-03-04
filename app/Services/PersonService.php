@@ -119,6 +119,11 @@ class PersonService {
 	public function searchFamilyByPerson($queryFilter) {
 		return $this->person->searchFamilyByPerson($queryFilter);
 	 }
+
+	 public function getReportByPartner($id) {
+		return $this->person->getReportByPartner($id);
+	   }
+   
 	 
 	 
 }
