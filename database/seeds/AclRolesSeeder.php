@@ -4,6 +4,7 @@ use App\Role;
 use App\User;
 use App\Permission;
 use Illuminate\Database\Seeder;
+use Spatie\Activitylog\Models\Activity;
 
 class AclRolesSeeder extends Seeder
 {
@@ -60,6 +61,9 @@ class AclRolesSeeder extends Seeder
 // $user->getPermissions();
 
 // dd($user->getPermissions());
+// $activity = Activity::inLog('profession')->get();
+
+// dd($activity);
 
     }
 }
