@@ -3,12 +3,14 @@
 namespace App\Services;
 
 use App\Repositories\CardPersonRepository;
+use App\Repositories\ShareRepository;
 use Illuminate\Http\Request;
 
 class CardPersonService {
 
-	public function __construct(CardPersonRepository $repository) {
-		$this->repository = $repository ;
+	public function __construct(CardPersonRepository $repository, ShareRepository $shareRepository) {
+		$this->repository = $repository;
+		$this->shareRepository = $shareRepository;
 	}
 
 	public function index($id) {
@@ -16,7 +18,10 @@ class CardPersonService {
 	}
 
 	public function create($request) {
-		return $this->repository->create($request);
+		$cardPerson = $this->repository->create($request);
+		$body = array('card_people'.$request["order"] => $cardPerson->id);
+		$this->shareRepository->update($request['share'], $body);
+		return $cardPerson;
 	}
 
 	public function update($request, $id) {

@@ -109,4 +109,21 @@ class ShareController extends Controller
             ]);
         }
     }
+
+        /**
+     * get shares by partner
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getByPartner($id)
+    {
+        $data = $this->service->getByPartner($id);
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
 }

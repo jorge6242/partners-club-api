@@ -55,6 +55,7 @@ Route::prefix('api/v1')->group(function () {
         Route::resource('/transaction-type', 'TransactionTypeController');
         Route::get('/transaction-type-search', 'TransactionTypeController@search');
         Route::resource('/share', 'ShareController');
+        Route::get('/share-by-partner/{id}', 'ShareController@getByPartner');
         Route::resource('/card-person', 'CardPersonController');
     });
 });

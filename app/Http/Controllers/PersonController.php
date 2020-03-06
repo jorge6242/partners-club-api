@@ -34,6 +34,7 @@ class PersonController extends Controller
     public function report()
     {
         $persons = $this->service->reportAll();
+        return $persons;
         $data = [
             'data' => $persons
         ];

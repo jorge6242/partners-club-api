@@ -17,7 +17,7 @@ class PersonRepository  {
     }
 
     public function find($id) {
-      $person = $this->model->where('id', $id)->with(['professions','creditCards'])->first();
+      $person = $this->model->where('id', $id)->with(['professions','creditCards','shares'])->first();
       $person->picture = url('storage/partners/'.$person->picture);
       return $person;
     }
@@ -106,6 +106,7 @@ class PersonRepository  {
           $relation = $this->relationTypeRepository->find($currentPerson->relation_type_id);
           $familys[$key]->relationType = $relation;
           $familys[$key]->id = $currentPerson->id;
+          $familys[$key]->status = $currentPerson->status;
         }
        return $person->family = $familys;
       } else {

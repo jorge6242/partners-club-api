@@ -18,6 +18,7 @@ class CreatePersonRelationsTable extends Migration
             $table->bigInteger('base_id');
             $table->bigInteger('related_id');
             $table->bigInteger('relation_type_id');
+            $table->bigInteger('status');
             $table->timestamps();
         });
     }

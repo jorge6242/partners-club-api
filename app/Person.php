@@ -107,4 +107,12 @@ class Person extends Model
         return $this->hasMany('App\CardPerson', 'people_id', 'id');
     }
 
+        /**
+     * The sports that belong to the person.
+     */
+    public function shares()
+    {
+        return $this->hasMany('App\Share','id_persona', 'id');
+    }
+
 }

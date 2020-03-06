@@ -37,5 +37,9 @@ class ShareService {
 	*/
 	public function search($queryFilter) {
 		return $this->repository->search($queryFilter);
- 	}
+	 }
+	 
+	 public function getByPartner($id) {
+		return $this->repository->getByPartner($id);
+	   }
 }

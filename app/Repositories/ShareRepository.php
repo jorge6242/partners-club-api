@@ -13,7 +13,17 @@ class ShareRepository  {
     }
 
     public function find($id) {
-      return $this->model->find($id);
+      return $this->model->query()->where('id', $id)->with(['titular', 'facturador', 'fiador', 'tarjetaPrimaria', 'tarjetaSecundaria', 'tarjetaTerciaria' ])
+      ->with([ 'tarjetaPrimaria' => function($query){
+            $query->with(['bank','card']);
+            }
+      ])->with([ 'tarjetaSecundaria' => function($query){
+        $query->with(['bank','card']);
+        }
+      ])->with([ 'tarjetaTerciaria' => function($query){
+        $query->with(['bank','card']);
+        }
+      ])->first();
     }
 
     public function create($attributes) {
@@ -53,5 +63,18 @@ class ShareRepository  {
         $search = $this->model->where('description', 'like', '%'.$queryFilter->query('term').'%')->paginate($queryFilter->query('perPage'));
       }
      return $search;
+    }
+
+    public function getByPartner($id) {
+      return $this->model->query()->where('id_persona', $id)->with(['titular', 'facturador', 'fiador'])->with([ 'tarjetaPrimaria' => function($query){
+        $query->with(['bank','card']);
+        }
+  ])->with([ 'tarjetaSecundaria' => function($query){
+    $query->with(['bank','card']);
+    }
+  ])->with([ 'tarjetaTerciaria' => function($query){
+    $query->with(['bank','card']);
+    }
+  ])->get();
     }
 }

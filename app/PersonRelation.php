@@ -10,6 +10,7 @@ class PersonRelation extends Model
         'base_id',
         'related_id',
         'relation_type_id',
+        'status',
     ];
 
             /**
