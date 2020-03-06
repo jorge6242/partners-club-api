@@ -16,6 +16,8 @@ class CreateCardTypesTable extends Migration
         Schema::create('card_types', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('description');
+            $table->string('logo')->nullable();
+            $table->string('equivalent_code')->nullable();
             $table->timestamps();
         });
     }

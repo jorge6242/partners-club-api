@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class CardType extends Model
 {
     protected $fillable = [
-        'description', 
+        'description',
+        'logo',
+        'equivalent_code',
     ];
 }

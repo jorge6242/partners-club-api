@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\CardTypeService;
+use App\Services\CardPersonService;
 use Barryvdh\DomPDF\Facade as PDF;
 use App\Http\Requests\BankValidator;
 
-class CardTypeController extends Controller
+class CardPersonController extends Controller
 {
-    public function __construct(CardTypeService $service)
+    public function __construct(CardPersonService $service)
 	{
 		$this->service = $service;
     }
@@ -20,7 +20,8 @@ class CardTypeController extends Controller
      */
     public function index(Request $request)
     {
-        $banks = $this->service->index($request->query('perPage'));
+        $body = $request->all();
+        $banks = $this->service->index($body['id']);
         return response()->json([
             'success' => true,
             'data' => $banks

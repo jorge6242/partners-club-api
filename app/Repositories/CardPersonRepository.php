@@ -2,13 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Bank;
+use App\CardPerson;
 
-class BankRepository  {
+class CardPersonRepository  {
   
     protected $post;
 
-    public function __construct(Bank $model) {
+    public function __construct(CardPerson $model) {
       $this->model = $model;
     }
 
@@ -24,15 +24,15 @@ class BankRepository  {
       return $this->model->find($id)->update($attributes);
     }
   
-    public function all($perPage) {
-      return $this->model->query()->paginate($perPage);
+    public function all($id) {
+      return $this->model->query()->where('people_id', $id)->with(['bank','card'])->get();
     }
 
     public function delete($id) {
      return $this->model->find($id)->delete();
     }
 
-    public function checkBank($name)
+    public function checkRecord($name)
     {
       $data = $this->model->where('description', $name)->first();
       if ($data) {

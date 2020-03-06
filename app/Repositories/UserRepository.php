@@ -33,7 +33,7 @@ class UserRepository  {
     }
 
     public function all() {
-      return $this->model->all();
+      return $this->model->query()->with('roles')->get();
     }
 
     public function delete($id) {

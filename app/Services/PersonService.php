@@ -123,7 +123,4 @@ class PersonService {
 	 public function getReportByPartner($id) {
 		return $this->person->getReportByPartner($id);
 	   }
-   
-	 
-	 
 }

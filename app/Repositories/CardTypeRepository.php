@@ -2,13 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Bank;
+use App\CardType;
 
-class BankRepository  {
+class CardTypeRepository  {
   
     protected $post;
 
-    public function __construct(Bank $model) {
+    public function __construct(CardType $model) {
       $this->model = $model;
     }
 
@@ -32,7 +32,7 @@ class BankRepository  {
      return $this->model->find($id)->delete();
     }
 
-    public function checkBank($name)
+    public function checkRecord($name)
     {
       $data = $this->model->where('description', $name)->first();
       if ($data) {

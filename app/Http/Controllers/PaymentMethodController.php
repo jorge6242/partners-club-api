@@ -3,27 +3,28 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\PaymentMethodService;
+use Barryvdh\DomPDF\Facade as PDF;
+use App\Http\Requests\BankValidator;
 
 class PaymentMethodController extends Controller
 {
+    public function __construct(PaymentMethodService $service)
+	{
+		$this->service = $service;
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $banks = $this->service->index($request->query('perPage'));
+        return response()->json([
+            'success' => true,
+            'data' => $banks
+        ]);
     }
 
     /**
@@ -34,7 +35,9 @@ class PaymentMethodController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $bankRequest = $request->all();
+        $bank = $this->service->create($bankRequest);
+        return $bank;
     }
 
     /**
@@ -45,18 +48,13 @@ class PaymentMethodController extends Controller
      */
     public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        $bank = $this->service->read($id);
+        if($bank) {
+            return response()->json([
+                'success' => true,
+                'data' => $bank
+            ]);
+        }
     }
 
     /**
@@ -68,7 +66,14 @@ class PaymentMethodController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $bankRequest = $request->all();
+        $bank = $this->service->update($bankRequest, $id);
+        if($bank) {
+            return response()->json([
+                'success' => true,
+                'data' => $bank
+            ]);
+        }
     }
 
     /**
@@ -79,6 +84,29 @@ class PaymentMethodController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $bank = $this->service->delete($id);
+        if($bank) {
+            return response()->json([
+                'success' => true,
+                'data' => $bank
+            ]);
+        }
+    }
+
+    /**
+     * Get the specified resource by search.
+     *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request) {
+        $bank = $this->service->search($request);
+        if($bank) {
+            return response()->json([
+                'success' => true,
+                'data' => $bank
+            ]);
+        }
     }
 }

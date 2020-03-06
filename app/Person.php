@@ -99,4 +99,12 @@ class Person extends Model
         return $this->belongsToMany('App\Person', 'person_relations', 'base_id', 'related_id');
     }
 
+        /**
+     * The credit cards that belong to the person.
+     */
+    public function creditCards()
+    {
+        return $this->hasMany('App\CardPerson', 'people_id', 'id');
+    }
+
 }

@@ -2,13 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Bank;
+use App\TransactionType;
 
-class BankRepository  {
+class TransactionTypeRepository  {
   
     protected $post;
 
-    public function __construct(Bank $model) {
+    public function __construct(TransactionType $model) {
       $this->model = $model;
     }
 
@@ -32,7 +32,7 @@ class BankRepository  {
      return $this->model->find($id)->delete();
     }
 
-    public function checkBank($name)
+    public function checkRecord($name)
     {
       $data = $this->model->where('description', $name)->first();
       if ($data) {

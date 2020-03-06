@@ -14,8 +14,9 @@
 Route::prefix('api/v1')->group(function () {
     Route::post('/auth/login', 'PassportController@login');
     Route::post('/register', 'PassportController@register');
+
     Route::middleware('auth:api')->group(function () {
-        Route::resource('/product', 'ProductController');
+
         Route::resource('/bank', 'BankController');
         Route::get('/bank-search', 'BankController@search');
         Route::resource('/sport', 'SportController');
@@ -47,6 +48,14 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/product-search', 'ProductController@search');
         Route::resource('/user', 'UserController');
         Route::get('/person-report', 'PersonController@report');
+        Route::resource('/payment-method', 'PaymentMethodController');
+        Route::get('/payment-method-search', 'PaymentMethodController@search');
+        Route::resource('/card-type', 'CardTypeController');
+        Route::get('/card-type-search', 'CardTypeController@search');
+        Route::resource('/transaction-type', 'TransactionTypeController');
+        Route::get('/transaction-type-search', 'TransactionTypeController@search');
+        Route::resource('/share', 'ShareController');
+        Route::resource('/card-person', 'CardPersonController');
     });
 });
 
