@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\CardPersonService;
+use App\Services\ShareMovementService;
 use Barryvdh\DomPDF\Facade as PDF;
-use App\Http\Requests\BankValidator;
 
-class CardPersonController extends Controller
+class ShareMovementController extends Controller
 {
-    public function __construct(CardPersonService $service)
+    public function __construct(ShareMovementService $service)
 	{
 		$this->service = $service;
     }
@@ -20,8 +19,7 @@ class CardPersonController extends Controller
      */
     public function index(Request $request)
     {
-        $body = $request->all();
-        $banks = $this->service->index($body['id']);
+        $banks = $this->service->index($request->query('perPage'));
         return response()->json([
             'success' => true,
             'data' => $banks
@@ -36,6 +34,7 @@ class CardPersonController extends Controller
      */
     public function store(Request $request)
     {
+
         $bankRequest = $request->all();
         $bank = $this->service->create($bankRequest);
         return $bank;
@@ -80,17 +79,16 @@ class CardPersonController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $id)
+    public function destroy($id)
     {
-        $data = $this->service->delete($request->all(), $id);
-        if($data) {
+        $bank = $this->service->delete($id);
+        if($bank) {
             return response()->json([
                 'success' => true,
-                'data' => $data
+                'data' => $bank
             ]);
         }
     }
@@ -111,4 +109,5 @@ class CardPersonController extends Controller
             ]);
         }
     }
+
 }

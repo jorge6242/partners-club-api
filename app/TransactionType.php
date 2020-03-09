@@ -11,6 +11,6 @@ class TransactionType extends Model
         'rate',
         'apply_main',
         'apply_extension',
-        'apply_chhange_user',
+        'apply_change_user',
     ];
 }

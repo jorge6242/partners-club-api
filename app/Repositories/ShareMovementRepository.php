@@ -13,7 +13,7 @@ class ShareMovementRepository  {
     }
 
     public function find($id) {
-      return $this->model->find($id);
+      return $this->model->find($id, ['id', 'description', 'rate']);
     }
 
     public function create($attributes) {
@@ -25,7 +25,7 @@ class ShareMovementRepository  {
     }
   
     public function all($perPage) {
-      return $this->model->query()->paginate($perPage);
+      return $this->model->query()->select(['id', 'description', 'rate'])->with(['share', 'transaction', 'partner', 'titular'])->paginate($perPage);
     }
 
     public function delete($id) {

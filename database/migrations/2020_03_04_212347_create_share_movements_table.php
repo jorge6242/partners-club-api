@@ -15,11 +15,12 @@ class CreateShareMovementsTable extends Migration
     {
         Schema::create('share_movements', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('share_number',255);
             $table->string('description',255);
             $table->string('rate', 255);
-            $table->string('sale_price', 255);
-            $table->bigInteger('procesed');
+            $table->string('number_sale_price', 255);
+            $table->date('created');
+            $table->bigInteger('number_procesed');
+            $table->bigInteger('share_id');
             $table->bigInteger('transaction_type_id');
             $table->bigInteger('people_id');
             $table->bigInteger('id_titular_persona');

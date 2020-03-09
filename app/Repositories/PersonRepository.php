@@ -65,6 +65,20 @@ class PersonRepository  {
      return $search;
     }
 
+        /**
+     * seatch persons by query params
+     * @param  object $queryFilter
+    */
+    public function searchToAssign($queryFilter) {
+      $search;
+      if($queryFilter->query('term') === null) {
+        $search = $this->model->all();  
+      } else {
+        $search = $this->model->select('id', 'name', 'last_name')->where('name', 'like', '%'.$queryFilter->query('term').'%')->get();
+      }
+     return $search;
+    }
+
     /**
      * get persons by query params
      * @param  object $queryFilter

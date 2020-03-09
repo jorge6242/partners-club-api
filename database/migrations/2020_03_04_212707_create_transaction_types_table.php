@@ -19,7 +19,7 @@ class CreateTransactionTypesTable extends Migration
             $table->string('rate');
             $table->bigInteger('apply_main');
             $table->bigInteger('apply_extension');
-            $table->bigInteger('apply_chhange_user');
+            $table->bigInteger('apply_change_user');
             $table->timestamps();
         });
     }

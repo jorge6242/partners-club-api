@@ -57,6 +57,10 @@ Route::prefix('api/v1')->group(function () {
         Route::resource('/share', 'ShareController');
         Route::get('/share-by-partner/{id}', 'ShareController@getByPartner');
         Route::resource('/card-person', 'CardPersonController');
+        Route::resource('/share-movement', 'ShareMovementController');
+        Route::get('/share-movement-search', 'ShareMovementController@search');
+        Route::get('/search-to-assign', 'ShareController@searchToAssign');
+        Route::get('/search-person-to-assign', 'PersonController@searchToAssign');
     });
 });
 

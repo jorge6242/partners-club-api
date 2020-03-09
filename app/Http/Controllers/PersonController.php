@@ -207,4 +207,21 @@ class PersonController extends Controller
         $pdf = PDF::loadView('reports/partner', $data);
         return $pdf->download('archivo.pdf');
     }
+
+            /**
+     * Get the specified resource by search.
+     *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function searchToAssign(Request $request) {
+        $data = $this->service->searchToAssign($request);
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
 }

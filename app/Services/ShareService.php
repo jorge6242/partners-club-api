@@ -42,4 +42,13 @@ class ShareService {
 	 public function getByPartner($id) {
 		return $this->repository->getByPartner($id);
 	   }
+
+	   	/**
+	 *  Search resource from repository
+	 * @param  object $queryFilter
+	*/
+	public function searchToAssign($queryFilter) {
+		return $this->repository->searchToAssign($queryFilter);
+	 }
+	 
 }

@@ -7,11 +7,46 @@ use Illuminate\Database\Eloquent\Model;
 class ShareMovement extends Model
 {
     protected $fillable = [
-        'share_number',
         'description',
-        'sale_price',
+        'rate',
+        'number_sale_price',
+        'number_procesed',
+        'share_id',
         'transaction_type_id',
         'people_id',
         'id_titular_persona',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function share()
+    {
+        return $this->belongsTo('App\Share', 'share_id', 'id');
+    }
+    
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function transaction()
+    {
+        return $this->belongsTo('App\TransactionType', 'transaction_type_id', 'id');
+    }
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function partner()
+    {
+        return $this->belongsTo('App\Person', 'people_id', 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function titular()
+    {
+        return $this->belongsTo('App\Person', 'id_titular_persona', 'id');
+    }
 }

@@ -100,8 +100,8 @@ class ShareController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function search(Request $request) {
-        $bank = $this->service->search($request);
+    public function searchToAssign(Request $request) {
+        $bank = $this->service->searchToAssign($request);
         if($bank) {
             return response()->json([
                 'success' => true,
@@ -123,6 +123,23 @@ class ShareController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $data
+            ]);
+        }
+    }
+
+        /**
+     * Get the specified resource by search.
+     *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request) {
+        $bank = $this->service->search($request);
+        if($bank) {
+            return response()->json([
+                'success' => true,
+                'data' => $bank
             ]);
         }
     }

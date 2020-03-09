@@ -32,8 +32,10 @@ class CardPersonService {
      return $this->repository->find($id);
 	}
 
-	public function delete($id) {
-      return $this->repository->delete($id);
+	public function delete($request, $id) {
+		$body = array('card_people'.$request["order"] => NULL);
+		$this->shareRepository->update($request['share'], $body);
+		return $this->repository->delete($id);
 	}
 
 	/**

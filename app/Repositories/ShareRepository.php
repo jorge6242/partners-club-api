@@ -77,4 +77,18 @@ class ShareRepository  {
     }
   ])->get();
     }
+
+            /**
+     * get banks by query params
+     * @param  object $queryFilter
+    */
+    public function searchToAssign($queryFilter) {
+      $search;
+      if($queryFilter->query('term') === null) {
+        $search = $this->model->all();  
+      } else {
+        $search = $this->model->where('share_number', 'like', '%'.$queryFilter->query('term').'%')->get();
+      }
+     return $search;
+    }
 }
