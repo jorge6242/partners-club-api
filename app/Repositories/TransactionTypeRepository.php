@@ -28,6 +28,12 @@ class TransactionTypeRepository  {
       return $this->model->query()->select(['id', 'description', 'rate'])->paginate($perPage);
     }
 
+    public function getList() {
+      return $this->model->query()->select(['id', 'description', 'rate','currency_id'])->with(['currency' => function($query){
+        $query->select('id', 'description', 'unicode'); 
+    }, ])->get();
+    }
+
     public function delete($id) {
      return $this->model->find($id)->delete();
     }

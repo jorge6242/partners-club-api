@@ -11,12 +11,28 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(UsersTableSeeder::class);
+        /* Master Tables */
+        $this->call(RelationTypesSeeder::class);
+        $this->call(PaymentMethodsSeeder::class);
+        $this->call(NationalitiesTableSeeder::class);
+        $this->call(CardTypesSeeder::class);
+        $this->call(BanksTableSeeder::class);
         $this->call(CountryTableSeeder::class);
         $this->call(StatusPeopleTableSeeder::class);
         $this->call(MaritalStatusTableSeeder::class);
         $this->call(GenderTableSeeder::class);
         $this->call(ProfessionTableSeeder::class);
+        $this->call(CurrenciesTableSeeder::class);
+        $this->call(SportsTableSeeder::class);
+        $this->call(ShareTypeSeeder::class);
+        $this->call(LocationSeeder::class);
+        /***/
+
+        $this->call(PermissionsSeeder::class);
+        $this->call(RolesSeeder::class);
+        $this->call(UsersTableSeeder::class);
         $this->call(TransactionTypesSeeder::class);
+        $this->call(SharesSeeder::class);
+        
     }
 }

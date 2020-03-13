@@ -2,18 +2,18 @@
 
 namespace App\Repositories;
 
-use App\ShareMovement;
+use App\AccessControl;
 
-class ShareMovementRepository  {
+class AccessControlRepository  {
   
     protected $post;
 
-    public function __construct(ShareMovement $model) {
+    public function __construct(AccessControl $model) {
       $this->model = $model;
     }
 
     public function find($id) {
-      return $this->model->find($id, ['id', 'description', 'rate']);
+      return $this->model->find($id, ['id', 'status', 'created', 'location_id', 'people_id', 'share_id']);
     }
 
     public function create($attributes) {
@@ -23,22 +23,13 @@ class ShareMovementRepository  {
     public function update($id, array $attributes) {
       return $this->model->find($id)->update($attributes);
     }
-    
+  
     public function all($perPage) {
-      return $this->model->query()->with([
-        'share' => function($query){
-            $query->select('id', 'share_number'); 
-        }, 
-        'transaction' => function($query){
-            $query->select('id', 'description');
-        }, 
-        'partner' => function($query){
-            $query->select('id', 'name', 'last_name');
-        },
-        'titular' => function($query){
-          $query->select('id', 'name', 'last_name');
-      }
-     ])->paginate($perPage);
+      return $this->model->query()->select(['id', 'status', 'created', 'location_id', 'people_id', 'share_id'])->paginate($perPage);
+    }
+
+    public function getList() {
+      return $this->model->query()->select(['id', 'status', 'created', 'location_id', 'people_id', 'share_id'])->get();
     }
 
     public function delete($id) {

@@ -15,6 +15,9 @@ class ShareMovement extends Model
         'transaction_type_id',
         'people_id',
         'id_titular_persona',
+        'currencie_id',
+        'currency_rate_id',
+        'currency_sale_price_id',
     ];
 
     /**
@@ -32,6 +35,14 @@ class ShareMovement extends Model
     public function transaction()
     {
         return $this->belongsTo('App\TransactionType', 'transaction_type_id', 'id');
+    }
+
+        /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function currency()
+    {
+        return $this->belongsTo('App\Currency', 'currencie_id', 'id');
     }
     
     /**

@@ -1,6 +1,7 @@
 <?php
 
 use App\Share;
+use App\ShareType;
 use Illuminate\Database\Seeder;
 
 class SharesSeeder extends Seeder
@@ -21,7 +22,8 @@ class SharesSeeder extends Seeder
                 'id_persona' => 1,
                 'id_titular_persona' => 5,
                 'id_factura_persona' => 7,
-                'id_fiador_persona' => 6
+                'id_fiador_persona' => 6,
+                'share_type' => 'Propietario',
             ],
             [ 
                 'share_number' => '120611',
@@ -31,7 +33,8 @@ class SharesSeeder extends Seeder
                 'id_persona' => 1,
                 'id_titular_persona' => 5,
                 'id_factura_persona' => 2,
-                'id_fiador_persona' => 6
+                'id_fiador_persona' => 6,
+                'share_type' => 'Propietario',
             ],
             [ 
                 'share_number' => '120612',
@@ -41,10 +44,12 @@ class SharesSeeder extends Seeder
                 'id_persona' => 1,
                 'id_titular_persona' => 5,
                 'id_factura_persona' => 8,
-                'id_fiador_persona' => 6
+                'id_fiador_persona' => 6,
+                'share_type' => 'Propietario',
             ],
         ];
         foreach ($data as $element) {
+            $share = ShareType::where('description', $element['share_type'])->first();
             Share::create([
                 'share_number' => $element['share_number'],
                 'father_share_id' => $element['father_share_id'],
@@ -54,6 +59,7 @@ class SharesSeeder extends Seeder
                 'id_titular_persona' => $element['id_titular_persona'],
                 'id_factura_persona' => $element['id_factura_persona'],
                 'id_fiador_persona' => $element['id_fiador_persona'],
+                'share_type_id' => $share ? $share->id : null,
             ]);
         }
     }

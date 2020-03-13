@@ -1,5 +1,6 @@
 <?php
 
+use App\Currency;
 use App\TransactionType;
 use Illuminate\Database\Seeder;
 
@@ -20,6 +21,7 @@ class TransactionTypesSeeder extends Seeder
                     'apply_main' => 1,
                     'apply_extension' => 0,
                     'apply_change_user' => 0,
+                    'currency' => 'Dolar',
                 ],
                 [ 
                     'description' => 'Compra', 
@@ -27,6 +29,7 @@ class TransactionTypesSeeder extends Seeder
                     'apply_main' => 0,
                     'apply_extension' => 0,
                     'apply_change_user' => 0,
+                    'currency' => 'Dolar',
                 ],
                 [ 
                     'description' => 'Revocacion', 
@@ -34,6 +37,7 @@ class TransactionTypesSeeder extends Seeder
                     'apply_main' => 1,
                     'apply_extension' => 1,
                     'apply_change_user' => 0,
+                    'currency' => 'Dolar',
                 ],
                 [ 
                     'description' => 'Carga Inicial', 
@@ -41,6 +45,7 @@ class TransactionTypesSeeder extends Seeder
                     'apply_main' => 0,
                     'apply_extension' => 0,
                     'apply_change_user' => 0,
+                    'currency' => 'Euro',
                 ],
                 [ 
                     'description' => 'Cambio de Usuario', 
@@ -48,6 +53,7 @@ class TransactionTypesSeeder extends Seeder
                     'apply_main' => 1,
                     'apply_extension' => 0,
                     'apply_change_user' => 1,
+                    'currency' => 'Euro',
                 ],
                 [ 
                     'description' => 'Traspado Familiar', 
@@ -55,6 +61,7 @@ class TransactionTypesSeeder extends Seeder
                     'apply_main' => 0,
                     'apply_extension' => 1,
                     'apply_change_user' => 0,
+                    'currency' => 'Dolar',
                 ],
                 [ 
                     'description' => 'Sucecion', 
@@ -62,17 +69,23 @@ class TransactionTypesSeeder extends Seeder
                     'apply_main' => 1,
                     'apply_extension' => 1,
                     'apply_change_user' => 0,
+                    'currency' => 'Dolar',
                 ],
             ];
             foreach ($data as $element) {
+                $this->command->getOutput()->progressStart(count($data));
+                $currency = Currency::where('description',$element['currency'])->first();
                 TransactionType::create([
                     'description' => $element['description'],
                     'rate' => $element['rate'],
                     'apply_main' => $element['apply_main'],
                     'apply_extension' => $element['apply_extension'],
                     'apply_change_user' => $element['apply_change_user'],
+                    'currency_id' => $currency ? $currency->id : null,
                 ]);
+                $this->command->getOutput()->progressAdvance();
             }
+            $this->command->getOutput()->progressFinish();
         }
     }
 }

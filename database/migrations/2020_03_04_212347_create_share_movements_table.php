@@ -15,15 +15,18 @@ class CreateShareMovementsTable extends Migration
     {
         Schema::create('share_movements', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('description',255);
-            $table->string('rate', 255);
-            $table->string('number_sale_price', 255);
-            $table->date('created');
-            $table->bigInteger('number_procesed');
-            $table->bigInteger('share_id');
-            $table->bigInteger('transaction_type_id');
-            $table->bigInteger('people_id');
-            $table->bigInteger('id_titular_persona');
+            $table->string('description',255)->nullable();
+            $table->bigInteger('currency_rate_id')->nullable();
+            $table->string('rate', 255)->nullable();
+            $table->bigInteger('currency_sale_price_id')->nullable();
+            $table->string('number_sale_price', 255)->nullable();
+            $table->bigInteger('currencie_id')->nullable();
+            $table->bigInteger('number_procesed')->nullable();
+            $table->bigInteger('share_id')->nullable();
+            $table->bigInteger('transaction_type_id')->nullable();
+            $table->bigInteger('people_id')->nullable();
+            $table->bigInteger('id_titular_persona')->nullable();
+            $table->date('created')->nullable();
             $table->timestamps();
         });
     }

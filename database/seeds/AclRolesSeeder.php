@@ -61,9 +61,9 @@ class AclRolesSeeder extends Seeder
 // $user->getPermissions();
 
 // dd($user->getPermissions());
-// $activity = Activity::inLog('profession')->get();
+//$activity = Activity::inLog('profession')->get();
 
-// dd($activity);
+//dd($activity);
 
     }
 }

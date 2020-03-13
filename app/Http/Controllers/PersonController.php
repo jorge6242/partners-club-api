@@ -224,4 +224,37 @@ class PersonController extends Controller
             ]);
         }
     }
+
+
+    /**
+     * Get the specified partner by card.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getFamiliesPartnerByCard(Request $request) {
+        $data = $this->service->getFamiliesPartnerByCard($request['card']);
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
+
+    /**
+     * Get the specified guest by identification.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getGuestByPartner(Request $request) {
+        $data = $this->service->getGuestByPartner($request['identification']);
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
 }

@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\TransactionTypeService;
+use App\Services\LocationService;
 use Barryvdh\DomPDF\Facade as PDF;
 use App\Http\Requests\BankValidator;
 
-class TransactionTypeController extends Controller
+class LocationController extends Controller
 {
-    public function __construct(TransactionTypeService $service)
+    public function __construct(LocationService $service)
 	{
 		$this->service = $service;
     }

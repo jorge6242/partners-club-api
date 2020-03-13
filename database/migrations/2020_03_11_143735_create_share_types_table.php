@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTransactionTypesTable extends Migration
+class CreateShareTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,10 @@ class CreateTransactionTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('transaction_types', function (Blueprint $table) {
+        Schema::create('share_types', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('code');
             $table->string('description');
-            $table->string('rate');
-            $table->bigInteger('apply_main');
-            $table->bigInteger('apply_extension');
-            $table->bigInteger('apply_change_user');
-            $table->bigInteger('currency_id')->nullable();
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ class CreateTransactionTypesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('transaction_types');
+        Schema::dropIfExists('share_types');
     }
 }

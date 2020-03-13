@@ -3,12 +3,14 @@
 namespace App\Services;
 
 use App\Repositories\ShareMovementRepository;
+use App\Repositories\ShareRepository;
 use Illuminate\Http\Request;
 
 class ShareMovementService {
 
-	public function __construct(ShareMovementRepository $model) {
+	public function __construct(ShareMovementRepository $model, ShareRepository $shareRepository) {
 		$this->model = $model ;
+		$this->shareRepository = $shareRepository ;
 	}
 
 	public function index($perPage) {
@@ -16,12 +18,8 @@ class ShareMovementService {
 	}
 
 	public function create($request) {
-		if ($this->model->checkBank($request['description'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Record already exist'
-            ])->setStatusCode(400);
-        }
+		$body = array('id_persona' => $request['people_id'], 'id_titular_persona' => $request['id_titular_persona'] );
+		$this->shareRepository->update($request['share_id'], $body);
 		return $this->model->create($request);
 	}
 

@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\TransactionTypeService;
+use App\Services\ShareTypeService;
 use Barryvdh\DomPDF\Facade as PDF;
 use App\Http\Requests\BankValidator;
 
-class TransactionTypeController extends Controller
+class ShareTypeController extends Controller
 {
-    public function __construct(TransactionTypeService $service)
+    public function __construct(ShareTypeService $service)
 	{
 		$this->service = $service;
     }

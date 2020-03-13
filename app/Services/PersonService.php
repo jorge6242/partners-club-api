@@ -131,4 +131,12 @@ class PersonService {
 	public function searchToAssign($queryFilter) {
 		return $this->person->searchToAssign($queryFilter);
 	 }
+	
+	public function getFamiliesPartnerByCard($card){
+		return $this->person->getFamiliesPartnerByCard($card);
+	}
+
+	public function getGuestByPartner($identification){
+		return $this->person->getGuestByPartner($identification);
+	}
 }

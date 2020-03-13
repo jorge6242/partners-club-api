@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
-use App\Repositories\TransactionTypeRepository;
+use App\Repositories\LocationRepository;
 use Illuminate\Http\Request;
 
-class TransactionTypeService {
+class LocationService {
 
-	public function __construct(TransactionTypeRepository $repository) {
+	public function __construct(LocationRepository $repository) {
 		$this->repository = $repository ;
 	}
 

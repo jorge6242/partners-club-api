@@ -18,7 +18,16 @@ class Share extends Model
         'id_titular_persona',
         'id_factura_persona',
         'id_fiador_persona',
+        'share_type_id',
     ];
+
+    /**
+     * The sports that belong to the share.
+     */
+    public function fatherShare()
+    {
+        return $this->hasOne('App\Share', 'id', 'father_share_id');
+    }
 
     /**
      * The sports that belong to the share.
@@ -50,15 +59,15 @@ class Share extends Model
      */
     public function paymentMethod()
     {
-        return $this->hasOne('App\PaymentMethod', 'payment_method_id', 'id');
+        return $this->hasOne('App\PaymentMethod', 'id', 'payment_method_id');
     }
 
     /**
      * The person that belong to the share.
      */
-    public function person()
+    public function partner()
     {
-        return $this->hasOne('App\Person', 'id_persona', 'id');
+        return $this->hasOne('App\Person', 'id', 'id_persona');
     }
 
     /**
@@ -83,5 +92,13 @@ class Share extends Model
     public function fiador()
     {
         return $this->hasOne('App\Person', 'id', 'id_fiador_persona');
+    }
+
+        /**
+     * The sports that belong to the share.
+     */
+    public function shareType()
+    {
+        return $this->hasOne('App\ShareType', 'id', 'share_type_id');
     }
 }

@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
-use App\Repositories\TransactionTypeRepository;
+use App\Repositories\ShareTypeRepository;
 use Illuminate\Http\Request;
 
-class TransactionTypeService {
+class ShareTypeService {
 
-	public function __construct(TransactionTypeRepository $repository) {
+	public function __construct(ShareTypeRepository $repository) {
 		$this->repository = $repository ;
 	}
 

@@ -12,6 +12,36 @@ class ShareRepository  {
       $this->model = $model;
     }
 
+    public function all($perPage) {
+      return $this->model->query()->select(
+        'id', 
+        'share_number', 
+        'father_share_id', 
+        'payment_method_id', 
+        'id_persona', 
+        'id_titular_persona',
+        'id_factura_persona',
+        'id_fiador_persona',
+        'share_type_id'
+        )->with([
+          'fatherShare' => function($query){
+          $query->select('id', 'share_number'); 
+          }, 
+          'partner' => function($query){
+          $query->select('id', 'name', 'last_name'); 
+          }, 
+          'titular' => function($query){
+          $query->select('id', 'name', 'last_name'); 
+          },
+          'paymentMethod' => function($query){
+          $query->select('id', 'description'); 
+          }, 
+          'shareType' => function($query){
+          $query->select('id', 'description', 'code'); 
+          }, 
+     ])->paginate($perPage);
+    }
+
     public function find($id) {
       return $this->model->query()->where('id', $id)->with(['titular', 'facturador', 'fiador', 'tarjetaPrimaria', 'tarjetaSecundaria', 'tarjetaTerciaria' ])
       ->with([ 'tarjetaPrimaria' => function($query){
@@ -32,10 +62,6 @@ class ShareRepository  {
 
     public function update($id, array $attributes) {
       return $this->model->find($id)->update($attributes);
-    }
-  
-    public function all($perPage) {
-      return $this->model->query()->paginate($perPage);
     }
 
     public function delete($id) {
@@ -69,13 +95,13 @@ class ShareRepository  {
       return $this->model->query()->where('id_persona', $id)->with(['titular', 'facturador', 'fiador'])->with([ 'tarjetaPrimaria' => function($query){
         $query->with(['bank','card']);
         }
-  ])->with([ 'tarjetaSecundaria' => function($query){
-    $query->with(['bank','card']);
-    }
-  ])->with([ 'tarjetaTerciaria' => function($query){
-    $query->with(['bank','card']);
-    }
-  ])->get();
+        ])->with([ 'tarjetaSecundaria' => function($query){
+          $query->with(['bank','card']);
+          }
+        ])->with([ 'tarjetaTerciaria' => function($query){
+          $query->with(['bank','card']);
+          }
+        ])->get();
     }
 
             /**
@@ -90,5 +116,9 @@ class ShareRepository  {
         $search = $this->model->where('share_number', 'like', '%'.$queryFilter->query('term').'%')->get();
       }
      return $search;
+    }
+
+    public function getListByPartner($id) {
+      return $this->model->query()->select('id', 'share_number')->where('id_persona', $id)->get();
     }
 }

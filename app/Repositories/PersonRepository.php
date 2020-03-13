@@ -7,13 +7,21 @@ use App\PersonRelation;
 use Illuminate\Database\Eloquent\Builder;
 use App\Repositories\RelationTypeRepository;
 use App\Repositories\PersonRelationRepository;
+use App\Repositories\ShareRepository;
 
 class PersonRepository  {
 
-    public function __construct(Person $model, PersonRelationRepository $personRelationRepository, RelationTypeRepository $relationTypeRepository) {
+    public function __construct(
+      Person $model, 
+      PersonRelationRepository $personRelationRepository, 
+      RelationTypeRepository $relationTypeRepository,
+      ShareRepository $shareRepository
+      ) 
+      {
       $this->model = $model;
       $this->personRelationRepository = $personRelationRepository;
       $this->relationTypeRepository = $relationTypeRepository;
+      $this->shareRepository = $shareRepository;
     }
 
     public function find($id) {
@@ -161,4 +169,47 @@ class PersonRepository  {
       }
       return $str;
     }
+
+    public function getFamiliesPartnerByCard($card) {
+      $person = $this->model->query()->select('id', 'name', 'last_name', 'card_number', 'picture')->where('card_number', $card)->with(['family', 'statusPerson'])->first();
+      if($person) {
+        $shares = $this->shareRepository->getListByPartner($person->id);
+        if (count($shares)) {
+          $person['shares'] = $shares;
+        } else {
+          $person['shares'] = null;
+        }
+        if($person->family()) {
+          $familys = $person->family()->with([
+            'statusPerson' => function($query) {
+              $query->select('id', 'description'); 
+            }, 
+            'gender' => function($query) {
+              $query->select('id', 'description'); 
+            }])->get();
+          foreach ( $familys as $key => $family) {
+            $professions = $this->parseProfessions($family->professions()->get());
+            $currentPerson = PersonRelation::query()->where('base_id', $person->id)->where('related_id', $family->id)->first();
+            $relation = $this->relationTypeRepository->find($currentPerson->relation_type_id);
+            $familys[$key]->relationType = $relation->description;
+            $familys[$key]->id = $currentPerson->id;
+            $familys[$key]->picture = url('storage/partners/'.$family->picture);
+          }
+          unset($person['family']);
+          $person['family'] = $familys;
+          $person['picture'] =  url('storage/partners/'.$person['picture']);
+        }
+        return $person;
+      }
+      return $person;
+  }
+
+  public function getGuestByPartner($identification){
+    $person = $this->model->query()->select('id','name','last_name', 'picture', 'primary_email', 'telephone1')->where('rif_ci', $identification)->first();
+    if($person) {
+      $person->picture = url('storage/partners/'.$person->picture);
+      return $person;
+    }
+    return $person;
+  }
 }

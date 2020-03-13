@@ -2,18 +2,18 @@
 
 namespace App\Repositories;
 
-use App\ShareMovement;
+use App\Currency;
 
-class ShareMovementRepository  {
+class CurrencyRepository  {
   
     protected $post;
 
-    public function __construct(ShareMovement $model) {
+    public function __construct(Currency $model) {
       $this->model = $model;
     }
 
     public function find($id) {
-      return $this->model->find($id, ['id', 'description', 'rate']);
+      return $this->model->find($id);
     }
 
     public function create($attributes) {
@@ -23,29 +23,20 @@ class ShareMovementRepository  {
     public function update($id, array $attributes) {
       return $this->model->find($id)->update($attributes);
     }
-    
+  
     public function all($perPage) {
-      return $this->model->query()->with([
-        'share' => function($query){
-            $query->select('id', 'share_number'); 
-        }, 
-        'transaction' => function($query){
-            $query->select('id', 'description');
-        }, 
-        'partner' => function($query){
-            $query->select('id', 'name', 'last_name');
-        },
-        'titular' => function($query){
-          $query->select('id', 'name', 'last_name');
-      }
-     ])->paginate($perPage);
+      return $this->model->query()->paginate($perPage);
     }
+
+    public function getList() {
+        return $this->model->query()->select(['id', 'description', 'unicode'])->get();
+      }
 
     public function delete($id) {
      return $this->model->find($id)->delete();
     }
 
-    public function checkRecord($name)
+    public function checkBank($name)
     {
       $data = $this->model->where('description', $name)->first();
       if ($data) {

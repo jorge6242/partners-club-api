@@ -2,28 +2,28 @@
 
 namespace App\Services;
 
-use App\Repositories\TransactionTypeRepository;
+use App\Repositories\CurrencyRepository;
 use Illuminate\Http\Request;
 
-class TransactionTypeService {
+class CurrencyService {
 
-	public function __construct(TransactionTypeRepository $repository) {
+	public function __construct(CurrencyRepository $repository) {
 		$this->repository = $repository ;
 	}
 
 	public function index($perPage) {
 		return $this->repository->all($perPage);
-	}
-
-	public function getList() {
+    }
+    
+    public function getList() {
 		return $this->repository->getList();
 	}
 
 	public function create($request) {
-		if ($this->repository->checkRecord($request['description'])) {
+		if ($this->repository->checkBank($request['description'])) {
             return response()->json([
                 'success' => false,
-                'message' => 'Record already exist'
+                'message' => 'Bank already exist'
             ])->setStatusCode(400);
         }
 		return $this->repository->create($request);

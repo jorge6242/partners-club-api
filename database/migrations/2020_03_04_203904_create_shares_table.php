@@ -16,7 +16,7 @@ class CreateSharesTable extends Migration
     {
         Schema::create('shares', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('share_number')->nullable();
+            $table->string('share_number')->nullable();
             $table->integer('father_share_id')->nullable();
             $table->bigInteger('status')->nullable();
             $table->bigInteger('payment_method_id')->nullable();
@@ -27,6 +27,7 @@ class CreateSharesTable extends Migration
             $table->bigInteger('id_titular_persona')->nullable();
             $table->bigInteger('id_factura_persona')->nullable();
             $table->bigInteger('id_fiador_persona')->nullable();
+            $table->bigInteger('share_type_id')->nullable();
             $table->timestamps();
         });
     }

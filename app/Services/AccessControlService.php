@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
-use App\Repositories\TransactionTypeRepository;
+use App\Repositories\AccessControlRepository;
 use Illuminate\Http\Request;
 
-class TransactionTypeService {
+class AccessControlService {
 
-	public function __construct(TransactionTypeRepository $repository) {
+	public function __construct(AccessControlRepository $repository) {
 		$this->repository = $repository ;
 	}
 
@@ -20,13 +20,18 @@ class TransactionTypeService {
 	}
 
 	public function create($request) {
-		if ($this->repository->checkRecord($request['description'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Record already exist'
-            ])->setStatusCode(400);
-        }
-		return $this->repository->create($request);
+		$data = $this->repository->create($request);
+		if($request['family']) {
+			foreach ($request['family'] as $element) {
+				$request['people_id'] = $element;
+				$this->repository->create($request);
+			}
+		}
+		if($request['guest_id'] !== "") {
+			$request['people_id'] = $request['guest_id'];
+			$this->repository->create($request);
+		}
+		return $data;
 	}
 
 	public function update($request, $id) {

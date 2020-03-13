@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\TransactionTypeService;
+use App\Services\CurrencyService;
 use Barryvdh\DomPDF\Facade as PDF;
-use App\Http\Requests\BankValidator;
+use App\Http\Requests\CurrencyValidator;
 
-class TransactionTypeController extends Controller
+class CurrencyController extends Controller
 {
-    public function __construct(TransactionTypeService $service)
+    public function __construct(CurrencyService $service)
 	{
 		$this->service = $service;
     }
@@ -20,19 +20,19 @@ class TransactionTypeController extends Controller
      */
     public function index(Request $request)
     {
-        $banks = $this->service->index($request->query('perPage'));
+        $data = $this->service->index($request->query('perPage'));
         return response()->json([
             'success' => true,
-            'data' => $banks
+            'data' => $data
         ]);
     }
 
-    /**
+        /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function getList(Request $request)
+    public function getList()
     {
         $data = $this->service->getList();
         return response()->json([
