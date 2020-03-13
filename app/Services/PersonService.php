@@ -14,8 +14,8 @@ class PersonService {
 		$this->personProfessionRepository = $personProfessionRepository;
 	}
 
-	public function index() {
-		return $this->person->all();
+	public function index($perPage) {
+		return $this->person->all($perPage);
 	}
 
 	public function reportAll() {

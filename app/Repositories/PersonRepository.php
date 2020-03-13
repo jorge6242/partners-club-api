@@ -42,8 +42,8 @@ class PersonRepository  {
       return $this->model->all();
     }
 
-    public function all() {
-      return $this->model->all();
+    public function all($perPage) {
+      return $this->model->query()->paginate($perPage);
     }
 
     public function delete($id) {

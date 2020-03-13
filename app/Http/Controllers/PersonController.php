@@ -14,12 +14,12 @@ class PersonController extends Controller
     }
     /**
      * Display a listing of the resource.
-     *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $persons = $this->service->index();
+        $persons = $this->service->index($request->query('perPage'));
         return response()->json([
             'success' => true,
             'data' => $persons
