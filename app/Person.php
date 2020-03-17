@@ -115,4 +115,20 @@ class Person extends Model
         return $this->hasMany('App\Share','id_persona', 'id');
     }
 
+            /**
+     * The sports that belong to the person.
+     */
+    public function relationship()
+    {
+        return $this->hasOne('App\PersonRelation','related_id', 'id');
+    }
+
+    /**
+     * The countries that belong to the person.
+     */
+    public function countries()
+    {
+        return $this->belongsToMany('App\Country', 'person_countries', 'people_id', 'countries_id');
+    }
+
 }

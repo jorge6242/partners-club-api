@@ -142,6 +142,38 @@ class PersonController extends Controller
         }
     }
 
+    /**
+     * Get the specified resource by search.
+     *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function filter(Request $request) {
+        $person = $this->service->filter($request);
+        if($person) {
+            return response()->json([
+                'success' => true,
+                'data' => $person
+            ]);
+        }
+    }
+
+    /**
+     * Get the specified resource by search.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function filterReport(Request $request) {
+        $partner = $this->service->filter($request);
+        $data = [
+            'data' => $partner
+        ];
+        $pdf = PDF::loadView('reports/persons', $data);
+        return $pdf->download('general.pdf');
+    }
+
 
     /**
      * Get the specified resource by search.

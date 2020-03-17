@@ -13,12 +13,14 @@ class CountryTableSeeder extends Seeder
     public function run()
     {
         $data = [
-            [ 'description' => 'Venezuela' ],
-            [ 'description' => 'Colombia' ],
+            [ 'description' => 'Venezuela', 'citizenship' => 'Venezolana' ],
+            [ 'description' => 'Colombia', 'citizenship' => 'Colombiana'  ],
+            [ 'description' => 'España', 'citizenship' => 'Española'  ],
         ];
         foreach ($data as $element) {
             Country::create([
                 'description' => $element['description'],
+                'citizenship' => $element['citizenship'],
             ]);
         }
     }

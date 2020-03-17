@@ -18,6 +18,6 @@ class PersonRelation extends Model
      */
     public function relationType()
     {
-        return $this->hasMany('App\RelationType', 'relation_type_id', 'id');
+        return $this->hasOne('App\RelationType', 'id', 'relation_type_id');
     }
 }

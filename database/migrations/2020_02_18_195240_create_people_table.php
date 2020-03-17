@@ -37,7 +37,6 @@ class CreatePeopleTable extends Migration
             $table->string('state', 255)->nullable();
             $table->string('postal_code', 100)->nullable();
             $table->bigInteger('type_person', 100)->nullable();
-            $table->string('type_person', 100)->nullable();
             $table->bigInteger('company_person_id');
             $table->bigInteger('status_person_id');
             $table->bigInteger('marital_statuses_id');

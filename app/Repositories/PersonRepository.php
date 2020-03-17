@@ -4,10 +4,12 @@ namespace App\Repositories;
 
 use App\Person;
 use App\PersonRelation;
-use Illuminate\Database\Eloquent\Builder;
+use App\Repositories\ShareRepository;
 use App\Repositories\RelationTypeRepository;
 use App\Repositories\PersonRelationRepository;
-use App\Repositories\ShareRepository;
+
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 
 class PersonRepository  {
 
@@ -68,10 +70,79 @@ class PersonRepository  {
       if($queryFilter->query('term') === null) {
         $search = $this->model->all();  
       } else {
-        $search = $this->model->where('description', 'like', '%'.$queryFilter->query('term').'%')->get();
+        $search = $this->model->where('name', 'like', '%'.$queryFilter->query('term').'%')->get();
       }
      return $search;
     }
+
+    /**
+     * get persons by query params
+     * @param  object $queryFilter
+    */
+    public function filter($queryFilter) {
+      $search = $this->model->query()->with(['statusPerson', 'maritalStatus', 'gender', 'country','professions', 'shares',
+      'relationship' => function($query){
+        $query->select('id', 'related_id', 'base_id', 'relation_type_id')->with('relationType'); 
+    },]);
+      if ($queryFilter->query('name')) {
+        $search->where('name', 'like', '%'.$queryFilter->query('name').'%');
+        $search->orWhere('last_name', 'like', '%'.$queryFilter->query('name').'%');
+      }
+      if ($queryFilter->query('rif_ci')) {
+        $search->orWhere('rif_ci', 'like', '%'.$queryFilter->query('rif_ci').'%');
+      }
+      if ($queryFilter->query('passport')) {
+        $search->orWhere('passport', 'like', '%'.$queryFilter->query('passport').'%');
+      }
+      if ($queryFilter->query('type_person')) {
+        $search->where('type_person', $queryFilter->query('type_person'));
+      }
+      if ($queryFilter->query('gender_id')) {
+        $search->where('gender_id', $queryFilter->query('gender_id'));
+      }
+      if ($queryFilter->query('status_person_id')) {
+        $search->where('status_person_id', $queryFilter->query('status_person_id'));
+      }
+      if ($queryFilter->query('card_number')) {
+        $search->orWhere('card_number', 'like', '%'.$queryFilter->query('card_number').'%');
+      }
+      if ($queryFilter->query('primary_email')) {
+        $search->orWhere('primary_email', 'like', '%'.$queryFilter->query('primary_email').'%');
+      }
+      if ($queryFilter->query('telephone1')) {
+        $search->orWhere('telephone1', 'like', '%'.$queryFilter->query('telephone1').'%');
+      }
+      if ($queryFilter->query('phone_mobile1')) {
+        $search->orWhere('phone_mobile1', 'like', '%'.$queryFilter->query('phone_mobile1').'%');
+      }
+      if ($queryFilter->query('expiration_start') && $queryFilter->query('expiration_end')) {
+        $search->orWhereBetween('expiration_date', [$queryFilter->query('expiration_start'), $queryFilter->query('expiration_end')]);
+      }
+      if ($queryFilter->query('birth_start') && $queryFilter->query('birth_end')) {
+        $search->orWhereBetween('birth_date', [$queryFilter->query('birth_start'), $queryFilter->query('birth_end')]);
+      }
+      if ($queryFilter->query('age_start') && $queryFilter->query('age_end')) {
+        $birth_start = Carbon::today()->subYears($queryFilter->query('age_start'))->year.'-01-01-';
+        $birth_end = Carbon::today()->subYears($queryFilter->query('age_end'))->year.'-01-01-';
+        $search->orWhereBetween('birth_date', [$birth_end, $birth_start]);
+      }
+      $persons = $search->get();
+      foreach ($persons as $key => $person) {
+        if(count($person->relationship()->get())) {
+          $relation = $person->relationship()->with('relationType')->first();
+          $persons[$key]->relation = $relation->relationType->description;
+        } else {
+          $persons[$key]->relation = '';
+        }
+        if(count($person->shares()->get())) {
+          $shareList = $this->parseShares($person->shares()->get());
+          $persons[$key]->shareList = $shareList;
+        } else {
+          $persons[$key]->shareList = "";
+        }
+      }
+      return $persons;
+  }
 
         /**
      * seatch persons by query params
@@ -166,6 +237,17 @@ class PersonRepository  {
         $count = $count + 1;
         $coma = count($professions) == $count ? '' : ', ';
         $str .= $profession->description.''.$coma; 
+      }
+      return $str;
+    }
+
+    public function parseShares($shares) {
+      $str = '';
+      $count = 0;
+      foreach ( $shares as $share) {
+        $count = $count + 1;
+        $coma = count($shares) == $count ? '' : ', ';
+        $str .= $share->share_number.''.$coma; 
       }
       return $str;
     }
