@@ -5,13 +5,22 @@ namespace App\Services;
 use App\Repositories\PersonRepository;
 use App\Repositories\ProfessionRepository;
 use App\Repositories\PersonProfessionRepository;
+use App\Repositories\PersonCountryRepository;
+use App\Repositories\PersonSportRepository;
 use Illuminate\Http\Request;
 
 class PersonService {
 
-	public function __construct(PersonRepository $person, PersonProfessionRepository $personProfessionRepository) {
+	public function __construct(
+		PersonRepository $person, 
+		PersonProfessionRepository $personProfessionRepository,
+		PersonCountryRepository $personCountryRepository,
+		PersonSportRepository $personSportRepository
+		) {
 		$this->person = $person;
 		$this->personProfessionRepository = $personProfessionRepository;
+		$this->personCountryRepository = $personCountryRepository;
+		$this->personSportRepository = $personSportRepository;
 	}
 
 	public function index($perPage) {
@@ -71,7 +80,34 @@ class PersonService {
 				$this->personProfessionRepository->create($data);
 			}
 		}
-	}	
+	}
+
+	if ($request['country_list']) {
+		$countries = json_decode($request['country_list']);
+		if(count($countries)) {
+			if($this->personCountryRepository->findPartner($id)){
+				$this->personCountryRepository->deleteRegistersbyPerson($id);
+			}
+			foreach ($countries as $country) {
+				$data = ['people_id' => $id, 'countries_id' => $country];
+				$this->personCountryRepository->create($data);
+			}
+		}
+	}
+	
+	
+	if ($request['sport_list']) {
+		$sports = json_decode($request['sport_list']);
+		if(count($sports)) {
+			if($this->personSportRepository->findPartner($id)){
+				$this->personSportRepository->deleteRegistersbyPerson($id);
+			}
+			foreach ($sports as $sport) {
+				$data = ['people_id' => $id, 'sports_id' => $sport];
+				$this->personSportRepository->create($data);
+			}
+		}
+	}
 
       return $this->person->update($id, $request);
 	}
@@ -97,8 +133,8 @@ class PersonService {
 	 *  Search resource from repository
 	 * @param  object $queryFilter
 	*/
-	public function filter($queryFilter) {
-		return $this->person->filter($queryFilter);
+	public function filter($queryFilter, $isPDF = false) {
+		return $this->person->filter($queryFilter, $isPDF);
 	 }
 	 
     /**

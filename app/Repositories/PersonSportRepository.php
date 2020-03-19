@@ -2,16 +2,16 @@
 
 namespace App\Repositories;
 
-use App\PersonCountry;
+use App\PersonSport;
 
-class PersonCountryRepository  {
+class PersonSportRepository  {
 
-    public function __construct(PersonCountry $model) {
+    public function __construct(PersonSport $model) {
       $this->model = $model;
     }
 
-    public function find($peopleId, $country) {
-      $data = $this->model->query()->where('people_id', $peopleId)->where('countries_id', $country)->first();
+    public function find($peopleId, $sport) {
+      $data = $this->model->query()->where('people_id', $peopleId)->where('sports_id', $sport)->first();
       if($data) {
           return true;
       }

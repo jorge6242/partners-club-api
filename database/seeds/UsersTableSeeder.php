@@ -1,6 +1,7 @@
 <?php
 
 use App\User;
+use App\Role;
 use Illuminate\Database\Seeder;
 
 class UsersTableSeeder extends Seeder
@@ -14,27 +15,32 @@ class UsersTableSeeder extends Seeder
     {
         $users = [
             [ 
-                'name' => 'User Test ',
-                'email' => 'user@test.com',
-                'password' => bcrypt(123456),
+                'name' => 'Admin Test ',
+                'email' => 'admin@test.com',
+                'password' => '123456',
+                'role' => 'administrador',
             ],
             [ 
-                'name' => 'User Test 1',
-                'email' => 'user1@test.com',
-                'password' => bcrypt(123456),
+                'name' => 'Gerente Test 1',
+                'email' => 'gerente@test.com',
+                'password' => '123456',
+                'role' => 'gerente',
             ],
             [ 
-                'name' => 'User Test 2',
-                'email' => 'user2@test.com',
-                'password' => bcrypt(123456),
+                'name' => 'Secretaria Test 2',
+                'email' => 'secretaria@test.com',
+                'password' => '123456',
+                'role' => 'secretaria',
             ],
         ];
         foreach ($users as $user) {
-            User::create([
+           $role = Role::where('slug',$user['role'])->first();
+           $user = User::create([
                 'name' => $user['name'],
                 'email' => $user['email'],
                 'password' => $user['password'],
             ]);
+            $user->assignRole($role->id);
         }
     }
 }

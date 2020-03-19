@@ -14,7 +14,6 @@ class DatabaseSeeder extends Seeder
         /* Master Tables */
         $this->call(RelationTypesSeeder::class);
         $this->call(PaymentMethodsSeeder::class);
-        $this->call(NationalitiesTableSeeder::class);
         $this->call(CardTypesSeeder::class);
         $this->call(BanksTableSeeder::class);
         $this->call(CountryTableSeeder::class);
@@ -26,12 +25,14 @@ class DatabaseSeeder extends Seeder
         $this->call(SportsTableSeeder::class);
         $this->call(ShareTypeSeeder::class);
         $this->call(LocationSeeder::class);
-        /***/
-
+        $this->call(TransactionTypesSeeder::class);
         $this->call(PermissionsSeeder::class);
         $this->call(RolesSeeder::class);
+        /***/
+
+        $this->call(PersonTableSeeder::class);
+        $this->call(RolePermissionsSeeder::class);
         $this->call(UsersTableSeeder::class);
-        $this->call(TransactionTypesSeeder::class);
         $this->call(SharesSeeder::class);
         
     }

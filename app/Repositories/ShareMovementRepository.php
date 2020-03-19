@@ -41,6 +41,23 @@ class ShareMovementRepository  {
      ])->paginate($perPage);
     }
 
+    public function getList() {
+      return $this->model->query()->with([
+        'share' => function($query){
+            $query->select('id', 'share_number'); 
+        }, 
+        'transaction' => function($query){
+            $query->select('id', 'description');
+        }, 
+        'partner' => function($query){
+            $query->select('id', 'name', 'last_name');
+        },
+        'titular' => function($query){
+          $query->select('id', 'name', 'last_name');
+      }
+     ])->get();
+    }
+
     public function delete($id) {
      return $this->model->find($id)->delete();
     }

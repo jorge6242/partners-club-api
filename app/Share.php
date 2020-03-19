@@ -101,4 +101,12 @@ class Share extends Model
     {
         return $this->hasOne('App\ShareType', 'id', 'share_type_id');
     }
+
+    /**
+     * The professions that belong to the person.
+     */
+    public function shareMovements()
+    {
+        return $this->hasMany('App\ShareMovement');
+    }
 }

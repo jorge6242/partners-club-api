@@ -1,6 +1,7 @@
 <?php
 
 use App\Share;
+use App\Person;
 use App\ShareType;
 use Illuminate\Database\Seeder;
 
@@ -19,10 +20,10 @@ class SharesSeeder extends Seeder
                 'father_share_id' => 0,
                 'status' => 1,
                 'payment_method_id' => 2,
-                'id_persona' => 1,
-                'id_titular_persona' => 5,
-                'id_factura_persona' => 7,
-                'id_fiador_persona' => 6,
+                'person' => '18934599',
+                'owner' => '21106197',
+                'invoice' => '6138049',
+                'fiador' => '7998168',
                 'share_type' => 'Propietario',
             ],
             [ 
@@ -30,10 +31,10 @@ class SharesSeeder extends Seeder
                 'father_share_id' => 1,
                 'status' => 1,
                 'payment_method_id' => 1,
-                'id_persona' => 1,
-                'id_titular_persona' => 5,
-                'id_factura_persona' => 2,
-                'id_fiador_persona' => 6,
+                'person' => '18934599',
+                'owner' => '21106197',
+                'invoice' => '6138049',
+                'fiador' => '7998168',
                 'share_type' => 'Propietario',
             ],
             [ 
@@ -41,24 +42,28 @@ class SharesSeeder extends Seeder
                 'father_share_id' => 1,
                 'status' => 1,
                 'payment_method_id' => 2,
-                'id_persona' => 1,
-                'id_titular_persona' => 5,
-                'id_factura_persona' => 8,
-                'id_fiador_persona' => 6,
+                'person' => '18934576',
+                'owner' => '21106197',
+                'invoice' => '6138049',
+                'fiador' => '7998168',
                 'share_type' => 'Propietario',
             ],
         ];
         foreach ($data as $element) {
+            $person = Person::where('rif_ci',$element['person'])->first();
+            $owner = Person::where('rif_ci',$element['owner'])->first();
+            $invoice = Person::where('rif_ci',$element['invoice'])->first();
+            $fiador = Person::where('rif_ci',$element['fiador'])->first();
             $share = ShareType::where('description', $element['share_type'])->first();
             Share::create([
                 'share_number' => $element['share_number'],
                 'father_share_id' => $element['father_share_id'],
                 'status' => $element['status'],
                 'payment_method_id' => $element['payment_method_id'],
-                'id_persona' => $element['id_persona'],
-                'id_titular_persona' => $element['id_titular_persona'],
-                'id_factura_persona' => $element['id_factura_persona'],
-                'id_fiador_persona' => $element['id_fiador_persona'],
+                'id_persona' => $person->id,
+                'id_titular_persona' => $owner->id,
+                'id_factura_persona' => $invoice->id,
+                'id_fiador_persona' => $fiador->id,
                 'share_type_id' => $share ? $share->id : null,
             ]);
         }

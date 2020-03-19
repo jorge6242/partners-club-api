@@ -8,8 +8,8 @@
 ## Installation
 
 -   `copy .env.local file informacion , after, create .env file in the main project and paste the information`
--   `create database : shoppingcart`
--   `update database credentials, lines 13 and 14.`
+-   `create database : partnersControl`
+-   `update database credentials, lines 13 and 14 in .env`
 -   `composer install`
 -   `php artisan migrate`
     `php artisan key:generate`

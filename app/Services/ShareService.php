@@ -15,6 +15,10 @@ class ShareService {
 		return $this->repository->all($perPage);
 	}
 
+	public function filter($queryFilter, $isPDF = false) {
+		return $this->repository->filter($queryFilter, $isPDF);
+	}
+
 	public function create($request) {
 		return $this->repository->create($request);
 	}

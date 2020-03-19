@@ -166,7 +166,7 @@ class PersonController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function filterReport(Request $request) {
-        $partner = $this->service->filter($request);
+        $partner = $this->service->filter($request, true);
         $data = [
             'data' => $partner
         ];

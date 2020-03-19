@@ -13,7 +13,7 @@
 
 Route::prefix('api/v1')->group(function () {
     Route::post('/auth/login', 'PassportController@login');
-    Route::post('/register', 'PassportController@register');
+    Route::post('/auth/register', 'PassportController@register');
 
     Route::middleware('auth:api')->group(function () {
 
@@ -98,11 +98,15 @@ Route::prefix('api/v1')->group(function () {
 
         Route::resource('/share', 'ShareController');
         Route::get('/share-by-partner/{id}', 'ShareController@getByPartner');
+        Route::get('/share-filter', 'ShareController@filter');
+        Route::get('/share-filter-report', 'ShareController@filterReport');
 
         Route::resource('/card-person', 'CardPersonController');
 
         Route::resource('/share-movement', 'ShareMovementController');
+        Route::get('/share-movement-list', 'ShareMovementController@getList');
         Route::get('/share-movement-search', 'ShareMovementController@search');
+       
         Route::get('/search-to-assign', 'ShareController@searchToAssign');
 
         Route::resource('/access-control', 'AccessControlController');

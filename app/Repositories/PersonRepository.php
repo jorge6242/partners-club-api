@@ -27,7 +27,7 @@ class PersonRepository  {
     }
 
     public function find($id) {
-      $person = $this->model->where('id', $id)->with(['professions','creditCards','shares'])->first();
+      $person = $this->model->where('id', $id)->with(['professions','creditCards','shares', 'countries', 'sports'])->first();
       $person->picture = url('storage/partners/'.$person->picture);
       return $person;
     }
@@ -79,11 +79,14 @@ class PersonRepository  {
      * get persons by query params
      * @param  object $queryFilter
     */
-    public function filter($queryFilter) {
+    public function filter($queryFilter, $isPDF = false) {
       $search = $this->model->query()->with(['statusPerson', 'maritalStatus', 'gender', 'country','professions', 'shares',
       'relationship' => function($query){
         $query->select('id', 'related_id', 'base_id', 'relation_type_id')->with('relationType'); 
     },]);
+      if ($queryFilter->query('isPartner')) {
+        $search->where('isPartner', $queryFilter->query('isPartner'));
+      }
       if ($queryFilter->query('name')) {
         $search->where('name', 'like', '%'.$queryFilter->query('name').'%');
         $search->orWhere('last_name', 'like', '%'.$queryFilter->query('name').'%');
@@ -126,22 +129,25 @@ class PersonRepository  {
         $birth_end = Carbon::today()->subYears($queryFilter->query('age_end'))->year.'-01-01-';
         $search->orWhereBetween('birth_date', [$birth_end, $birth_start]);
       }
-      $persons = $search->get();
-      foreach ($persons as $key => $person) {
-        if(count($person->relationship()->get())) {
-          $relation = $person->relationship()->with('relationType')->first();
-          $persons[$key]->relation = $relation->relationType->description;
-        } else {
-          $persons[$key]->relation = '';
-        }
-        if(count($person->shares()->get())) {
-          $shareList = $this->parseShares($person->shares()->get());
-          $persons[$key]->shareList = $shareList;
-        } else {
-          $persons[$key]->shareList = "";
-        }
+      if($isPDF) {
+        $persons = $search->get();
+          foreach ($persons as $key => $person) {
+            if(count($person->relationship()->get())) {
+              $relation = $person->relationship()->with('relationType')->first();
+              $persons[$key]->relation = $relation->relationType->description;
+            } else {
+              $persons[$key]->relation = '';
+            }
+            if(count($person->shares()->get())) {
+              $shareList = $this->parseShares($person->shares()->get());
+              $persons[$key]->shareList = $shareList;
+            } else {
+              $persons[$key]->shareList = "";
+            }
+          }
+        return $persons;
       }
-      return $persons;
+      return $search->paginate($queryFilter->query('perPage'));
   }
 
         /**

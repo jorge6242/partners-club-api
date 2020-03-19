@@ -73,7 +73,6 @@ class TransactionTypesSeeder extends Seeder
                 ],
             ];
             foreach ($data as $element) {
-                $this->command->getOutput()->progressStart(count($data));
                 $currency = Currency::where('description',$element['currency'])->first();
                 TransactionType::create([
                     'description' => $element['description'],
@@ -83,9 +82,7 @@ class TransactionTypesSeeder extends Seeder
                     'apply_change_user' => $element['apply_change_user'],
                     'currency_id' => $currency ? $currency->id : null,
                 ]);
-                $this->command->getOutput()->progressAdvance();
             }
-            $this->command->getOutput()->progressFinish();
         }
     }
 }
