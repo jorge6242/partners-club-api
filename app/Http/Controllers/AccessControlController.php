@@ -41,6 +41,36 @@ class AccessControlController extends Controller
         ]);
     }
 
+            /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function filter(Request $request)
+    {
+        $banks = $this->service->filter($request);
+        return response()->json([
+            'success' => true,
+            'data' => $banks
+        ]);
+    }
+
+    /**
+     * Get the specified resource by search.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+        public function filterReport(Request $request) {
+            $data = $this->service->filter($request, true);
+            $data = [
+                'data' => $data
+            ];
+            $pdf = PDF::loadView('reports/accessControl', $data);
+            return $pdf->download('accessControlReport.pdf');
+        }
+
+
     /**
      * Store a newly created resource in storage.
      *

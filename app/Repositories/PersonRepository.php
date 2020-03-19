@@ -259,7 +259,19 @@ class PersonRepository  {
     }
 
     public function getFamiliesPartnerByCard($card) {
-      $person = $this->model->query()->select('id', 'name', 'last_name', 'card_number', 'picture')->where('card_number', $card)->with(['family', 'statusPerson'])->first();
+      $person = $this->model->query()->select('id', 'name', 'last_name', 'card_number', 'picture')
+      ->where('isPartner', 1)
+      ->where('card_number', $card)->with([
+        'family' => function($query) {
+          $query->with([
+            'statusPerson',
+            'relationship' => function($query){
+              $query->select('id', 'related_id', 'base_id', 'relation_type_id')->with('relationType'); 
+            },
+          ]); 
+        }, 
+        'statusPerson'
+        ])->first();
       if($person) {
         $shares = $this->shareRepository->getListByPartner($person->id);
         if (count($shares)) {
@@ -283,8 +295,7 @@ class PersonRepository  {
             $familys[$key]->id = $currentPerson->id;
             $familys[$key]->picture = url('storage/partners/'.$family->picture);
           }
-          unset($person['family']);
-          $person['family'] = $familys;
+          $person['familyMembers'] = $familys;
           $person['picture'] =  url('storage/partners/'.$person['picture']);
         }
         return $person;

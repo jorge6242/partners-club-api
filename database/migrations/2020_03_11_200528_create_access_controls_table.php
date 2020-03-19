@@ -15,8 +15,8 @@ class CreateAccessControlsTable extends Migration
     {
         Schema::create('access_controls', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('status');
-            $table->date('created');
+            $table->integer('status')->nullable();
+            $table->date('created')->nullable();
             $table->bigInteger('location_id')->nullable();
             $table->bigInteger('people_id')->nullable();
             $table->bigInteger('share_id')->nullable();

@@ -38,4 +38,12 @@ class AccessControl extends Model
     {
         return $this->hasOne('App\Share', 'id', 'share_id');
     }
+
+    /**
+     * The sports that belong to the share.
+     */
+    public function guest()
+    {
+        return $this->hasOne('App\Person', 'id', 'guest_id');
+    }
 }

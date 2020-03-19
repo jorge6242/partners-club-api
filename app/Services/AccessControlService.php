@@ -19,6 +19,10 @@ class AccessControlService {
 		return $this->repository->getList();
 	}
 
+	public function filter($queryFilter, $isPDF = false) {
+		return $this->repository->filter($queryFilter, $isPDF);
+	}
+
 	public function create($request) {
 		$data = $this->repository->create($request);
 		if($request['family']) {
@@ -28,7 +32,7 @@ class AccessControlService {
 			}
 		}
 		if($request['guest_id'] !== "") {
-			$request['people_id'] = $request['guest_id'];
+			$request['guest_id'] = $request['guest_id'];
 			$this->repository->create($request);
 		}
 		return $data;

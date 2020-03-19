@@ -74,8 +74,7 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/location-list', 'LocationController@getList');
         Route::get('/location-search', 'LocationController@search');
 
-        /* |-------------------------------------------------------------------------- |*/
-        
+        /* |-------------------------------------------------------------------------- |*/    
 
         Route::get('/person-search', 'PersonController@search');
         Route::get('/search-person-to-assign-family', 'PersonController@searchPersonsToAssign');
@@ -112,6 +111,8 @@ Route::prefix('api/v1')->group(function () {
         Route::resource('/access-control', 'AccessControlController');
         Route::get('/access-control-list', 'AccessControlController@getList');
         Route::get('/access-control-search', 'AccessControlController@search');
+        Route::get('/access-control-filter', 'AccessControlController@filter');
+        Route::get('/access-control-filter-report', 'AccessControlController@filterReport');
 
     });
 });
