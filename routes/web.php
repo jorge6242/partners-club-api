@@ -74,6 +74,19 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/location-list', 'LocationController@getList');
         Route::get('/location-search', 'LocationController@search');
 
+        Route::resource('/parameter', 'ParameterController');
+        Route::get('/parameter-list', 'ParameterController@getList');
+        Route::get('/parameter-search', 'ParameterController@search');
+
+        Route::resource('/locker', 'LockerController');
+        Route::get('/locker-list', 'LockerController@getList');
+        Route::get('/locker-search', 'LockerController@search');
+        Route::get('/locker-by-location', 'LockerController@getByLocation');
+
+        Route::resource('/locker-location', 'LockerLocationController');
+        Route::get('/locker-location-list', 'LockerLocationController@getList');
+        Route::get('/locker-location-search', 'LockerLocationController@search');
+
         /* |-------------------------------------------------------------------------- |*/    
 
         Route::get('/person-search', 'PersonController@search');
@@ -87,6 +100,8 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/get-guest-by-partner', 'PersonController@getGuestByPartner');
         Route::get('/person-filter', 'PersonController@filter');
         Route::get('/person-filter-report', 'PersonController@filterReport');
+        Route::get('/person-lockers-by-location', 'PersonController@getLockersByLocation');
+        Route::get('/person-lockers', 'PersonController@getLockersByPartner');
 
         Route::get('/check-login', 'UserController@checkLogin');
         Route::resource('/user', 'UserController');

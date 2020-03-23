@@ -10,8 +10,8 @@ class PersonSportRepository  {
       $this->model = $model;
     }
 
-    public function find($peopleId, $sport) {
-      $data = $this->model->query()->where('people_id', $peopleId)->where('sports_id', $sport)->first();
+    public function find($peopleId, $professionId) {
+      $data = $this->model->query()->where('people_id', $peopleId)->where('sports_id', $professionId)->first();
       if($data) {
           return true;
       }

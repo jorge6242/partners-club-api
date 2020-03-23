@@ -289,4 +289,40 @@ class PersonController extends Controller
             ]);
         }
     }
+
+    /**
+     * Get the specified family by person
+     *
+     * @param  string $id
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getLockersByLocation(Request $request) {
+        $person = $this->service->getLockersByLocation($request);
+        if($person) {
+            return response()->json([
+                'success' => true,
+                'data' => $person
+            ]);
+        }
+    }
+
+        /**
+     * Get the specified family by person
+     *
+     * @param  string $id
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getLockersByPartner(Request $request) {
+        $data = $this->service->getLockersByPartner($request['id']);
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
+
+
 }

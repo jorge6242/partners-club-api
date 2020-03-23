@@ -2,20 +2,16 @@
 
 namespace App\Repositories;
 
-use App\PersonCountry;
+use App\PersonLocker;
 
-class PersonCountryRepository  {
+class PersonLockerRepository  {
 
-    public function __construct(PersonCountry $model) {
+    public function __construct(PersonLocker $model) {
       $this->model = $model;
     }
 
-    public function find($peopleId, $professionId) {
-      $data = $this->model->query()->where('people_id', $peopleId)->where('countries_id', $professionId)->first();
-      if($data) {
-          return true;
-      }
-      return false;
+    public function find($person, $locker) {
+      return $this->model->query()->where('people_id', $person)->where('locker_id', $locker)->first();
     }
 
     public function findPartner($id) {
@@ -44,6 +40,6 @@ class PersonCountryRepository  {
 
     public function deleteRegistersbyPerson($id) {
         return $this->model->where('people_id', $id)->delete();
-       }
+    }
 
 }

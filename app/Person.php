@@ -131,4 +131,12 @@ class Person extends Model
         return $this->belongsToMany('App\Country', 'person_countries', 'people_id', 'countries_id');
     }
 
+    /**
+     * The lockers that belong to the person.
+     */
+    public function lockers()
+    {
+        return $this->belongsToMany('App\Locker', 'person_lockers', 'people_id', 'locker_id');
+    }
+
 }

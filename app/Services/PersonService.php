@@ -7,6 +7,7 @@ use App\Repositories\ProfessionRepository;
 use App\Repositories\PersonProfessionRepository;
 use App\Repositories\PersonCountryRepository;
 use App\Repositories\PersonSportRepository;
+use App\Repositories\PersonLockerRepository;
 use Illuminate\Http\Request;
 
 class PersonService {
@@ -15,12 +16,14 @@ class PersonService {
 		PersonRepository $person, 
 		PersonProfessionRepository $personProfessionRepository,
 		PersonCountryRepository $personCountryRepository,
-		PersonSportRepository $personSportRepository
+		PersonSportRepository $personSportRepository,
+		PersonLockerRepository $personLockerRepository
 		) {
 		$this->person = $person;
 		$this->personProfessionRepository = $personProfessionRepository;
 		$this->personCountryRepository = $personCountryRepository;
 		$this->personSportRepository = $personSportRepository;
+		$this->personLockerRepository = $personLockerRepository;
 	}
 
 	public function index($perPage) {
@@ -94,8 +97,7 @@ class PersonService {
 			}
 		}
 	}
-	
-	
+
 	if ($request['sport_list']) {
 		$sports = json_decode($request['sport_list']);
 		if(count($sports)) {
@@ -105,6 +107,28 @@ class PersonService {
 			foreach ($sports as $sport) {
 				$data = ['people_id' => $id, 'sports_id' => $sport];
 				$this->personSportRepository->create($data);
+			}
+		}
+	}
+
+	if ($request['lockers']) {
+		$lockers = $request['lockers'];
+		if(count($lockers['itemsToAdd'])) {
+			foreach ($lockers['itemsToAdd'] as $itemsToAdd) {
+				$locker = $this->personLockerRepository->find($id, $itemsToAdd['id']);
+				if(!$locker) {
+					$data = ['people_id' => $id, 'locker_id' => $itemsToAdd['id']];
+					$this->personLockerRepository->create($data);
+				}
+			}
+		}
+
+		if(count($lockers['itemsToRemove'])) {
+			foreach ($lockers['itemsToRemove'] as $itemsToRemove) {
+				$locker = $this->personLockerRepository->find($id, $itemsToRemove['id']);
+				if($locker) {
+					$this->personLockerRepository->delete($locker->id);
+				}
 			}
 		}
 	}
@@ -183,5 +207,13 @@ class PersonService {
 
 	public function getGuestByPartner($identification){
 		return $this->person->getGuestByPartner($identification);
+	}
+
+	public function getLockersByLocation($request) {
+		return $this->person->getLockersByLocation($request);
+	}
+
+	public function getLockersByPartner($id) {
+		return $this->person->getLockersByPartner($id);
 	}
 }

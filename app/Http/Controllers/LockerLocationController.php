@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\LockerService;
+use App\Services\LockerLocationService;
 use Barryvdh\DomPDF\Facade as PDF;
 
-class LockerController extends Controller
+class LockerLocationController extends Controller
 {
-    public function __construct(LockerService $service)
+    public function __construct(LockerLocationService $service)
 	{
 		$this->service = $service;
     }
@@ -119,23 +119,6 @@ class LockerController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $bank
-            ]);
-        }
-    }
-
-        /**
-     * Get the specified resource by search.
-     *
-     * @param  string $term
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function getByLocation(Request $request) {
-        $data = $this->service->getByLocation($request['id']);
-        if($data) {
-            return response()->json([
-                'success' => true,
-                'data' => $data
             ]);
         }
     }

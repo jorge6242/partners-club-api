@@ -14,11 +14,11 @@ use Illuminate\Database\Eloquent\Builder;
 class PersonRepository  {
 
     public function __construct(
-      Person $model, 
-      PersonRelationRepository $personRelationRepository, 
+      Person $model,
+      PersonRelationRepository $personRelationRepository,
       RelationTypeRepository $relationTypeRepository,
       ShareRepository $shareRepository
-      ) 
+      )
       {
       $this->model = $model;
       $this->personRelationRepository = $personRelationRepository;
@@ -27,7 +27,14 @@ class PersonRepository  {
     }
 
     public function find($id) {
-      $person = $this->model->where('id', $id)->with(['professions','creditCards','shares', 'countries', 'sports'])->first();
+      $person = $this->model->where('id', $id)->with([
+        'professions',
+        'creditCards',
+        'shares',
+        'countries',
+        'sports',
+        'lockers',
+        ])->first();
       $person->picture = url('storage/partners/'.$person->picture);
       return $person;
     }
@@ -39,7 +46,7 @@ class PersonRepository  {
     public function update($id, array $attributes) {
       return $this->model->find($id)->update($attributes);
     }
-  
+
     public function reportAll() {
       return $this->model->all();
     }
@@ -58,7 +65,7 @@ class PersonRepository  {
       if ($person) {
         return $person;
       }
-      return false; 
+      return false;
     }
 
     /**
@@ -68,7 +75,7 @@ class PersonRepository  {
     public function search($queryFilter) {
       $search;
       if($queryFilter->query('term') === null) {
-        $search = $this->model->all();  
+        $search = $this->model->all();
       } else {
         $search = $this->model->where('name', 'like', '%'.$queryFilter->query('term').'%')->get();
       }
@@ -82,7 +89,7 @@ class PersonRepository  {
     public function filter($queryFilter, $isPDF = false) {
       $search = $this->model->query()->with(['statusPerson', 'maritalStatus', 'gender', 'country','professions', 'shares',
       'relationship' => function($query){
-        $query->select('id', 'related_id', 'base_id', 'relation_type_id')->with('relationType'); 
+        $query->select('id', 'related_id', 'base_id', 'relation_type_id')->with('relationType');
     },]);
       if ($queryFilter->query('isPartner')) {
         $search->where('isPartner', $queryFilter->query('isPartner'));
@@ -157,7 +164,7 @@ class PersonRepository  {
     public function searchToAssign($queryFilter) {
       $search;
       if($queryFilter->query('term') === null) {
-        $search = $this->model->all();  
+        $search = $this->model->all();
       } else {
         $search = $this->model->select('id', 'name', 'last_name')->where('name', 'like', '%'.$queryFilter->query('term').'%')->get();
       }
@@ -171,7 +178,7 @@ class PersonRepository  {
     public function searchByCompany($queryFilter) {
       $search;
       if($queryFilter->query('term') === null) {
-        $search = $this->model->all();  
+        $search = $this->model->all();
       } else {
         $search = $this->model->where('type_person', 2)->where('description', 'like', '%'.$queryFilter->query('term').'%')->get();
       }
@@ -184,7 +191,7 @@ class PersonRepository  {
     public function searchPersonsToAssign($queryFilter) {
       $search;
       if($queryFilter->query('term') === null) {
-        $search = $this->model->query()->where('id', '!=', $queryFilter->query('id'))->where('type_person', 1)->paginate($queryFilter->query('perPage'));  
+        $search = $this->model->query()->where('id', '!=', $queryFilter->query('id'))->where('type_person', 1)->paginate($queryFilter->query('perPage'));
       } else {
         $search = $this->model->where('id', '!=', $queryFilter->query('id'))->where('type_person', 1)->where('name', 'like', '%'.$queryFilter->query('term').'%')->paginate($queryFilter->query('perPage'));
       }
@@ -242,7 +249,7 @@ class PersonRepository  {
       foreach ( $professions as $profession) {
         $count = $count + 1;
         $coma = count($professions) == $count ? '' : ', ';
-        $str .= $profession->description.''.$coma; 
+        $str .= $profession->description.''.$coma;
       }
       return $str;
     }
@@ -253,7 +260,7 @@ class PersonRepository  {
       foreach ( $shares as $share) {
         $count = $count + 1;
         $coma = count($shares) == $count ? '' : ', ';
-        $str .= $share->share_number.''.$coma; 
+        $str .= $share->share_number.''.$coma;
       }
       return $str;
     }
@@ -266,10 +273,10 @@ class PersonRepository  {
           $query->with([
             'statusPerson',
             'relationship' => function($query){
-              $query->select('id', 'related_id', 'base_id', 'relation_type_id')->with('relationType'); 
+              $query->select('id', 'related_id', 'base_id', 'relation_type_id')->with('relationType');
             },
-          ]); 
-        }, 
+          ]);
+        },
         'statusPerson'
         ])->first();
       if($person) {
@@ -282,10 +289,10 @@ class PersonRepository  {
         if($person->family()) {
           $familys = $person->family()->with([
             'statusPerson' => function($query) {
-              $query->select('id', 'description'); 
-            }, 
+              $query->select('id', 'description');
+            },
             'gender' => function($query) {
-              $query->select('id', 'description'); 
+              $query->select('id', 'description');
             }])->get();
           foreach ( $familys as $key => $family) {
             $professions = $this->parseProfessions($family->professions()->get());
@@ -310,5 +317,35 @@ class PersonRepository  {
       return $person;
     }
     return $person;
+  }
+
+  public function getLockersByLocation($request) {
+    $lockerLocation = $request['location'];
+    if($request['location'] == 0) {
+      $lockerLocation = \DB::table('person_lockers')
+      ->select('lockers.id', 'lockers.description', 'lockers.locker_location_id')
+      ->join('lockers', 'lockers.id', '=', 'person_lockers.locker_id')
+      ->join('people', 'people.id', '=', 'person_lockers.people_id')
+      ->where('people.id', $request['id'])
+      ->first();
+      $lockerLocation = $lockerLocation->locker_location_id;
+    }
+
+   $data = \DB::table('person_lockers')
+    ->select('lockers.id', 'lockers.description', 'lockers.locker_location_id')
+    ->join('lockers', 'lockers.id', '=', 'person_lockers.locker_id')
+    ->join('people', 'people.id', '=', 'person_lockers.people_id')
+    ->where('people.id', $request['id'])
+    ->where('lockers.locker_location_id', $lockerLocation)
+    ->get();
+    return $data;
+  }
+
+  public function getLockersByPartner($id){
+    return $this->model->where('id', $id)->with([
+      'lockers' => function($query) {
+        $query->with(['location'])->orderBy('locker_location_id', 'asc');
+      }
+      ])->first();
   }
 }
