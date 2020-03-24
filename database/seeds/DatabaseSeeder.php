@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         /* Master Tables */
-        $this->call(LockerLocationSeeder::class);
+        $this->call(LockerLocationsSeeder::class);
         $this->call(RelationTypesSeeder::class);
         $this->call(PaymentMethodsSeeder::class);
         $this->call(CardTypesSeeder::class);

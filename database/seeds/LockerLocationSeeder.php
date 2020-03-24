@@ -3,7 +3,7 @@
 use App\LockerLocation;
 use Illuminate\Database\Seeder;
 
-class LockerLocationSeeder extends Seeder
+class LockerLocationsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
