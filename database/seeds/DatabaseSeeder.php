@@ -12,7 +12,6 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         /* Master Tables */
-        $this->call(LockersLocationSeeder::class);
         $this->call(RelationTypesSeeder::class);
         $this->call(PaymentMethodsSeeder::class);
         $this->call(CardTypesSeeder::class);
@@ -29,15 +28,16 @@ class DatabaseSeeder extends Seeder
         $this->call(TransactionTypesSeeder::class);
         $this->call(PermissionsSeeder::class);
         $this->call(RolesSeeder::class);
+        $this->call(LockersLocationSeeder::class);
         $this->call(RecordTypeSeeder::class);
         $this->call(DepartmentSeeder::class);
         /***/
 
-        $this->call(LockerSeeder::class);
         $this->call(PersonTableSeeder::class);
         $this->call(RolePermissionsSeeder::class);
         $this->call(UsersTableSeeder::class);
         $this->call(SharesSeeder::class);
+        $this->call(LockerSeeder::class);
         
     }
 }
