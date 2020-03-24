@@ -29,6 +29,8 @@ class DatabaseSeeder extends Seeder
         $this->call(TransactionTypesSeeder::class);
         $this->call(PermissionsSeeder::class);
         $this->call(RolesSeeder::class);
+        $this->call(RecordTypeSeeder::class);
+        $this->call(DepartmentSeeder::class);
         /***/
 
         $this->call(LockerSeeder::class);

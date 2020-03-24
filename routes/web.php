@@ -87,6 +87,24 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/locker-location-list', 'LockerLocationController@getList');
         Route::get('/locker-location-search', 'LockerLocationController@search');
 
+        Route::resource('/record', 'RecordController');
+        Route::get('/record-list', 'RecordController@getList');
+        Route::get('/record-search', 'RecordController@search');
+        Route::get('/record-by-person', 'RecordController@getByPerson');
+
+        Route::resource('/record-type', 'RecordTypeController');
+        Route::get('/record-type-list', 'RecordTypeController@getList');
+        Route::get('/record-type-search', 'RecordTypeController@search');
+
+        Route::resource('/department', 'DepartmentController');
+        Route::get('/department-list', 'DepartmentController@getList');
+        Route::get('/department-search', 'DepartmentController@search');
+
+        Route::resource('/note', 'NoteController');
+        Route::get('/note-list', 'NoteController@getList');
+        Route::get('/note-search', 'NoteController@search');
+        Route::get('/note-by-person', 'NoteController@getByPerson');
+
         /* |-------------------------------------------------------------------------- |*/    
 
         Route::get('/person-search', 'PersonController@search');

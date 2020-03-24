@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\LocationService;
+use App\Services\RecordTypeService;
 use Barryvdh\DomPDF\Facade as PDF;
 
-class LocationController extends Controller
+class RecordTypeController extends Controller
 {
-    public function __construct(LocationService $service)
+    public function __construct(RecordTypeService $service)
 	{
 		$this->service = $service;
     }

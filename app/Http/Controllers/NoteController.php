@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\LocationService;
+use App\Services\NoteService;
 use Barryvdh\DomPDF\Facade as PDF;
 
-class LocationController extends Controller
+class NoteController extends Controller
 {
-    public function __construct(LocationService $service)
+    public function __construct(NoteService $service)
 	{
 		$this->service = $service;
     }
@@ -19,10 +19,10 @@ class LocationController extends Controller
      */
     public function index(Request $request)
     {
-        $banks = $this->service->index($request->query('perPage'));
+        $data = $this->service->index($request->query('perPage'));
         return response()->json([
             'success' => true,
-            'data' => $banks
+            'data' => $data
         ]);
     }
 
@@ -119,6 +119,22 @@ class LocationController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $bank
+            ]);
+        }
+    }
+
+    /**
+     * Get the recource list by person.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getByPerson(Request $request) {
+        $data = $this->service->getByPerson($request);
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
             ]);
         }
     }

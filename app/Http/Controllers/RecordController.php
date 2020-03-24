@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\LocationService;
+use App\Services\RecordService;
 use Barryvdh\DomPDF\Facade as PDF;
 
-class LocationController extends Controller
+class RecordController extends Controller
 {
-    public function __construct(LocationService $service)
+    public function __construct(RecordService $service)
 	{
 		$this->service = $service;
     }
@@ -49,7 +49,7 @@ class LocationController extends Controller
     public function store(Request $request)
     {
         $bankRequest = $request->all();
-        $bank = $this->service->create($bankRequest);
+        $bank = $this->service->create($bankRequest, $request);
         return $bank;
     }
 
@@ -115,6 +115,22 @@ class LocationController extends Controller
      */
     public function search(Request $request) {
         $bank = $this->service->search($request);
+        if($bank) {
+            return response()->json([
+                'success' => true,
+                'data' => $bank
+            ]);
+        }
+    }
+
+        /**
+     * Get the recource list by person.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getByPerson(Request $request) {
+        $bank = $this->service->getByPerson($request);
         if($bank) {
             return response()->json([
                 'success' => true,

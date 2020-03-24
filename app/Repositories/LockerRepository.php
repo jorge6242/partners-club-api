@@ -72,11 +72,22 @@ class LockerRepository  {
     }
 
     public function getByLocation($id) {
+//       SELECT pl.locker_id , lockers.id 
+// from person_lockers pl  
+// RIGHT JOIN lockers ON lockers.id = pl.locker_id
+// WHERE lockers.locker_location_id  = 1
+    //  return $data = \DB::table('person_lockers')
+    //   ->select('lockers.id', 'lockers.description', 'lockers.locker_location_id')
+    //   ->join('lockers', 'lockers.id', '=', 'person_lockers.locker_id')
+    //   ->where('lockers.id', '!==', 'person_lockers.locker_id')
+    //   ->where('lockers.locker_location_id', $lockerLocation)
+    //   ->get();
+    //   return $data;
       $lockerLocation = $id;
       if($id == 0) {
         $lockerLocation = $this->lockerLocationmodel->first();
         $lockerLocation = $lockerLocation->id;
       }
-      return $this->model->query()->select(['id', 'description', 'locker_location_id'])->where('locker_location_id',$lockerLocation)->get();
+      return $this->model->query()->select(['id', 'description', 'locker_location_id'])->where('locker_location_id',$id)->get();
     }
 }
