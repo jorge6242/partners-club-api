@@ -266,9 +266,16 @@ class PersonRepository  {
     }
 
     public function getFamiliesPartnerByCard($card) {
+      $cardNumber = $card;
+      $person = $this->model->query()->select('id', 'isPartner')->where('card_number', $cardNumber)->first();
+      if($person && $person->isPartner === 2) {
+        $partner = $this->personRelationRepository->findPartner($person->id);
+        $partner = $this->model->query()->select('id', 'card_number')->where('id', $partner->id)->first();
+        $cardNumber = $partner->card_number;
+      }
       $person = $this->model->query()->select('id', 'name', 'last_name', 'card_number', 'picture')
       ->where('isPartner', 1)
-      ->where('card_number', $card)->with([
+      ->where('card_number', $cardNumber)->with([
         'family' => function($query) {
           $query->with([
             'statusPerson',
@@ -300,7 +307,12 @@ class PersonRepository  {
             $relation = $this->relationTypeRepository->find($currentPerson->relation_type_id);
             $familys[$key]->relationType = $relation->description;
             $familys[$key]->id = $currentPerson->id;
-            $familys[$key]->picture = url('storage/partners/'.$family->picture);
+            $familys[$key]->profilePicture = url('storage/partners/'.$family->picture);
+            if($familys[$key]->card_number === $card ) {
+              $familys[$key]->selectedFamily = true;
+            } else {
+              $familys[$key]->selectedFamily = false;
+            }
           }
           $person['familyMembers'] = $familys;
           $person['picture'] =  url('storage/partners/'.$person['picture']);

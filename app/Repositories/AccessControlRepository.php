@@ -166,4 +166,11 @@ class AccessControlRepository  {
       }
      return $search;
     }
+
+    public function getVisitsByMont($id) {
+       return $this->model->where('status', 1)
+       ->where('guest_id', $id)
+       ->whereMonth('created', '=', date('m'))
+       ->get();
+    }
 }

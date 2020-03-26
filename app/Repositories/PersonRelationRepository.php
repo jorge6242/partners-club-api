@@ -66,4 +66,9 @@ class PersonRelationRepository  {
       }
      return $search;
     }
+
+    public function findPartner($id)
+    {
+      return $this->model->where('related_id', $id)->first();
+    }
 }

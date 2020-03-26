@@ -125,4 +125,17 @@ class RecordRepository  {
         },
         ])->where('people_id', $queryFilter->query('id'))->paginate($queryFilter->query('perPage'));
     }
+
+    public function getBlockedRecord($id){
+      return $this->model->query()->select([
+        'id',
+        'description',
+        'created',
+        'days',
+        'blocked',
+        'expiration_date',
+        'record_type_id',
+        'people_id'
+    ])->where('blocked', 1)->where('people_id', $id)->get();
+    }
 }

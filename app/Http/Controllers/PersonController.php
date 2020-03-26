@@ -272,6 +272,10 @@ class PersonController extends Controller
                 'data' => $data
             ]);
         }
+        return response()->json([
+            'success' => false,
+            'message' => 'Persona no es un Socio/Familiar'
+        ])->setStatusCode(400);
     }
 
     /**

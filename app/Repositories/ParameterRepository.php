@@ -58,4 +58,8 @@ class ParameterRepository  {
       }
      return $search;
     }
+
+    public function findByParameter($parameter) {
+      return $this->model->query()->select(['id', 'description', 'parameter', 'value'])->where('parameter', $parameter)->first();
+    }
 }
