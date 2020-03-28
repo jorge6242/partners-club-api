@@ -33,6 +33,7 @@ class Person extends Model
         'marital_statuses_id',
         'gender_id',
         'countries_id',
+        'isPartner',
     ];
 
     /**

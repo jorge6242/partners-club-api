@@ -138,4 +138,18 @@ class RecordController extends Controller
             ]);
         }
     }
+    /**
+    * Get statistics.
+    *
+    * @return \Illuminate\Http\Response
+    */
+   public function getRecordsStatistics() {
+       $bank = $this->service->getRecordsStatistics();
+       if($bank) {
+           return response()->json([
+               'success' => true,
+               'data' => $bank
+           ]);
+       }
+   }
 }

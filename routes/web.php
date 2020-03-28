@@ -25,6 +25,7 @@ Route::prefix('api/v1')->group(function () {
         */
         Route::resource('/bank', 'BankController');
         Route::get('/bank-search', 'BankController@search');
+        Route::get('/bank-list', 'BankController@getList');
 
         Route::resource('/sport', 'SportController');
         Route::get('/sport-search', 'SportController@search');
@@ -91,6 +92,7 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/record-list', 'RecordController@getList');
         Route::get('/record-search', 'RecordController@search');
         Route::get('/record-by-person', 'RecordController@getByPerson');
+        Route::get('/record-statistics', 'RecordController@getRecordsStatistics');
 
         Route::resource('/record-type', 'RecordTypeController');
         Route::get('/record-type-list', 'RecordTypeController@getList');
@@ -120,6 +122,10 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/person-filter-report', 'PersonController@filterReport');
         Route::get('/person-lockers-by-location', 'PersonController@getLockersByLocation');
         Route::get('/person-lockers', 'PersonController@getLockersByPartner');
+        Route::get('/person-count-by-ispartner', 'PersonController@getCountPersonByIsPartner');
+        Route::get('/person-count-all', 'PersonController@getCountPersons');
+        Route::get('/person-statistics-exception', 'PersonController@getExceptionStatistics');
+        Route::get('/person-statistics-birthday', 'PersonController@getCountBirthdays');
 
         Route::get('/check-login', 'UserController@checkLogin');
         Route::resource('/user', 'UserController');
@@ -134,6 +140,7 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/share-filter-report', 'ShareController@filterReport');
 
         Route::resource('/card-person', 'CardPersonController');
+        Route::get('/card-person-statistics', 'CardPersonController@getCardStatistics');
 
         Route::resource('/share-movement', 'ShareMovementController');
         Route::get('/share-movement-list', 'ShareMovementController@getList');
@@ -146,6 +153,8 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/access-control-search', 'AccessControlController@search');
         Route::get('/access-control-filter', 'AccessControlController@filter');
         Route::get('/access-control-filter-report', 'AccessControlController@filterReport');
+        Route::get('/access-control-partner-family-statistics', 'AccessControlController@getPartnersFamilyStatistics');
+        Route::get('/access-control-guest-statistics', 'AccessControlController@getGuestStatistics');
 
     });
 });

@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 use App\Record;
 
+use Carbon\Carbon;
+
 class RecordRepository  {
   
     protected $post;
@@ -137,5 +139,14 @@ class RecordRepository  {
         'record_type_id',
         'people_id'
     ])->where('blocked', 1)->where('people_id', $id)->get();
+    }
+
+    public function getRecordsStatistics() {
+      $blockedYes =  $this->model->where('blocked', 1)->whereMonth('expiration_date', '=', Carbon::now())->count();
+      $blockedNo = $this->model->where('blocked', 0)->count();
+      $blockedYes = $blockedYes ? $blockedYes : 0;
+      $blockedNo = $blockedNo ? $blockedNo : 0;
+      $data = $blockedYes.'/'.$blockedNo;
+      return array('blockeds' => $data);
     }
 }

@@ -111,4 +111,18 @@ class CardPersonController extends Controller
             ]);
         }
     }
+
+        /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getCardStatistics()
+    {
+        $data = $this->service->getCardStatistics();
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
 }

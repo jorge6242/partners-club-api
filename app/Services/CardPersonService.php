@@ -44,5 +44,9 @@ class CardPersonService {
 	*/
 	public function search($queryFilter) {
 		return $this->repository->search($queryFilter);
- 	}
+	 }
+	 
+	 public function getCardStatistics() {
+		return $this->repository->getCardStatistics();
+	  }
 }

@@ -58,5 +58,13 @@ class RecordService {
 	*/
 	public function getByPerson($queryFilter) {
 		return $this->repository->getByPerson($queryFilter);
+	 }
+	 
+	 	/**
+	 *  Search resource from repository
+	 * @param  object $queryFilter
+	*/
+	public function getRecordsStatistics() {
+		return $this->repository->getRecordsStatistics();
  	}
 }

@@ -10,9 +10,9 @@ use App\Http\Requests\BankValidator;
 
 class BankController extends Controller
 {
-    public function __construct(BankService $bankService)
+    public function __construct(BankService $service)
 	{
-		$this->bankService = $bankService;
+		$this->service = $service;
     }
     /**
      * Display a listing of the resource.
@@ -27,10 +27,24 @@ class BankController extends Controller
                 'message' => 'No tiene permisos'
             ])->setStatusCode(400);
         }
-        $banks = $this->bankService->index($request->query('perPage'));
+        $banks = $this->service->index($request->query('perPage'));
         return response()->json([
             'success' => true,
             'data' => $banks
+        ]);
+    }
+
+        /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getList(Request $request)
+    {
+        $data = $this->service->getList();
+        return response()->json([
+            'success' => true,
+            'data' => $data
         ]);
     }
 
@@ -49,7 +63,7 @@ class BankController extends Controller
             ])->setStatusCode(400);
         }
         $bankRequest = $request->all();
-        $bank = $this->bankService->create($bankRequest);
+        $bank = $this->service->create($bankRequest);
         return $bank;
     }
 
@@ -67,7 +81,7 @@ class BankController extends Controller
                 'message' => 'No tiene permisos'
             ])->setStatusCode(400);
         }
-        $bank = $this->bankService->read($id);
+        $bank = $this->service->read($id);
         if($bank) {
             return response()->json([
                 'success' => true,
@@ -92,7 +106,7 @@ class BankController extends Controller
             ])->setStatusCode(400);
         }
         $bankRequest = $request->all();
-        $bank = $this->bankService->update($bankRequest, $id);
+        $bank = $this->service->update($bankRequest, $id);
         if($bank) {
             return response()->json([
                 'success' => true,
@@ -115,7 +129,7 @@ class BankController extends Controller
                 'message' => 'No tiene permisos'
             ])->setStatusCode(400);
         }
-        $bank = $this->bankService->delete($id);
+        $bank = $this->service->delete($id);
         if($bank) {
             return response()->json([
                 'success' => true,
@@ -132,7 +146,7 @@ class BankController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function search(Request $request) {
-        $bank = $this->bankService->search($request);
+        $bank = $this->service->search($request);
         if($bank) {
             return response()->json([
                 'success' => true,

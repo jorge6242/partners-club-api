@@ -8,6 +8,7 @@ use App\Repositories\PersonProfessionRepository;
 use App\Repositories\PersonCountryRepository;
 use App\Repositories\PersonSportRepository;
 use App\Repositories\PersonLockerRepository;
+use App\Repositories\PersonExceptionRepository;
 use Illuminate\Http\Request;
 
 class PersonService {
@@ -17,13 +18,15 @@ class PersonService {
 		PersonProfessionRepository $personProfessionRepository,
 		PersonCountryRepository $personCountryRepository,
 		PersonSportRepository $personSportRepository,
-		PersonLockerRepository $personLockerRepository
+		PersonLockerRepository $personLockerRepository,
+		PersonExceptionRepository $personExceptionRepository
 		) {
 		$this->person = $person;
 		$this->personProfessionRepository = $personProfessionRepository;
 		$this->personCountryRepository = $personCountryRepository;
 		$this->personSportRepository = $personSportRepository;
 		$this->personLockerRepository = $personLockerRepository;
+		$this->personExceptionRepository = $personExceptionRepository;
 	}
 
 	public function index($perPage) {
@@ -215,5 +218,21 @@ class PersonService {
 
 	public function getLockersByPartner($id) {
 		return $this->person->getLockersByPartner($id);
+	}
+
+	public function getCountPersons(){
+		return $this->person->getCountPersons();
+	}
+
+	public function getCountPersonByIsPartner($isPartner) {
+		return $this->person->getCountPersonByIsPartner($isPartner);
+	}
+
+	public function getExceptionStatistics() {
+		return $this->personExceptionRepository->getStatistics();
+	}
+
+	public function getCountBirthdays() {
+		return $this->person->getCountBirthdays();
 	}
 }

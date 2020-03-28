@@ -153,4 +153,36 @@ class AccessControlController extends Controller
             ]);
         }
     }
+
+            /**
+     * Get count partners and family per year
+     *
+     * @param  string $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getPartnersFamilyStatistics() {
+        $data = $this->service->getPartnersFamilyStatistics();
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
+
+                /**
+     * Get count guests per year
+     *
+     * @param  string $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getGuestStatistics() {
+        $data = $this->service->getGuestStatistics();
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
 }

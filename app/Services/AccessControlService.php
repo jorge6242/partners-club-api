@@ -153,5 +153,13 @@ class AccessControlService {
 	*/
 	public function search($queryFilter) {
 		return $this->repository->search($queryFilter);
- 	}
+	 }
+	 
+	 public function getPartnersFamilyStatistics() {
+		return $this->repository->getPartnersFamilyStatistics();
+	}
+
+	public function getGuestStatistics() {
+		return $this->repository->getGuestStatistics();
+	}
 }

@@ -6,6 +6,8 @@ use App\Person;
 use App\Share;
 use App\AccessControl;
 
+use Carbon\Carbon;
+
 class AccessControlRepository  {
   
     protected $post;
@@ -173,4 +175,74 @@ class AccessControlRepository  {
        ->whereMonth('created', '=', date('m'))
        ->get();
     }
+
+    public function getMonthsByIsPartner($isPartner) {
+      $this->isPartner = $isPartner;
+      if($isPartner === 3) {
+        $lastMonth =  $this->model->where('status', 1)
+        ->whereNotNull('guest_id')
+        ->whereHas('guest' , function($q){
+          $q->where('isPartner', $this->isPartner);
+        })->whereMonth('created', '=', Carbon::now()->subMonth()->month)->count();
+        $currentMonth = $this->model->where('status', 1)->whereNotNull('guest_id')->whereHas('guest' , function($q){
+          $q->where('isPartner', $this->isPartner);
+        })->whereMonth('created', '=', date('m'))->count();
+      } else {
+        $lastMonth =  $this->model->where('status', 1)->whereHas('person' , function($q){
+          $q->where('isPartner', $this->isPartner);
+        })->whereMonth('created', '=', Carbon::now()->subMonth()->month)->count();
+        $currentMonth = $this->model->where('status', 1)->whereHas('person' , function($q){
+          $q->where('isPartner', $this->isPartner);
+        })->whereMonth('created', '=', date('m'))->count();
+      }
+
+      $lastMonth = $lastMonth ? $lastMonth : 0;
+      $currentMonth = $currentMonth ? $currentMonth : 0;
+      $data = $lastMonth.'/'.$currentMonth;
+      return $data;
+    }
+
+    public function getAllMonths() {
+      $lastMonth =  $this->model->where('status', 1)->whereMonth('created', '=', Carbon::now()->subMonth()->month)->count();
+      $currentMonth = $this->model->where('status', 1)->whereMonth('created', '=', date('m'))->count();
+      $lastMonth = $lastMonth ? $lastMonth : 0;
+      $currentMonth = $currentMonth ? $currentMonth : 0;
+      $data = $lastMonth.'/'.$currentMonth;
+      return $data;
+    }
+
+    //   SELECT month(created) ,  count(*) as cant 
+//   FROM [access_controls] c , people p
+//   where guest_id=NULLL 
+// and p.ispartner in (1,2)
+// and p.people_id= c.people_id
+//   and  status=1 and year(created)=year(getdate())  
+// group by  month(created)
+// order by month(created)
+//      $first = $this->model->whereRaw('DATEDIFF("'.Carbon::today()->format('Y-m-d').'",expiration_date) <= 30')->count();
+  public function getPartnersFamilyStatistics() {
+    $data = $this->model->selectRaw('created ,year(created) year, monthname(created) month, count(*) data')
+    ->where('status', 1)
+    ->where('guest_id', NULL)
+    ->whereHas('person' , function($q){
+      $q->whereIn('isPartner', [1,2]);
+    })->whereYear('created', '=', date('Y'))
+    ->groupBy('year', 'month', 'created')
+    ->orderBy('created', 'asc')
+    ->get();
+    return $data;
+  }
+
+  public function getGuestStatistics() {
+    $data = $this->model->selectRaw('created ,year(created) year, monthname(created) month, count(*) data')
+    ->where('status', 1)
+    ->whereNotNull('guest_id')
+    ->whereHas('guest' , function($q){
+      $q->whereIn('isPartner', [3]);
+    })->whereYear('created', '=', date('Y'))
+    ->groupBy('year', 'month', 'created')
+    ->orderBy('created', 'asc')
+    ->get();
+    return $data;
+  }
 }

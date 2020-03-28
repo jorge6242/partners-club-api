@@ -27,6 +27,10 @@ class BankRepository  {
     public function all($perPage) {
       return $this->model->query()->paginate($perPage);
     }
+    
+    public function getList() {
+      return $this->model->query()->select(['id', 'description'])->get();
+    }
 
     public function delete($id) {
      return $this->model->find($id)->delete();

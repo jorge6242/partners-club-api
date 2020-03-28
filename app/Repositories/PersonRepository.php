@@ -7,6 +7,7 @@ use App\PersonRelation;
 use App\Repositories\ShareRepository;
 use App\Repositories\RelationTypeRepository;
 use App\Repositories\PersonRelationRepository;
+use App\Repositories\AccessControlRepository;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,13 +18,15 @@ class PersonRepository  {
       Person $model,
       PersonRelationRepository $personRelationRepository,
       RelationTypeRepository $relationTypeRepository,
-      ShareRepository $shareRepository
+      ShareRepository $shareRepository,
+      AccessControlRepository $accessControlRepository
       )
       {
       $this->model = $model;
       $this->personRelationRepository = $personRelationRepository;
       $this->relationTypeRepository = $relationTypeRepository;
       $this->shareRepository = $shareRepository;
+      $this->accessControlRepository = $accessControlRepository;
     }
 
     public function find($id) {
@@ -360,4 +363,22 @@ class PersonRepository  {
       }
       ])->first();
   }
+
+  public function getCountPersons(){
+    $count = $this->model->whereIn('isPartner', [1, 2, 3])->count();
+    $months = $this->accessControlRepository->getAllMonths();
+    return array('count' => $count, 'months' => $months);
+  }
+
+  public function getCountPersonByIsPartner(int $isPartner){
+    $count = $this->model->where('isPartner', $isPartner)->count();
+    $months = $this->accessControlRepository->getMonthsByIsPartner($isPartner);
+    return array('count' => $count, 'months' => $months);
+  }
+
+  public function getCountBirthdays(){
+    $birth =  $this->model->whereIn('isPartner', [1, 2])->whereMonth('birth_date',date('m'))->count();
+    return array('count' => $birth ? $birth : 0);
+  }
+  
 }

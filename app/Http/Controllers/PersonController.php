@@ -328,5 +328,70 @@ class PersonController extends Controller
         }
     }
 
+    /**
+     * Get count persons by isPartner column value
+     *
+     * @param  string $id
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getCountPersonByIsPartner(Request $request) {
+        $data = $this->service->getCountPersonByIsPartner($request['isPartner']);
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
+
+    /**
+     * Get the count persons
+     *
+     * @param  string $id
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getCountPersons() {
+        $data = $this->service->getCountPersons();
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
+
+        /**
+     * Get persons exception statistics
+     *
+     * @param  string $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getExceptionStatistics() {
+        $data = $this->service->getExceptionStatistics();
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
+
+            /**
+     * Get count birthdays
+     *
+     * @param  string $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getCountBirthdays() {
+        $data = $this->service->getCountBirthdays();
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
 
 }
