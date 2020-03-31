@@ -205,7 +205,7 @@ class PersonController extends Controller
         return $person;
     }
 
-        /**
+    /**
      * Get the specified family by person
      *
      * @param  string $term
@@ -392,6 +392,21 @@ class PersonController extends Controller
                 'data' => $data
             ]);
         }
+    }
+
+        /**
+     * Get the specified partner by card.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getFamilyByPartner(Request $request) {
+        $share = auth()->user()->username;
+        $data = $this->service->getFamilyByPartner($share);
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
     }
 
 }

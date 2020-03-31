@@ -46,6 +46,11 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+        'partner-portal' => [
+            'driver' => 'passport',
+            'provider' => 'people',
+            'hash' => false,
+        ],
     ],
 
     /*

@@ -126,6 +126,7 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/person-count-all', 'PersonController@getCountPersons');
         Route::get('/person-statistics-exception', 'PersonController@getExceptionStatistics');
         Route::get('/person-statistics-birthday', 'PersonController@getCountBirthdays');
+        Route::get('/person-families-partner', 'PersonController@getFamilyByPartner');
 
         Route::get('/check-login', 'UserController@checkLogin');
         Route::resource('/user', 'UserController');
@@ -145,6 +146,7 @@ Route::prefix('api/v1')->group(function () {
         Route::resource('/share-movement', 'ShareMovementController');
         Route::get('/share-movement-list', 'ShareMovementController@getList');
         Route::get('/share-movement-search', 'ShareMovementController@search');
+        Route::get('/share-movement-last', 'ShareMovementController@getLastMovement');
        
         Route::get('/search-to-assign', 'ShareController@searchToAssign');
 
@@ -156,6 +158,7 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/access-control-partner-family-statistics', 'AccessControlController@getPartnersFamilyStatistics');
         Route::get('/access-control-guest-statistics', 'AccessControlController@getGuestStatistics');
 
+        Route::get('/soap-test', 'WebServiceController@show');
     });
 });
 

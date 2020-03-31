@@ -43,6 +43,9 @@ class CreatePeopleTable extends Migration
             $table->bigInteger('marital_statuses_id')->nullable();
             $table->bigInteger('gender_id')->nullable();
             $table->bigInteger('countries_id')->nullable();
+            $table->string('user', 255)->nullable();
+            $table->string('date', 255)->nullable();
+            $table->string('status', 255)->nullable();
             $table->timestamps();
         });
     }

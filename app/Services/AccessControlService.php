@@ -38,6 +38,14 @@ class AccessControlService {
 		return $this->repository->filter($queryFilter, $isPDF);
 	}
 
+	public function legacyAccesControlIngration($person, $type) {
+		$person = $this->model->where('isPartner', $id)->first();
+		if($person && $person->isPartner === $type) {
+			return 1;
+		}
+		return 0;
+	}
+
 	public function checkPersonStatus($id) {
 		$person = $this->personModel->where('id',$id)->with([
 			'statusPerson' => function($query) {
@@ -104,6 +112,8 @@ class AccessControlService {
 			$message.= '<strong>- Socio</strong>: <br>
 			'.$validatePartnerMessage.'
 			';
+		} else {
+			$this->legacyAccesControlIngration($request['people_id']);
 		}
 
 		if($request['family']) {
@@ -116,11 +126,13 @@ class AccessControlService {
 		}
 
 		$validateGuestMessage = $this->validateGuest($request);
-		 if($validateGuestMessage !== '') {
+			if($validateGuestMessage !== '') {
 			$message.= '<strong>- Invitado</strong>: <br>
 			'.$validateGuestMessage.'
 			';
-		 }
+		} else {
+			$this->legacyAccesControlIngration($request['guest_id']);
+		}
 
 		if($message !== '') {
 			$body = '<div>

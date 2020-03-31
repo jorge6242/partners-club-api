@@ -54,6 +54,8 @@ class PersonRepository  {
       return $this->model->all();
     }
 
+
+
     public function all($perPage) {
       return $this->model->query()->paginate($perPage);
     }
@@ -379,6 +381,26 @@ class PersonRepository  {
   public function getCountBirthdays(){
     $birth =  $this->model->whereIn('isPartner', [1, 2])->whereMonth('birth_date',date('m'))->count();
     return array('count' => $birth ? $birth : 0);
+  }
+
+  public function getFamilyByPartner($id) {
+      $data = $this->model->where('id', $id)->with(['family'])->first();
+      $array = array();
+      $partner = $this->model->where('id', $id)->with(['relationship'])->first();
+      $families = $data->family()->with([
+        'relationship' => function($q) {
+          $q->with([
+            'relationType' => function($q) {
+              $q->select('id', 'description');
+            }
+            ]);
+        }
+        ])->get();
+      array_push($array, $partner);
+      foreach ($families as $key => $family) {
+        array_push($array, $family);
+      }
+      return $array;
   }
   
 }

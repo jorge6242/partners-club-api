@@ -3,10 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Repositories\ShareRepository;
+
 use Illuminate\Http\Request;
 
 class PassportController extends Controller
 {
+    public function __construct(ShareRepository $shareRepository)
+    {
+    $this->shareRepository = $shareRepository;
+    }
    /**
      * Handles Registration Request
      *
@@ -39,17 +45,29 @@ class PassportController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
-    {
+    {   
+        $header = $request->header();
+        $header = $header['partners-application'];
         $credentials = [
-            'email' => $request->email,
+            'username' => $request->username,
             'password' => $request->password
         ];
  
         if (auth()->attempt($credentials)) {
+            $partner = $this->shareRepository->findByShare($request->username);
+            if($header[0] === 'portal' && !$partner) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Solo pueden acceder Socios'
+                ])->setStatusCode(401);
+            }
             $token = auth()->user()->createToken('TutsForWeb')->accessToken;
-            return response()->json(['token' => $token], 200);
+            return response()->json(['token' => $token, 'user' => auth()->user()], 200);
         } else {
-            return response()->json(['error' => 'unauthorized'], 401);
+            return response()->json([
+                'success' => false,
+                'message' => 'Credenciales incorrectas'
+            ])->setStatusCode(401);
         }
     }
  

@@ -124,4 +124,21 @@ class ShareMovementController extends Controller
         }
     }
 
+        /**
+     * Get the last movement by share
+     *
+     * @param  int $share
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getLastMovement(Request $request) {
+        $data = $this->service->getLastMovement($request['share']);
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
+
 }

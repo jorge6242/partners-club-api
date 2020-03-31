@@ -84,4 +84,8 @@ class ShareMovementRepository  {
       }
      return $search;
     }
+
+    public function getLastMovement($share) {
+      return $this->model->where('share_id ', $share)->with(['transaction'])->orderBy('created', 'desc')->first();
+    }
 }

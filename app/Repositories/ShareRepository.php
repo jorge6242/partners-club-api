@@ -228,4 +228,12 @@ class ShareRepository  {
     public function getListByPartner($id) {
       return $this->model->query()->select('id', 'share_number')->where('id_persona', $id)->get();
     }
+
+    public function findByShare($share) {
+      return $this->model->where('share_number', $share)->with([
+        'partner' => function($q) {
+          $q->select('id', 'name', 'last_name', 'rif_ci', 'card_number');
+        }
+        ])->first();
+    }
 }

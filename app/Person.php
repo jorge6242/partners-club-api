@@ -2,10 +2,13 @@
 
 namespace App;
 
+use Laravel\Passport\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
 
 class Person extends Model
 {
+    use HasApiTokens;
+    
     protected $fillable = [
         'name', 
         'last_name', 
@@ -34,6 +37,9 @@ class Person extends Model
         'gender_id',
         'countries_id',
         'isPartner',
+        'user',
+        'date',
+        'status',
     ];
 
     /**

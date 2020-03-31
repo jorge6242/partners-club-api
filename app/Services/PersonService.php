@@ -9,6 +9,7 @@ use App\Repositories\PersonCountryRepository;
 use App\Repositories\PersonSportRepository;
 use App\Repositories\PersonLockerRepository;
 use App\Repositories\PersonExceptionRepository;
+use App\Repositories\ShareRepository;
 use Illuminate\Http\Request;
 
 class PersonService {
@@ -19,7 +20,8 @@ class PersonService {
 		PersonCountryRepository $personCountryRepository,
 		PersonSportRepository $personSportRepository,
 		PersonLockerRepository $personLockerRepository,
-		PersonExceptionRepository $personExceptionRepository
+		PersonExceptionRepository $personExceptionRepository,
+		ShareRepository $shareRepository
 		) {
 		$this->person = $person;
 		$this->personProfessionRepository = $personProfessionRepository;
@@ -27,6 +29,7 @@ class PersonService {
 		$this->personSportRepository = $personSportRepository;
 		$this->personLockerRepository = $personLockerRepository;
 		$this->personExceptionRepository = $personExceptionRepository;
+		$this->shareRepository = $shareRepository;
 	}
 
 	public function index($perPage) {
@@ -235,4 +238,10 @@ class PersonService {
 	public function getCountBirthdays() {
 		return $this->person->getCountBirthdays();
 	}
+
+	public function getFamilyByPartner($share) {
+		$person = $this->shareRepository->findByShare($share);
+		return $this->person->getFamilyByPartner($person->partner->id);
+	}
+
 }

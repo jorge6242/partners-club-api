@@ -28,6 +28,11 @@ class RolesSeeder extends Seeder
                 'slug' => 'secretaria', 
                 'description' => 'Secreataria' 
             ],
+            [ 
+                'name' => 'Socio', 
+                'slug' => 'socio', 
+                'description' => 'Permisos para socios' 
+            ],
         ];
         foreach ($data as $element) {
             Role::create([
