@@ -47,20 +47,12 @@ class PassportController extends Controller
     public function login(Request $request)
     {   
         $header = $request->header();
-        $header = $header['partners-application'];
         $credentials = [
             'username' => $request->username,
             'password' => $request->password
         ];
  
         if (auth()->attempt($credentials)) {
-            $partner = $this->shareRepository->findByShare($request->username);
-            if($header[0] === 'portal' && !$partner) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Solo pueden acceder Socios'
-                ])->setStatusCode(401);
-            }
             $token = auth()->user()->createToken('TutsForWeb')->accessToken;
             return response()->json(['token' => $token, 'user' => auth()->user()], 200);
         } else {

@@ -39,7 +39,7 @@ class AccessControlService {
 	}
 
 	public function legacyAccesControlIngration($person, $type) {
-		$person = $this->model->where('isPartner', $id)->first();
+		$person = $this->personModel->where('isPartner', $person)->first();
 		if($person && $person->isPartner === $type) {
 			return 1;
 		}
@@ -47,12 +47,9 @@ class AccessControlService {
 	}
 
 	public function checkPersonStatus($id) {
-		$person = $this->personModel->where('id',$id)->with([
-			'statusPerson' => function($query) {
-				$query->select('id', 'description');
-			}
-		])->first();
-		return $person->statusPerson->description;
+		$person = $this->personModel->where('id', $id)->with(['statusPerson'])->first();
+		$person = $person->statusPerson()->first();
+		return $person->description;
 	}
 
 	function validatePartner($request) {
@@ -116,7 +113,7 @@ class AccessControlService {
 			$this->legacyAccesControlIngration($request['people_id'], 1);
 		}
 
-		if($request['family']) {
+		if($request['family'] !== null) {
 			$status = 1;
 			foreach ($request['family'] as $element) {
 				$request['people_id'] = $element;
@@ -125,13 +122,15 @@ class AccessControlService {
 			}
 		}
 
-		$validateGuestMessage = $this->validateGuest($request);
+		if($request['guest_id'] !== null) {
+			$validateGuestMessage = $this->validateGuest($request);
 			if($validateGuestMessage !== '') {
 			$message.= '<strong>- Invitado</strong>: <br>
 			'.$validateGuestMessage.'
 			';
 		} else {
 			$this->legacyAccesControlIngration($request['guest_id'], 3);
+		}
 		}
 
 		if($message !== '') {
@@ -144,7 +143,10 @@ class AccessControlService {
 				'message' => $body,
 			])->setStatusCode(400);
 		}
-		return $data;
+		return response()->json([
+			'success' => true,
+			'message' => 'Access Created',
+		])->setStatusCode(200);
 	}
 
 	public function update($request, $id) {
