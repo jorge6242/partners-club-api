@@ -113,7 +113,7 @@ class AccessControlService {
 			'.$validatePartnerMessage.'
 			';
 		} else {
-			$this->legacyAccesControlIngration($request['people_id']);
+			$this->legacyAccesControlIngration($request['people_id'], 1);
 		}
 
 		if($request['family']) {
@@ -131,7 +131,7 @@ class AccessControlService {
 			'.$validateGuestMessage.'
 			';
 		} else {
-			$this->legacyAccesControlIngration($request['guest_id']);
+			$this->legacyAccesControlIngration($request['guest_id'], 3);
 		}
 
 		if($message !== '') {
