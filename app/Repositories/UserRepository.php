@@ -48,4 +48,9 @@ class UserRepository  {
       }
       return false; 
     }
+
+    public function forcedLogin($username)
+    {
+      return $this->model->where('username', $username)->first(); 
+    }
 }

@@ -221,28 +221,54 @@ class AccessControlRepository  {
 // order by month(created)
 //      $first = $this->model->whereRaw('DATEDIFF("'.Carbon::today()->format('Y-m-d').'",expiration_date) <= 30')->count();
   public function getPartnersFamilyStatistics() {
-    $data = $this->model->selectRaw('created ,year(created) year, monthname(created) month, count(*) data')
-    ->where('status', 1)
-    ->where('guest_id', NULL)
-    ->whereHas('person' , function($q){
-      $q->whereIn('isPartner', [1,2]);
-    })->whereYear('created', '=', date('Y'))
-    ->groupBy('year', 'month', 'created')
-    ->orderBy('created', 'asc')
-    ->get();
+    // $data = $this->model->selectRaw('created ,year(created) year, monthname(created) month, count(*) data')
+    // ->where('status', 1)
+    // ->where('guest_id', NULL)
+    // ->whereHas('person' , function($q){
+    //   $q->whereIn('isPartner', [1,2]);
+    // })->whereYear('created', '=', date('Y'))
+    // ->groupBy('year', 'month', 'created')
+    // ->orderBy('created', 'asc')
+    // ->get();
+
+    $data = \DB::select("SELECT month(c.created) as month ,  count(*) as cant 
+    FROM access_controls c , people p
+    where c.guest_id IS NULL
+    and p.isPartner in (1,2)
+    and p.id= c.people_id
+    and  c.status= 1 and year(c.created)= year(getdate())  
+    group by  month(c.created)
+    order by month(c.created)
+    ");
+    // return $data;
+    // $data = \DB::table('access_controls')
+    // ->select('month(access_controls.created) as month')
+    // ->join('people', 'people.id', '=', 'access_controls.people_id')
+    // ->where('access_controls.status', 1)
+    // ->where('access_controls.guest_id', NULL)
+    // ->get();
     return $data;
   }
 
   public function getGuestStatistics() {
-    $data = $this->model->selectRaw('created ,year(created) year, monthname(created) month, count(*) data')
-    ->where('status', 1)
-    ->whereNotNull('guest_id')
-    ->whereHas('guest' , function($q){
-      $q->whereIn('isPartner', [3]);
-    })->whereYear('created', '=', date('Y'))
-    ->groupBy('year', 'month', 'created')
-    ->orderBy('created', 'asc')
-    ->get();
+    // $data = $this->model->selectRaw('created ,year(created) year, monthname(created) month, count(*) data')
+    // ->where('status', 1)
+    // ->whereNotNull('guest_id')
+    // ->whereHas('guest' , function($q){
+    //   $q->whereIn('isPartner', [3]);
+    // })->whereYear('created', '=', date('Y'))
+    // ->groupBy('year', 'month', 'created')
+    // ->orderBy('created', 'asc')
+    // ->get();
+    $data = \DB::select("SELECT month(c.created) as month ,  count(*) as cant 
+    FROM access_controls c , people p
+    where c.guest_id IS NOT NULL
+    and p.isPartner in (3)
+    and p.id= c.people_id
+    and  c.status= 1 and year(c.created)= year(getdate())  
+    group by  month(c.created)
+    order by month(c.created)
+    ");
     return $data;
   }
 }

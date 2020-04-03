@@ -65,5 +65,11 @@ class AclRolesSeeder extends Seeder
 
 //dd($activity);
 
+// $user = User::where('username', 'A-1713')->first();
+// // $admin = Role::where('slug', 'administrador')->first();
+// // $user->assignRole($admin->id);
+// // $user->revokeRole('administrador');
+// dd($user->getRoles());
+
     }
 }

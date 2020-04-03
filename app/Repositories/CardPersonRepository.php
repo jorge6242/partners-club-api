@@ -59,8 +59,8 @@ class CardPersonRepository  {
     //30d    SELECT count(*)  FROM [partnersControl].[dbo].[card_people] WHERE    DATEDIFF(day,GETDATE(),[expiration_date])  <= 30 
     //60d    SELECT count(*)  FROM [partnersControl].[dbo].[card_people] WHERE    DATEDIFF(day,GETDATE(),[expiration_date])  <= 60  
     public function getCardStatistics() {
-      $first = $this->model->whereRaw('DATEDIFF("'.Carbon::today()->format('Y-m-d').'",expiration_date) <= 30')->count();
-      $second = $this->model->whereRaw('DATEDIFF("'.Carbon::today()->format('Y-m-d').'",expiration_date) <= 60')->count();
+      $first = $this->model->whereRaw('DATEDIFF(day,GETDATE(),[expiration_date]) <= 30')->count();
+      $second = $this->model->whereRaw('DATEDIFF(day,GETDATE(),[expiration_date]) <= 60')->count();
       $first = $first ? $first : 0;
       $second = $second ? $second : 0;
       $data = $first.'/'.$second;

@@ -54,7 +54,9 @@ class PassportController extends Controller
  
         if (auth()->attempt($credentials)) {
             $token = auth()->user()->createToken('TutsForWeb')->accessToken;
-            return response()->json(['token' => $token, 'user' => auth()->user()], 200);
+            $user = auth()->user();
+            $user->roles = auth()->user()->getRoles();
+            return response()->json(['token' => $token, 'user' =>  $user], 200);
         } else {
             return response()->json([
                 'success' => false,

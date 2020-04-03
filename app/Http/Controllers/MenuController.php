@@ -3,25 +3,39 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\UserService;
+use App\Services\MenuService;
 
-class UserController extends Controller
+class MenuController extends Controller
 {
-    public function __construct(UserService $userService)
+    public function __construct(MenuService $service)
 	{
-		$this->userService = $userService;
+		$this->service = $service;
     }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $user = $this->userService->index();
+        $banks = $this->service->index($request->query('perPage'));
         return response()->json([
             'success' => true,
-            'data' => $user
+            'data' => $banks
+        ]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getList(Request $request)
+    {
+        $data = $this->service->getList();
+        return response()->json([
+            'success' => true,
+            'data' => $data
         ]);
     }
 
@@ -33,20 +47,9 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $userRequest = $request->all();
-        if ($this->userService->checkUser($request['email'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User already exist'
-            ])->setStatusCode(400);
-        }
-        $user = $this->userService->create($userRequest);
-        if ($user) {
-            return response()->json([
-                'success' => true,
-                'data' => $user
-            ])->setStatusCode(200);
-        }
+        $bankRequest = $request->all();
+        $bank = $this->service->create($bankRequest);
+        return $bank;
     }
 
     /**
@@ -57,11 +60,11 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = $this->userService->read($id);
-        if($user) {
+        $bank = $this->service->read($id);
+        if($bank) {
             return response()->json([
                 'success' => true,
-                'data' => $user
+                'data' => $bank
             ]);
         }
     }
@@ -75,12 +78,12 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $userRequest = $request->all();
-        $user = $this->userService->update($userRequest, $id);
-        if($user) {
+        $bankRequest = $request->all();
+        $bank = $this->service->update($bankRequest, $id);
+        if($bank) {
             return response()->json([
                 'success' => true,
-                'data' => $user
+                'data' => $bank
             ]);
         }
     }
@@ -93,36 +96,29 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = $this->userService->delete($id);
-        if($user) {
+        $bank = $this->service->delete($id);
+        if($bank) {
             return response()->json([
                 'success' => true,
-                'data' => $user
+                'data' => $bank
             ]);
         }
     }
 
-        /**
-     * Show login user available
+    /**
+     * Get the specified resource by search.
      *
-     * @return \Illuminate\Http\Response
-     */
-    public function checkLogin()
-    {
-        return $this->userService->checkLogin();
-    }
-
-            /**
-     * Show login user available
+     * @param  string $term
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function forcedLogin(Request $request)
-    {
-        $data = $this->userService->forcedLogin($request['username']);
+    public function search(Request $request) {
+        $bank = $this->service->search($request);
+        if($bank) {
             return response()->json([
                 'success' => true,
-                'data' => $data
+                'data' => $bank
             ]);
+        }
     }
 }

@@ -107,6 +107,10 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/note-search', 'NoteController@search');
         Route::get('/note-by-person', 'NoteController@getByPerson');
 
+        Route::resource('/menu-item', 'MenuItemController');
+        Route::get('/menu-item-list', 'MenuItemController@getList');
+        Route::get('/menu-item-search', 'MenuItemController@search');
+
         /* |-------------------------------------------------------------------------- |*/    
 
         Route::get('/person-search', 'PersonController@search');
@@ -159,6 +163,13 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/access-control-guest-statistics', 'AccessControlController@getGuestStatistics');
 
         Route::get('/soap-test', 'WebServiceController@show');
+
+        Route::resource('/menu', 'MenuController');
+        Route::get('/menu-list', 'MenuController@getList');
+
+        Route::resource('/widget', 'WidgetController');
+        Route::get('/widget-search', 'WidgetControllerController@search');
+        Route::get('/widget-list', 'WidgetController@getList');
     });
 });
 
@@ -166,3 +177,4 @@ Route::prefix('api/v1')->group(function () {
 Route::get('/person-report', 'PersonController@report');
 Route::get('/partner-report', 'PersonController@getReportByPartner');
 Route::get('/person-filter-report', 'PersonController@filterReport');
+Route::get('/forced-login', 'UserController@forcedLogin');
