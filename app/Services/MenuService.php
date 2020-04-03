@@ -10,7 +10,7 @@ class MenuService {
 
 	public function __construct(
 		MenuRepository $repository,
-		MenuItemRepository $menuItemRepository
+		OtherMenuItemRepository $menuItemRepository
 		) {
 		$this->repository = $repository;
 		$this->menuItemRepository = $menuItemRepository;
