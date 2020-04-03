@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\MenuRepository;
-use App\Repositories\MenuItemRepository;
+use App\Repositories\OtherMenuItemRepository;
 use Illuminate\Http\Request;
 
 class MenuService {
