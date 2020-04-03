@@ -38,6 +38,6 @@ class DatabaseSeeder extends Seeder
         $this->call(UsersTableSeeder::class);
         $this->call(SharesSeeder::class);
         $this->call(LockerSeeder::class);
-        
+        $this->call(MenuTableSeeder::class);
     }
 }
