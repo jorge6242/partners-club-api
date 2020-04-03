@@ -6,7 +6,7 @@ use App\Repositories\MenuRepository;
 use App\Repositories\OtherMenuItemRepository;
 use Illuminate\Http\Request;
 
-class MenuService {
+class NewMenuService {
 
 	public function __construct(
 		MenuRepository $repository,

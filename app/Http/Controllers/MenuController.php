@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\MenuService;
+use App\Services\NewMenuService;
 
 class MenuController extends Controller
 {
-    public function __construct(MenuService $service)
+    public function __construct(NewMenuService $service)
 	{
 		$this->service = $service;
     }
