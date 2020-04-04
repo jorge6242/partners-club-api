@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\MenuItemService;
+use App\Services\MItemService;
 use Barryvdh\DomPDF\Facade as PDF;
 
 class MenuItemController extends Controller
 {
-    public function __construct(MenuItemService $service)
+    public function __construct(MItemService $service)
 	{
 		$this->service = $service;
     }

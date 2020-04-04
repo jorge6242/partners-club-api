@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Repositories\MItemRepository;
 use Illuminate\Http\Request;
 
-class MenuItemService {
+class MItemService {
 
 	public function __construct(MItemRepository $repository) {
 		$this->repository = $repository ;
