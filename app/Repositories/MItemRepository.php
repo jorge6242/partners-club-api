@@ -4,10 +4,8 @@ namespace App\Repositories;
 
 use App\MenuItem;
 
-class OtherMenuItemRepository  {
+class MItemRepository  {
   
-    protected $post;
-
     public function __construct(MenuItem $model) {
       $this->model = $model;
     }
