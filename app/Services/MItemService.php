@@ -2,21 +2,41 @@
 
 namespace App\Services;
 
-use App\Repositories\MItemRepository;
+use App\MenuItem;
 use Illuminate\Http\Request;
 
 class MItemService {
 
-	public function __construct(MItemRepository $repository) {
-		$this->repository = $repository ;
+	public function __construct(MenuItem $model) {
+		$this->model = $model ;
 	}
 
 	public function index($perPage) {
-		return $this->repository->all($perPage);
+		return $this->model->query()->select(          
+            'id',
+            'name', 
+            'slug', 
+            'description', 
+            'route',
+            'icon',
+            'parent',
+            'order',
+            'enabled',
+            'menu_id',)->paginate($perPage);
 	}
 
 	public function getList() {
-		return $this->repository->getList();
+		return $this->model->query()->select([     
+            'id',
+            'name',
+            'description', 
+            'slug', 
+            'route',
+            'icon',
+            'parent',
+            'order',
+            'enabled',
+            'menu_id'])->get();
 	}
 
 	public function create($request) {
@@ -26,19 +46,30 @@ class MItemService {
                 'message' => 'Record already exist'
             ])->setStatusCode(400);
         }
-		return $this->repository->create($request);
+		return $this->model->create($attributes);
 	}
 
 	public function update($request, $id) {
-      return $this->repository->update($id, $request);
+        return $this->model->find($id)->update($attributes);
 	}
 
 	public function read($id) {
-     return $this->repository->find($id);
+        return $this->model->find($id, [
+            'id',
+            'name', 
+            'slug', 
+            'description', 
+            'route',
+            'icon',
+            'parent',
+            'order',
+            'enabled',
+            'menu_id',
+            ]);
 	}
 
 	public function delete($id) {
-      return $this->repository->delete($id);
+        return $this->model->find($id)->delete();
 	}
 
 	/**
@@ -46,6 +77,12 @@ class MItemService {
 	 * @param  object $queryFilter
 	*/
 	public function search($queryFilter) {
-		return $this->repository->search($queryFilter);
+		$search;
+      if($queryFilter->query('term') === null) {
+        $search = $this->model->all();  
+      } else {
+        $search = $this->model->where('description', 'like', '%'.$queryFilter->query('term').'%')->paginate($queryFilter->query('perPage'));
+      }
+     return $search;
  	}
 }
