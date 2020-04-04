@@ -2,19 +2,24 @@
 
 namespace App\Services;
 
+use App\MenuItem;
 use App\Repositories\MenuRepository;
-use App\Repositories\MItemRepository;
 use Illuminate\Http\Request;
 
 class NewMenuService {
 
-	public function __construct(
-		MenuRepository $repository,
-		MItemRepository $menuItemRepository
-		) {
+	public function __construct( MenuRepository $repository ) {
 		$this->repository = $repository;
-		$this->menuItemRepository = $menuItemRepository;
 	}
+
+    public function findMenuItem($menuItem, $menu) {
+        return MenuItem::query()->where('id', $menuItem)->where('menu_id', $menu)->first();
+    }
+	
+	public function updateMenuItem($id, array $attributes) {
+		return MenuItem::find($id)->update($attributes);
+	  }
+	
 
 	public function index($perPage) {
 		return $this->repository->all($perPage);
@@ -36,10 +41,10 @@ class NewMenuService {
 			$items = $request['items'];
 			if(count($items['itemsToAdd'])) {
 				foreach ($items['itemsToAdd'] as $itemsToAdd) {
-					$menuItem = $this->menuItemRepository->findMenuItem($itemsToAdd['id'], $data->id );
+					$menuItem = $this->findMenuItem($itemsToAdd['id'], $data->id );
 					if(!$menuItem) {
 						$data = ['menu_id' => $data->id];
-						$this->menuItemRepository->update($itemsToAdd['id'], $data);
+						$this->updateMenuItem($itemsToAdd['id'], $data);
 					}
 				}
 			}
@@ -52,20 +57,20 @@ class NewMenuService {
 			$items = $request['items'];
 			if(count($items['itemsToAdd'])) {
 				foreach ($items['itemsToAdd'] as $itemsToAdd) {
-					$menuItem = $this->menuItemRepository->findMenuItem($itemsToAdd['id'], $request['id']);
+					$menuItem = $this->findMenuItem($itemsToAdd['id'], $request['id']);
 					if(!$menuItem) {
 						$data = ['menu_id' => $request['id']];
-						$this->menuItemRepository->update($itemsToAdd['id'], $data);
+						$this->updateMenuItem($itemsToAdd['id'], $data);
 					}
 				}
 			}
 	
 			if(count($items['itemsToRemove'])) {
 				foreach ($items['itemsToRemove'] as $itemsToRemove) {
-					$menuItem = $this->menuItemRepository->findMenuItem($itemsToRemove['id'], $request['id']);
+					$menuItem = $this->findMenuItem($itemsToRemove['id'], $request['id']);
 					if($menuItem) {
 						$data = ['menu_id' => null];
-						$this->menuItemRepository->update($itemsToRemove['id'], $data);
+						$this->updateMenuItem($itemsToRemove['id'], $data);
 					}
 				}
 			}
