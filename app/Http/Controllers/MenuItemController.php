@@ -8,19 +8,33 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class MenuItemController extends Controller
 {
+    public function __construct(MenuItem $model)
+	{
+		$this->model = $model;
+    }
     // /**
     //  * Display a listing of the resource.
     //  *
     //  * @return \Illuminate\Http\Response
     //  */
-    // public function index(Request $request)
-    // {
-    //     $banks = $this->service->index($request->query('perPage'));
-    //     return response()->json([
-    //         'success' => true,
-    //         'data' => $banks
-    //     ]);
-    // }
+    public function index(Request $request)
+    {
+        $data = $this->model->query()->select(          
+            'id',
+            'name', 
+            'slug', 
+            'description', 
+            'route',
+            'icon',
+            'parent',
+            'order',
+            'enabled',
+            'menu_id')->paginate($request->query('perPage'));
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
 
     /**
      * Display a listing of the resource.
@@ -29,7 +43,7 @@ class MenuItemController extends Controller
      */
     public function getList(Request $request)
     {
-        $data = MenuItem::query()->select([     
+        $data =$this->model->query()->select([     
             'id',
             'name',
             'description', 
@@ -52,12 +66,15 @@ class MenuItemController extends Controller
     //  * @param  \Illuminate\Http\Request  $request
     //  * @return \Illuminate\Http\Response
     //  */
-    // public function store(Request $request)
-    // {
-    //     $bankRequest = $request->all();
-    //     $bank = $this->service->create($bankRequest);
-    //     return $bank;
-    // }
+     public function store(Request $request)
+     {
+         $attributes = $request->all();
+         $data = $this->model->create($attributes);
+         return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+     }
 
     // /**
     //  * Display the specified resource.
@@ -65,16 +82,27 @@ class MenuItemController extends Controller
     //  * @param  int  $id
     //  * @return \Illuminate\Http\Response
     //  */
-    // public function show($id)
-    // {
-    //     $bank = $this->service->read($id);
-    //     if($bank) {
-    //         return response()->json([
-    //             'success' => true,
-    //             'data' => $bank
-    //         ]);
-    //     }
-    // }
+    public function show($id)
+    {
+        $bank =$this->model->find($id, [
+            'id',
+            'name', 
+            'slug', 
+            'description', 
+            'route',
+            'icon',
+            'parent',
+            'order',
+            'enabled',
+            'menu_id',
+            ]);
+        if($bank) {
+            return response()->json([
+                'success' => true,
+                'data' => $bank
+            ]);
+        }
+    }
 
     // /**
     //  * Update the specified resource in storage.
@@ -83,17 +111,17 @@ class MenuItemController extends Controller
     //  * @param  int  $id
     //  * @return \Illuminate\Http\Response
     //  */
-    // public function update(Request $request, $id)
-    // {
-    //     $bankRequest = $request->all();
-    //     $bank = $this->service->update($bankRequest, $id);
-    //     if($bank) {
-    //         return response()->json([
-    //             'success' => true,
-    //             'data' => $bank
-    //         ]);
-    //     }
-    // }
+    public function update(Request $request, $id)
+    {
+        $attributes = $request->all();
+        $bank = $this->model->find($id)->update($attributes);
+        if($bank) {
+            return response()->json([
+                'success' => true,
+                'data' => $bank
+            ]);
+        }
+    }
 
     // /**
     //  * Remove the specified resource from storage.
@@ -101,16 +129,16 @@ class MenuItemController extends Controller
     //  * @param  int  $id
     //  * @return \Illuminate\Http\Response
     //  */
-    // public function destroy($id)
-    // {
-    //     $bank = $this->service->delete($id);
-    //     if($bank) {
-    //         return response()->json([
-    //             'success' => true,
-    //             'data' => $bank
-    //         ]);
-    //     }
-    // }
+    public function destroy($id)
+    {
+        $data = $this->model->find($id)->delete();
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
 
     // /**
     //  * Get the specified resource by search.
@@ -119,30 +147,32 @@ class MenuItemController extends Controller
     //  * @param  \Illuminate\Http\Request  $request
     //  * @return \Illuminate\Http\Response
     //  */
-    // public function search(Request $request) {
-    //     $bank = $this->service->search($request);
-    //     if($bank) {
-    //         return response()->json([
-    //             'success' => true,
-    //             'data' => $bank
-    //         ]);
-    //     }
-    // }
+    public function search(Request $request) {
+        $search;
+      if($request->query('term') === null) {
+        $search = $this->model->all();  
+      } else {
+        $search = $this->model->where('description', 'like', '%'.$request->query('term').'%')
+        ->paginate($request->query('perPage'));
+      }
+        if($search) {
+            return response()->json([
+                'success' => true,
+                'data' => $search
+            ]);
+        }
+    }
 
-    //     /**
-    //  * Get the specified resource by search.
+        //  * Display a listing of the resource.
     //  *
-    //  * @param  string $term
-    //  * @param  \Illuminate\Http\Request  $request
     //  * @return \Illuminate\Http\Response
     //  */
-    // public function getByLocation(Request $request) {
-    //     $data = $this->service->getByLocation($request['id']);
-    //     if($data) {
-    //         return response()->json([
-    //             'success' => true,
-    //             'data' => $data
-    //         ]);
-    //     }
-    // }
+    public function getParents(Request $request)
+    {
+        $data = $this->model->query()->select(['id', 'description'])->where('parent', '=', 0)->get();
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
 }
