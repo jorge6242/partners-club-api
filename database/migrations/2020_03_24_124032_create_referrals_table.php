@@ -20,7 +20,6 @@ class CreateReferralsTable extends Migration
             $table->date('date')->nullable();
             $table->integer('status')->nullable();
             $table->bigInteger('people_id')->nullable();
-            $table->bigInteger('referral_types')->nullable();
             $table->timestamps();
         });
     }

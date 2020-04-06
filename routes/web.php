@@ -170,6 +170,10 @@ Route::prefix('api/v1')->group(function () {
         Route::resource('/widget', 'WidgetController');
         Route::get('/widget-search', 'WidgetControllerController@search');
         Route::get('/widget-list', 'WidgetController@getList');
+
+        Route::resource('/note-type', 'NoteTypeController');
+        Route::get('/note-type-search', 'NoteTypeControllerController@search');
+        Route::get('/note-type-list', 'NoteTypeController@getList');
     });
 });
 

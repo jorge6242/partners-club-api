@@ -2,18 +2,18 @@
 
 namespace App\Repositories;
 
-use App\Department;
+use App\NoteType;
 
-class DepartmentRepository  {
+class NoteTypeRepository  {
   
     protected $post;
 
-    public function __construct(Department $model) {
+    public function __construct(NoteType $model) {
       $this->model = $model;
     }
 
     public function find($id) {
-      return $this->model->find($id, ['id', 'description', 'email']);
+      return $this->model->find($id, ['id', 'description']);
     }
 
     public function create($attributes) {
@@ -25,11 +25,11 @@ class DepartmentRepository  {
     }
   
     public function all($perPage) {
-      return $this->model->query()->select(['id', 'description', 'email'])->paginate($perPage);
+      return $this->model->query()->select(['id', 'description'])->paginate($perPage);
     }
 
     public function getList() {
-      return $this->model->query()->select(['id', 'description', 'email'])->get();
+      return $this->model->query()->select(['id', 'description'])->get();
     }
 
     public function delete($id) {

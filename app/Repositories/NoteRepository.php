@@ -20,9 +20,15 @@ class NoteRepository  {
         'status',
         'people_id',
         'department_id',
+        'note_type_id',
+        'subject',
+        'is_sent',
         ])
         ->with([
           'department' => function($query) {
+            $query->select(['id', 'description']);
+          },
+          'type' => function($query) {
             $query->select(['id', 'description']);
           },
         ])->where('id', $id)->first();
@@ -44,7 +50,10 @@ class NoteRepository  {
         'status',
         'people_id',
         'department_id',
-    ])->paginate($perPage);
+        'note_type_id',
+        'subject',
+        'is_sent',
+    ])->with('type')->paginate($perPage);
     }
 
     public function getList() {
@@ -55,6 +64,9 @@ class NoteRepository  {
         'status',
         'people_id',
         'department_id',
+        'note_type_id',
+        'subject',
+        'is_sent',
     ])->get();
     }
 
@@ -93,9 +105,15 @@ class NoteRepository  {
         'status',
         'people_id',
         'department_id',
+        'note_type_id',
+        'subject',
+        'is_sent',
         ])
         ->with([
           'department' => function($query) {
+            $query->select(['id', 'description']);
+          },
+          'type' => function($query) {
             $query->select(['id', 'description']);
           },
         ])->where('people_id', $queryFilter->query('id'))

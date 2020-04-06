@@ -12,7 +12,7 @@ class Referral extends Model
         'date',
         'status',
         'people_id',
-        'referral_types',
+        'referral_type_id',
     ];
 
     public function person()

@@ -4,9 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Deparment extends Model
+class NoteType extends Model
 {
     protected $fillable = [
         'description', 
     ];
 }
+

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDeparmentsTable extends Migration
+class AddFieldsReferralTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,9 @@ class CreateDeparmentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('deparments', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('description',255)->nullable();
-            $table->timestamps();
+        Schema::table('referrals', function(Blueprint $table) {
+            $table->bigInteger('referral_type_id')->nullable();
+            $table->dropColumn('referral_types');
         });
     }
 
@@ -27,6 +26,8 @@ class CreateDeparmentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('deparments');
+        Schema::table('referrals', function(Blueprint $table) {
+            $table->dropColumn('referral_type_id');
+        });
     }
 }
