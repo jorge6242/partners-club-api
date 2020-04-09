@@ -2,25 +2,23 @@
 
 namespace App\Repositories;
 
-use App\TransactionType;
+use App\MenuItemIcon;
 
-class TransactionTypeRepository  {
+class MenuItemIconRepository  {
   
     protected $post;
 
-    public function __construct(TransactionType $model) {
+    public function __construct(MenuItemIcon $model) {
       $this->model = $model;
     }
 
     public function find($id) {
       return $this->model->find($id, [
         'id',
+        'name', 
+        'slug', 
         'description',
-        'rate',
-        'apply_main',
-        'apply_extension',
-        'apply_change_user',
-        'currency_id',
+        'import',
     ]);
     }
 
@@ -35,27 +33,21 @@ class TransactionTypeRepository  {
     public function all($perPage) {
       return $this->model->query()->select([
         'id',
+        'name', 
+        'slug', 
         'description',
-        'rate',
-        'apply_main',
-        'apply_extension',
-        'apply_change_user',
-        'currency_id',
-    ])->with(['currency'])->paginate($perPage);
+        'import',
+    ])->paginate($perPage);
     }
 
     public function getList() {
       return $this->model->query()->select([
         'id',
+        'name', 
+        'slug', 
         'description',
-        'rate',
-        'apply_main',
-        'apply_extension',
-        'apply_change_user',
-        'currency_id',
-    ])->with(['currency' => function($query){
-        $query->select('id', 'description', 'unicode'); 
-    }, ])->get();
+        'import',
+    ])->get();
     }
 
     public function delete($id) {

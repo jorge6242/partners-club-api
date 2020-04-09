@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\NewMenuService;
+use App\Services\MenuItemIconService;
 
-class MenuController extends Controller
+class MenuItemIconController extends Controller
 {
-    public function __construct(NewMenuService $service)
+    public function __construct(MenuItemIconService $service)
 	{
 		$this->service = $service;
     }
@@ -33,20 +33,6 @@ class MenuController extends Controller
     public function getList(Request $request)
     {
         $data = $this->service->getList();
-        return response()->json([
-            'success' => true,
-            'data' => $data
-        ]);
-    }
-
-        /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function getMenuList(Request $request)
-    {
-        $data = $this->service->getMenuList();
         return response()->json([
             'success' => true,
             'data' => $data

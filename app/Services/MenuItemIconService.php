@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
-use App\Repositories\LockerRepository;
+use App\Repositories\MenuItemIconRepository;
 use Illuminate\Http\Request;
 
-class LockerService {
+class MenuItemIconService {
 
-	public function __construct(LockerRepository $repository) {
+	public function __construct(MenuItemIconRepository $repository) {
 		$this->repository = $repository ;
 	}
 
@@ -20,7 +20,7 @@ class LockerService {
 	}
 
 	public function create($request) {
-		if ($this->repository->checkRecord($request['description'], $request['locker_location_id'])) {
+		if ($this->repository->checkRecord($request['description'])) {
             return response()->json([
                 'success' => false,
                 'message' => 'Record already exist'
@@ -47,9 +47,5 @@ class LockerService {
 	*/
 	public function search($queryFilter) {
 		return $this->repository->search($queryFilter);
-	 }
-	 
-	 public function getByLocation($id) {
-		return $this->repository->getByLocation($id);
-	}
+ 	}
 }

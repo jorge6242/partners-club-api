@@ -9,6 +9,7 @@ class PaymentMethod extends Model
     protected $fillable = [
         'description', 
         'card_validate', 
-        'is_default', 
+        'is_default',
+        'slug'
     ];
 }

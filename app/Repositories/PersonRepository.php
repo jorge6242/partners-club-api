@@ -60,6 +60,11 @@ class PersonRepository  {
       return $this->model->query()->paginate($perPage);
     }
 
+    public function getAllGuest($perPage) {
+      return $this->model->query()->where('isPartner', 3)->paginate($perPage);
+    }
+
+
     public function delete($id) {
      return $this->model->find($id)->delete();
     }
@@ -83,6 +88,20 @@ class PersonRepository  {
         $search = $this->model->all();
       } else {
         $search = $this->model->where('name', 'like', '%'.$queryFilter->query('term').'%')->get();
+      }
+     return $search;
+    }
+
+        /**
+     * get persons by query params
+     * @param  object $queryFilter
+    */
+    public function searchByGuest($queryFilter) {
+      $search;
+      if($queryFilter->query('term') === null) {
+        $search = $this->model->query()->where('isPartner', 3)->paginate();
+      } else {
+        $search = $this->model->where('name', 'like', '%'.$queryFilter->query('term').'%')->where('isPartner', 3)->paginate(8);
       }
      return $search;
     }

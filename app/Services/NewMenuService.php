@@ -29,6 +29,10 @@ class NewMenuService {
 		return $this->repository->getList();
 	}
 
+	public function getMenuList() {
+		return $this->repository->getMenuList();
+	}
+
 	public function create($request) {
 		if ($this->repository->checkRecord($request['description'])) {
             return response()->json([

@@ -11,10 +11,10 @@ class LockerRepository  {
 
     public function __construct(
       Locker $model,
-      LockerLocation $lockerLocationmodel
+      LockerLocation $lockerLocationModel
       ) {
       $this->model = $model;
-      $this->lockerLocationmodel = $lockerLocationmodel;
+      $this->lockerLocationModel = $lockerLocationModel;
     }
 
     public function find($id) {
@@ -48,9 +48,9 @@ class LockerRepository  {
      return $this->model->find($id)->delete();
     }
 
-    public function checkRecord($name)
+    public function checkRecord($name, $location)
     {
-      $data = $this->model->where('description', $name)->first();
+      $data = $this->model->where('description', $name)->where('locker_location_id', $location)->first();
       if ($data) {
         return true;
       }
@@ -85,7 +85,7 @@ class LockerRepository  {
     //   return $data;
       $lockerLocation = $id;
       if($id == 0) {
-        $lockerLocation = $this->lockerLocationmodel->first();
+        $lockerLocation = $this->lockerLocationModel->first();
         $lockerLocation = $lockerLocation->id;
       }
       return $this->model->query()->select(['id', 'description', 'locker_location_id'])->where('locker_location_id',$id)->get();

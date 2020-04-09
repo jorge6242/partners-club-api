@@ -131,6 +131,8 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/person-statistics-exception', 'PersonController@getExceptionStatistics');
         Route::get('/person-statistics-birthday', 'PersonController@getCountBirthdays');
         Route::get('/person-families-partner', 'PersonController@getFamilyByPartner');
+        Route::get('/person-guest', 'PersonController@getAllGuest');
+        Route::get('/person-search-guest', 'PersonController@searchByGuest');
 
         Route::get('/check-login', 'UserController@checkLogin');
         Route::resource('/user', 'UserController');
@@ -166,6 +168,11 @@ Route::prefix('api/v1')->group(function () {
 
         Route::resource('/menu', 'MenuController');
         Route::get('/menu-list', 'MenuController@getList');
+        Route::get('/get-menu-list', 'MenuController@getMenuList');
+
+        Route::resource('/menu-item-icon', 'MenuItemIconController');
+        Route::get('/menu-item-icon-search', 'MenuItemIconController@search');
+        Route::get('/menu-item-icon-list', 'MenuItemIconController@getList');
 
         Route::resource('/widget', 'WidgetController');
         Route::get('/widget-search', 'WidgetControllerController@search');

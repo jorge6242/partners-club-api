@@ -5,6 +5,7 @@ use Illuminate\Database\Seeder;
 use App\Role;
 use App\Menu;
 use App\MenuItem;
+use App\Parameter;
 use App\MenuItemRole;
 
 class CreateMenuSeeder extends Seeder
@@ -20,6 +21,13 @@ class CreateMenuSeeder extends Seeder
             'name' => 'menu-base',
             'slug' => 'menu-base',
             'description' => 'Menu Base',
+        ]);
+
+        Parameter::create([
+            'description' => 'MENU PRINCIPAL',
+            'parameter' => 'MENU_ID',
+            'value' => $menuBase->id,
+            'eliminable' => 1,
         ]);
 
         MenuItem::create([
@@ -267,6 +275,16 @@ class CreateMenuSeeder extends Seeder
         ]);
 
         MenuItem::create([
+            'name' => 'Usuarios',
+            'slug' => 'usuarios',
+            'parent' => $sec->id,
+            'order' => 2,
+            'description' => 'Usuarios',
+            'route' => '/dashboard/user',
+            'menu_id' => $menuBase->id,
+        ]);
+
+        MenuItem::create([
             'name' => 'Widget',
             'slug' => 'widget',
             'parent' => $sec->id,
@@ -390,6 +408,7 @@ class CreateMenuSeeder extends Seeder
             ['menuItem' => 'reporte-acciones', 'roles' => ['administrador']],
             ['menuItem' => 'seguridad', 'roles' => ['administrador']],
             ['menuItem' => 'roles', 'roles' => ['administrador']],
+            ['menuItem' => 'usuarios', 'roles' => ['administrador']],
             ['menuItem' => 'permisos', 'roles' => ['administrador']],
             ['menuItem' => 'widget', 'roles' => ['administrador']],
             ['menuItem' => 'menu', 'roles' => ['administrador']],

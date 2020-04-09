@@ -36,6 +36,15 @@ class PersonService {
 		return $this->person->all($perPage);
 	}
 
+	public function getAllGuest($perPage) {
+		return $this->person->getAllGuest($perPage);
+	}
+
+	public function searchByGuest($queryFilter) {
+		return $this->person->searchByGuest($queryFilter);
+	}
+
+
 	public function reportAll() {
 		return $this->person->reportAll();
 	}

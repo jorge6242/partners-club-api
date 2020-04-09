@@ -28,6 +28,20 @@ class PersonController extends Controller
 
         /**
      * Display a listing of the resource.
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getAllGuest(Request $request)
+    {
+        $persons = $this->service->getAllGuest($request->query('perPage'));
+        return response()->json([
+            'success' => true,
+            'data' => $persons
+        ]);
+    }
+
+        /**
+     * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
@@ -134,6 +148,23 @@ class PersonController extends Controller
      */
     public function search(Request $request) {
         $person = $this->service->search($request);
+        if($person) {
+            return response()->json([
+                'success' => true,
+                'data' => $person
+            ]);
+        }
+    }
+
+        /**
+     * Get the specified resource by search.
+     *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function searchByGuest(Request $request) {
+        $person = $this->service->searchByGuest($request);
         if($person) {
             return response()->json([
                 'success' => true,
