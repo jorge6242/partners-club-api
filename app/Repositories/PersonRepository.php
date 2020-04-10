@@ -37,6 +37,7 @@ class PersonRepository  {
         'countries',
         'sports',
         'lockers',
+        'company',
         ])->first();
       $person->picture = url('storage/partners/'.$person->picture);
       return $person;
@@ -421,5 +422,33 @@ class PersonRepository  {
       }
       return $array;
   }
+
+    /**
+     * get persons by query params
+     * @param  object $queryFilter
+    */
+    public function searchCompanyPersonToAssign($queryFilter) {
+      $search;
+      if($queryFilter->query('term') === null) {
+        $search = $this->model->query()->where('type_person', 2)->get();
+      } else {
+        $search = $this->model->where('id', '!=', $queryFilter->query('id'))->where('type_person', 2)->where('name', 'like', '%'.$queryFilter->query('term').'%')->get();
+      }
+     return $search;
+    }
+
+        /**
+     * get persons by query params
+     * @param  object $queryFilter
+    */
+    public function searchPersonsByType($queryFilter) {
+      $search;
+      if($queryFilter->query('term') === null) {
+        $search = $this->model->query()->where('type_person', $queryFilter->query('typePerson'))->get();
+      } else {
+        $search = $this->model->where('type_person', $queryFilter->query('typePerson'))->where('name', 'like', '%'.$queryFilter->query('term').'%')->get();
+      }
+     return $search;
+    }
   
 }

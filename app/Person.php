@@ -40,7 +40,16 @@ class Person extends Model
         'user',
         'date',
         'status',
+        'company_person_id'
     ];
+
+        /**
+     * The sports that belong to the share.
+     */
+    public function company()
+    {
+        return $this->hasOne('App\Person', 'id', 'company_person_id');
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

@@ -173,6 +173,40 @@ class PersonController extends Controller
         }
     }
 
+            /**
+     * Get the specified resource by search.
+     *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function searchCompanyPersonToAssign(Request $request) {
+        $person = $this->service->searchCompanyPersonToAssign($request);
+        if($person) {
+            return response()->json([
+                'success' => true,
+                'data' => $person
+            ]);
+        }
+    }
+
+                /**
+     * Get the specified resource by search.
+     *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function searchPersonsByType(Request $request) {
+        $person = $this->service->searchPersonsByType($request);
+        if($person) {
+            return response()->json([
+                'success' => true,
+                'data' => $person
+            ]);
+        }
+    }
+
     /**
      * Get the specified resource by search.
      *

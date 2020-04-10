@@ -44,6 +44,14 @@ class PersonService {
 		return $this->person->searchByGuest($queryFilter);
 	}
 
+	public function searchCompanyPersonToAssign($queryFilter) {
+		return $this->person->searchCompanyPersonToAssign($queryFilter);
+	}
+
+	public function searchPersonsByType($queryFilter) {
+		return $this->person->searchPersonsByType($queryFilter);
+	}
+
 
 	public function reportAll() {
 		return $this->person->reportAll();

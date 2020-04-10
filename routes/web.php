@@ -133,6 +133,8 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/person-families-partner', 'PersonController@getFamilyByPartner');
         Route::get('/person-guest', 'PersonController@getAllGuest');
         Route::get('/person-search-guest', 'PersonController@searchByGuest');
+        Route::get('/person-search-company', 'PersonController@searchCompanyPersonToAssign');
+        Route::get('/person-search-type', 'PersonController@searchPersonsByType');
 
         Route::get('/check-login', 'UserController@checkLogin');
         Route::resource('/user', 'UserController');
