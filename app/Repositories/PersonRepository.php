@@ -58,7 +58,12 @@ class PersonRepository  {
 
 
     public function all($perPage) {
-      return $this->model->query()->paginate($perPage);
+      $persons = $this->model->query()->with('shares')->paginate($perPage);
+      foreach ($persons as $key => $value) {
+        unset($persons[$key]->shares);
+        $persons[$key]->shares = $this->parseShares($value->shares()->get());
+      }
+      return $persons;
     }
 
     public function getAllGuest($perPage) {
@@ -102,7 +107,9 @@ class PersonRepository  {
       if($queryFilter->query('term') === null) {
         $search = $this->model->query()->where('isPartner', 3)->paginate();
       } else {
-        $search = $this->model->where('name', 'like', '%'.$queryFilter->query('term').'%')->where('isPartner', 3)->paginate(8);
+        $search = $this->model->query()->where('isPartner', 3)
+        ->where('name', 'like', '%'.$queryFilter->query('term').'%')
+        ->orWhere('last_name', 'like', '%'.$queryFilter->query('term').'%')->paginate(8);
       }
      return $search;
     }
@@ -191,7 +198,11 @@ class PersonRepository  {
       if($queryFilter->query('term') === null) {
         $search = $this->model->all();
       } else {
-        $search = $this->model->select('id', 'name', 'last_name')->where('name', 'like', '%'.$queryFilter->query('term').'%')->get();
+        $search = $this->model->select('id', 'name', 'last_name', 'rif_ci')
+        ->where('name', 'like', '%'.$queryFilter->query('term').'%')
+        ->orWhere('last_name', 'like', '%'.$queryFilter->query('term').'%')
+        ->orWhere('rif_ci', '>', $queryFilter->query('term'))
+        ->get();
       }
      return $search;
     }
@@ -218,7 +229,13 @@ class PersonRepository  {
       if($queryFilter->query('term') === null) {
         $search = $this->model->query()->where('id', '!=', $queryFilter->query('id'))->where('type_person', 1)->paginate($queryFilter->query('perPage'));
       } else {
-        $search = $this->model->where('id', '!=', $queryFilter->query('id'))->where('type_person', 1)->where('name', 'like', '%'.$queryFilter->query('term').'%')->paginate($queryFilter->query('perPage'));
+        $search = $this->model->where('id', '!=', $queryFilter->query('id'))
+        ->where('type_person', 1)
+        ->where('name', 'like', '%'.$queryFilter->query('term').'%')
+        ->where('last_name', 'like', '%'.$queryFilter->query('term').'%')
+        ->orWhere('passport', '>', $queryFilter->query('term'))
+        ->orWhere('rif_ci', '>', $queryFilter->query('term'))
+        ->paginate($queryFilter->query('perPage'));
       }
      return $search;
     }

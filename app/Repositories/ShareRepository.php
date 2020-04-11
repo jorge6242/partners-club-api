@@ -189,14 +189,99 @@ class ShareRepository  {
      * @param  object $queryFilter
     */
     public function search($queryFilter) {
-      $search;
       if($queryFilter->query('term') === null) {
-        $search = $this->model->all();  
+        return  $this->model->with([
+          'fatherShare' => function($query){
+          $query->select('id', 'share_number'); 
+          }, 
+          'partner' => function($query){
+          $query->select('id', 'name', 'last_name'); 
+          }, 
+          'titular' => function($query){
+          $query->select('id', 'name', 'last_name'); 
+          },
+          'paymentMethod' => function($query){
+          $query->select('id', 'description'); 
+          }, 
+          'shareType' => function($query){
+          $query->select('id', 'description', 'code'); 
+          }, 
+     ])->paginate(8);  
       } else {
-        $search = $this->model->where('description', 'like', '%'.$queryFilter->query('term').'%')->paginate($queryFilter->query('perPage'));
+        $search = $this->model->query()->with([
+          'fatherShare' => function($query){
+          $query->select('id', 'share_number'); 
+          }, 
+          'partner' => function($query){
+          $query->select('id', 'name', 'last_name'); 
+          }, 
+          'titular' => function($query){
+          $query->select('id', 'name', 'last_name'); 
+          },
+          'paymentMethod' => function($query){
+          $query->select('id', 'description'); 
+          }, 
+          'shareType' => function($query){
+          $query->select('id', 'description', 'code'); 
+          }, 
+     ]);
+        $search->where('share_number', 'like', '%'.$queryFilter->query('term').'%');
+        $fathers = $this->model->where('father_share_id', '>',0)->where('share_number', 'like', '%'.$queryFilter->query('term').'%')->get();
+        if(count($fathers)) {
+          foreach ($fathers as $key => $value) {
+            $search->orWhere('father_share_id', $value->id);
+           }
+        }
+
+        $persons = $this->personModel->query()->where('isPartner', 1)->where('name', 'like', '%'.$queryFilter->query('term').'%')->get();
+        if(count($persons)) {
+          foreach ($persons as $key => $value) {
+            $search->orWhere('id_persona', $value->id);
+           }
+        }
+
+        if(count($persons)) {
+          foreach ($persons as $key => $value) {
+            $search->orWhere('id_titular_persona', $value->id);
+           }
+        }
+        return $search->paginate(8);
       }
-     return $search;
     }
+
+            /**
+     * get banks by query params
+     * @param  object $queryFilter
+    */
+    public function singleSearch($queryFilter) {
+      if($queryFilter->query('term') === null) {
+        return  $this->model->get();  
+      } else {
+        $search = $this->model->query();
+        $search->where('share_number', 'like', '%'.$queryFilter->query('term').'%');
+        $fathers = $this->model->where('father_share_id', '>',0)->where('share_number', 'like', '%'.$queryFilter->query('term').'%')->get();
+        if(count($fathers)) {
+          foreach ($fathers as $key => $value) {
+            $search->orWhere('father_share_id', $value->id);
+           }
+        }
+
+        $persons = $this->personModel->query()->where('isPartner', 1)->where('name', 'like', '%'.$queryFilter->query('term').'%')->get();
+        if(count($persons)) {
+          foreach ($persons as $key => $value) {
+            $search->orWhere('id_persona', $value->id);
+           }
+        }
+
+        if(count($persons)) {
+          foreach ($persons as $key => $value) {
+            $search->orWhere('id_titular_persona', $value->id);
+           }
+        }
+        return $search->get();
+      }
+    }
+
 
     public function getByPartner($id) {
       return $this->model->query()->where('id_persona', $id)->with(['titular', 'facturador', 'fiador'])->with([ 'tarjetaPrimaria' => function($query){
@@ -216,13 +301,64 @@ class ShareRepository  {
      * @param  object $queryFilter
     */
     public function searchToAssign($queryFilter) {
-      $search;
       if($queryFilter->query('term') === null) {
-        $search = $this->model->all();  
+        return  $this->model->with([
+          'fatherShare' => function($query){
+          $query->select('id', 'share_number'); 
+          }, 
+          'partner' => function($query){
+          $query->select('id', 'name', 'last_name'); 
+          }, 
+          'titular' => function($query){
+          $query->select('id', 'name', 'last_name'); 
+          },
+          'paymentMethod' => function($query){
+          $query->select('id', 'description'); 
+          }, 
+          'shareType' => function($query){
+          $query->select('id', 'description', 'code'); 
+          }, 
+     ])->get();  
       } else {
-        $search = $this->model->where('share_number', 'like', '%'.$queryFilter->query('term').'%')->get();
+        $search = $this->model->query()->with([
+          'fatherShare' => function($query){
+          $query->select('id', 'share_number'); 
+          }, 
+          'partner' => function($query){
+          $query->select('id', 'name', 'last_name'); 
+          }, 
+          'titular' => function($query){
+          $query->select('id', 'name', 'last_name'); 
+          },
+          'paymentMethod' => function($query){
+          $query->select('id', 'description'); 
+          }, 
+          'shareType' => function($query){
+          $query->select('id', 'description', 'code'); 
+          }, 
+     ]);
+        $search->where('share_number', 'like', '%'.$queryFilter->query('term').'%');
+        $fathers = $this->model->where('father_share_id', '>',0)->where('share_number', 'like', '%'.$queryFilter->query('term').'%')->get();
+        if(count($fathers)) {
+          foreach ($fathers as $key => $value) {
+            $search->orWhere('father_share_id', $value->id);
+           }
+        }
+
+        $persons = $this->personModel->query()->where('isPartner', 1)->where('name', 'like', '%'.$queryFilter->query('term').'%')->get();
+        if(count($persons)) {
+          foreach ($persons as $key => $value) {
+            $search->orWhere('id_persona', $value->id);
+           }
+        }
+
+        if(count($persons)) {
+          foreach ($persons as $key => $value) {
+            $search->orWhere('id_titular_persona', $value->id);
+           }
+        }
+        return $search->get();
       }
-     return $search;
     }
 
     public function getListByPartner($id) {

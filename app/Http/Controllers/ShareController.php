@@ -172,4 +172,22 @@ class ShareController extends Controller
             ]);
         }
     }
+
+
+            /**
+     * Get the specified resource by search.
+     *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function singleSearch(Request $request) {
+        $bank = $this->service->singleSearch($request);
+        if($bank) {
+            return response()->json([
+                'success' => true,
+                'data' => $bank
+            ]);
+        }
+    }
 }

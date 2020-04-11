@@ -9,10 +9,15 @@ use App\Repositories\MenuItemRoleRepository;
 
 class MenuItemController extends Controller
 {
-    public function __construct(MenuItem $model, Menu $menuModel)
+    public function __construct(
+        MenuItem $model, 
+        Menu $menuModel,
+        MenuItemRoleRepository $menuItemRoleRepository
+        )
 	{
 		$this->model = $model;
 		$this->menuModel = $menuModel;
+		$this->menuItemRoleRepository = $menuItemRoleRepository;
     }
     // /**
     //  * Display a listing of the resource.
@@ -109,6 +114,7 @@ class MenuItemController extends Controller
             'order',
             'enabled',
             'menu_id',
+            'menu_item_icon_id',
             ])->where('id',$id)->with('roles')->first();
         if($data) {
             return response()->json([

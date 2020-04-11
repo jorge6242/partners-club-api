@@ -144,9 +144,11 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/transaction-type-search', 'TransactionTypeController@search');
 
         Route::resource('/share', 'ShareController');
+        Route::get('/share-search', 'ShareController@search');
         Route::get('/share-by-partner/{id}', 'ShareController@getByPartner');
         Route::get('/share-filter', 'ShareController@filter');
         Route::get('/share-filter-report', 'ShareController@filterReport');
+        Route::get('/share-single-search', 'ShareController@singleSearch');
 
         Route::resource('/card-person', 'CardPersonController');
         Route::get('/card-person-statistics', 'CardPersonController@getCardStatistics');

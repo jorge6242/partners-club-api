@@ -94,6 +94,7 @@ class AccessControlService {
 				$status = $status - 8;
 			}
 			$request['guest_id'] = $request['guest_id'];
+			$request['isPartner'] = 3;
 			$request['status'] = $status;
 			$this->repository->create($request);
 			return $message;
