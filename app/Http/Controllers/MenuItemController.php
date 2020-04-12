@@ -38,7 +38,11 @@ class MenuItemController extends Controller
             'enabled',
             'menu_id',
             'menu_item_icon_id',
-            )->with(['main', 'father', 'icons'])->paginate($request->query('perPage'));
+            )->with(['main', 'father'])
+            ->orderBy('menu_id', 'ASC')
+            ->orderBy('parent', 'ASC')
+            ->orderBy('order', 'ASC')
+            ->paginate($request->query('perPage'));
         return response()->json([
             'success' => true,
             'data' => $data
