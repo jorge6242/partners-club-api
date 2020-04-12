@@ -36,7 +36,9 @@ class MenuItemController extends Controller
             'parent',
             'order',
             'enabled',
-            'menu_id')->with(['main','father'])
+            'menu_id',
+            'menu_item_icon_id',
+            )->with(['main','father', 'icons'])
             ->orderBy('menu_id', 'ASC')
             ->orderBy('parent', 'ASC')
             ->orderBy('order', 'ASC')
