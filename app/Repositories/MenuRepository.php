@@ -64,7 +64,7 @@ class MenuRepository  {
       if(!$menu) {
         return [];
       }
-      $menuItems = $menu->items()->with(['icons'])->get();
+      $menuItems = $menu->items()->with(['icons'])->orderBy('parent', 'ASC')->orderBy('order', 'ASC')->get();
       $arrayMenus = array();
       foreach ($menuItems as $key => $value) {
         $userRoles = $value->roleMenu()->get();
