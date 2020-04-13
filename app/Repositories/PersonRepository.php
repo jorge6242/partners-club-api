@@ -38,6 +38,7 @@ class PersonRepository  {
         'sports',
         'lockers',
         'company',
+        'relationship',
         ])->first();
       $person->picture = url('storage/partners/'.$person->picture);
       return $person;

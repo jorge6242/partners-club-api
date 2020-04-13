@@ -10,6 +10,7 @@ use App\Repositories\PersonSportRepository;
 use App\Repositories\PersonLockerRepository;
 use App\Repositories\PersonExceptionRepository;
 use App\Repositories\ShareRepository;
+use App\Repositories\PersonRelationRepository;
 use Illuminate\Http\Request;
 
 class PersonService {
@@ -21,7 +22,8 @@ class PersonService {
 		PersonSportRepository $personSportRepository,
 		PersonLockerRepository $personLockerRepository,
 		PersonExceptionRepository $personExceptionRepository,
-		ShareRepository $shareRepository
+		ShareRepository $shareRepository,
+		PersonRelationRepository $personRelationRepository
 		) {
 		$this->person = $person;
 		$this->personProfessionRepository = $personProfessionRepository;
@@ -30,6 +32,7 @@ class PersonService {
 		$this->personLockerRepository = $personLockerRepository;
 		$this->personExceptionRepository = $personExceptionRepository;
 		$this->shareRepository = $shareRepository;
+		$this->personRelationRepository = $personRelationRepository;
 	}
 
 	public function index($perPage) {
@@ -61,7 +64,7 @@ class PersonService {
 		if ($this->person->checkPerson($request['rif_ci'])) {
             return response()->json([
                 'success' => false,
-                'message' => 'Person already exist'
+                'message' => 'Person Existe!'
             ])->setStatusCode(400);
 		}
 		$image = $request['picture'];
@@ -71,7 +74,17 @@ class PersonService {
 		} else {
 			$request['picture'] = "partner-empty.png";
 		}
+
 		$response = $this->person->create($request);
+		if($request['isPartner'] && $request['isPartner'] === 2){
+			$attr = [ 
+				'base_id' =>  $request['base_id'], 
+				'related_id' =>  $response->id, 
+				'relation_type_id' =>  $request['relation_type_id'],
+				'status' =>  1,
+			];
+			$this->personRelationRepository->create($attr);
+		}
 		if ($response) {
 			$partner = $this->person->checkPerson($request['rif_ci']);
 			$professions = json_decode($request['profession_list']);

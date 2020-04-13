@@ -200,6 +200,10 @@ class MenuItemController extends Controller
         $search = $this->model->all();  
       } else {
         $search = $this->model->where('description', 'like', '%'.$request->query('term').'%')
+        ->with(['main', 'father', 'icons'])
+        ->orderBy('menu_id', 'ASC')
+        ->orderBy('parent', 'ASC')
+        ->orderBy('order', 'ASC')
         ->paginate($request->query('perPage'));
       }
         if($search) {

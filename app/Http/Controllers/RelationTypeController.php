@@ -25,6 +25,20 @@ class RelationTypeController extends Controller
         ]);
     }
 
+      /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getList()
+    {
+        $response = $this->service->getList();
+        return response()->json([
+            'success' => true,
+            'data' => $response
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      *

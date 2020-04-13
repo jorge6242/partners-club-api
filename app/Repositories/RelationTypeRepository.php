@@ -26,6 +26,10 @@ class RelationTypeRepository  {
       return $this->model->all();
     }
 
+    public function getList() {
+      return $this->model->all();
+    }
+
     public function delete($id) {
      return $this->model->find($id)->delete();
     }

@@ -46,6 +46,7 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/gender-search', 'GenderController@search');
 
         Route::resource('/relation-type', 'RelationTypeController');
+        Route::get('/relation-type-list', 'RelationTypeController@getList');
         Route::get('/relation-type-search', 'RelationTypeController@search');
 
         Route::resource('/role', 'RoleController');
