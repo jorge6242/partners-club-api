@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Person;
+use App\Share;
 use App\PersonRelation;
 use App\Repositories\ShareRepository;
 use App\Repositories\RelationTypeRepository;
@@ -19,7 +20,8 @@ class PersonRepository  {
       PersonRelationRepository $personRelationRepository,
       RelationTypeRepository $relationTypeRepository,
       ShareRepository $shareRepository,
-      AccessControlRepository $accessControlRepository
+      AccessControlRepository $accessControlRepository,
+      Share $shareModel
       )
       {
       $this->model = $model;
@@ -27,6 +29,7 @@ class PersonRepository  {
       $this->relationTypeRepository = $relationTypeRepository;
       $this->shareRepository = $shareRepository;
       $this->accessControlRepository = $accessControlRepository;
+      $this->shareModel = $shareModel;
     }
 
     public function find($id) {
@@ -92,7 +95,26 @@ class PersonRepository  {
       if($queryFilter->query('term') === null) {
         $search = $this->model->all();
       } else {
-        $search = $this->model->where('name', 'like', '%'.$queryFilter->query('term').'%')->get();
+        $searchQuery = trim($queryFilter->query('term'));
+        $requestData = ['name', 'last_name', 'rif_ci'];
+        $this->share = $queryFilter->query('term');
+        $search = $this->model->with('shares')->where(function($q) use($requestData, $searchQuery) {
+                    foreach ($requestData as $field) {
+                      $q->orWhere($field, 'like', "{$searchQuery}%");
+                    }
+                    $persons = $this->shareModel->query()->where('share_number','like', $this->share.'%')->get();
+                    if(count($persons)) {
+                      foreach ($persons as $key => $value) {
+                        $q->orWhere('id', $value->id);
+                      }
+                    }
+        })->whereIn('isPartner', [1,2])->paginate(8);
+
+        foreach ($search as $key => $value) {
+          unset($search[$key]->shares);
+          $search[$key]->shares = $this->parseShares($value->shares()->get());
+        }
+
       }
      return $search;
     }
@@ -474,11 +496,18 @@ class PersonRepository  {
       if($queryFilter->query('term') === null) {
         $search = $this->model->query()->where('type_person', $queryFilter->query('typePerson'))->get();
       } else {
-        $search = $this->model->where('type_person', $queryFilter->query('typePerson'))
-        ->where('name', 'like', $queryFilter->query('term').'%')
-        ->orWhere('last_name', 'like', $queryFilter->query('term').'%')
-        ->orWhere('rif_ci', 'like', $queryFilter->query('term').'%')
-        ->get();
+        $searchQuery = trim($queryFilter->query('term'));
+        $requestData = ['name', 'last_name', 'rif_ci'];
+        $typePerson =  $queryFilter->query('typePerson') === "3" ? [1,2] : [(int)$queryFilter->query('typePerson')];
+        $search = $this->model->where(function($q) use($requestData, $searchQuery) {
+                    foreach ($requestData as $field)
+                      $q->orWhere($field, 'like', "{$searchQuery}%");
+                  })->whereIn('type_person', $typePerson)->get();
+        // $search = $this->model->where('type_person', $queryFilter->query('typePerson'))
+        // ->where('name', 'like', $queryFilter->query('term').'%')
+        // ->orWhere('last_name', 'like', $queryFilter->query('term').'%')
+        // ->orWhere('rif_ci', 'like', $queryFilter->query('term').'%')
+        // ->get();
       }
      return $search;
     }
