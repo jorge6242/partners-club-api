@@ -105,7 +105,7 @@ class PersonRepository  {
                     $persons = $this->shareModel->query()->where('share_number','like', $this->share.'%')->get();
                     if(count($persons)) {
                       foreach ($persons as $key => $value) {
-                        $q->orWhere('id', $value->id);
+                        $q->orWhere('id', $value->id_persona);
                       }
                     }
         })->whereIn('isPartner', [1,2])->paginate(8);

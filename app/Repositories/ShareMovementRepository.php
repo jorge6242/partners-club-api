@@ -3,13 +3,24 @@
 namespace App\Repositories;
 
 use App\ShareMovement;
+use App\Share;
+use App\Person;
+use App\TransactionType;
 
 class ShareMovementRepository  {
   
     protected $post;
 
-    public function __construct(ShareMovement $model) {
+    public function __construct(
+      ShareMovement $model,
+      Share $shareModel,
+      Person $personModel,
+      TransactionType $transactionTypeModel
+      ) {
       $this->model = $model;
+      $this->shareModel = $shareModel;
+      $this->personModel = $personModel;
+      $this->transactionTypeModel = $transactionTypeModel;
     }
 
     public function find($id) {
@@ -80,7 +91,58 @@ class ShareMovementRepository  {
       if($queryFilter->query('term') === null) {
         $search = $this->model->all();  
       } else {
-        $search = $this->model->where('description', 'like', '%'.$queryFilter->query('term').'%')->paginate($queryFilter->query('perPage'));
+        $searchQuery = trim($queryFilter->query('term'));
+        $requestData = ['description'];
+        $this->share = $queryFilter->query('term');
+        $search = $this->model->with([
+          'share' => function($query){
+              $query->select('id', 'share_number'); 
+          }, 
+          'transaction' => function($query){
+              $query->select('id', 'description');
+          }, 
+          'partner' => function($query){
+              $query->select('id', 'name', 'last_name');
+          },
+          'titular' => function($query){
+            $query->select('id', 'name', 'last_name');
+        }
+       ])->where(function($q) use($requestData, $searchQuery) {
+            foreach ($requestData as $field) {
+              $q->orWhere($field, 'like', "{$searchQuery}%");
+            }
+
+            $shares = $this->shareModel->query()->where('share_number','like', '%'.$this->share.'%')->get();     
+            if(count($shares)) {
+              foreach ($shares as $key => $value) {
+                $q->orWhere('share_id', $value->id);
+              }
+            }
+
+            $personData = ['name', 'last_name'];
+            $persons = $this->personModel->query()->where(function($q) use($personData, $searchQuery) {
+              foreach ($personData as $field) {
+                $q->orWhere($field, 'like', "%{$searchQuery}%");
+              }
+            })->get();
+            if(count($persons)) {
+              foreach ($persons as $key => $value) {
+                $q->orWhere('people_id', $value->id);
+              }
+            }
+            if(count($persons)) {
+              foreach ($persons as $key => $value) {
+                $q->orWhere('id_titular_persona', $value->id);
+              }
+            }
+
+            $transactionTypes = $this->transactionTypeModel->query()->where('description','like', "%{$searchQuery}%")->get();
+            if(count($transactionTypes)) {
+              foreach ($transactionTypes as $key => $value) {
+                $q->orWhere('transaction_type_id', $value->id);
+              }
+            }
+        })->paginate(8);
       }
      return $search;
     }

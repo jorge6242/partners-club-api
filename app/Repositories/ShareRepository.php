@@ -284,7 +284,7 @@ class ShareRepository  {
 
 
     public function getByPartner($id) {
-      return $this->model->query()->where('id_persona', $id)->with(['titular', 'facturador', 'fiador'])->with([ 'tarjetaPrimaria' => function($query){
+      return $this->model->query()->where('id_persona', $id)->with(['titular', 'facturador', 'fiador','paymentMethod'])->with([ 'tarjetaPrimaria' => function($query){
         $query->with(['bank','card']);
         }
         ])->with([ 'tarjetaSecundaria' => function($query){
