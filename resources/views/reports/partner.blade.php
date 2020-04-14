@@ -119,7 +119,7 @@
                     <tr>
                         <td colspan="1">Nacionalidad: Mexicana</td> 
                         <td colspan="1">Nacimiento: {{ $data->birth_date }}</td>
-                        <td colspan="2">Estado Civil: {{ $data->maritalStatus->description }}</td>
+                        <td colspan="2">Estado Civil: {{ $data->maritalStatus ? $data->maritalStatus->description : '' }}</td>
                     </tr>
 
                     <tr>
@@ -135,7 +135,7 @@
                         <td colspan="1">Ciudad: {{ $data->city }}</td>  
                         <td colspan="1">Estado: {{ $data->state }}</td> 
                         <td colspan="1">Cod Posta: {{ $data->postal_code }}</td>  
-                        <td colspan="1">Pais : {{ $data->country->description }}</td> 
+                        <td colspan="1">Pais : {{ $data->country ? $data->country->description : '' }}</td> 
                     </tr>
 
                     <tr>
@@ -183,7 +183,7 @@
                   </tr> --}}
             </table>
             @foreach ($data->familyMembers as $element)
-            <div style="margin: 10px 0px 10px 0px;">{{ $element->relationType->description }}</div>
+            <div style="margin: 10px 0px 10px 0px;">{{ $element->relationType ? $element->relationType->description : '' }}</div>
             <table width="100%" cellspacing="0" border="1">
                     <tr>
                         <td>Tipo: {{ $data->type_person === 1 ? 'Natural' : 'Empresa' }}</td> 
@@ -203,7 +203,7 @@
                     <tr>
                         <td colspan="1">Nacionalidad: Mexicana</td> 
                         <td colspan="1">Nacimiento: {{ $element->birth_date }}</td>
-                        <td colspan="2">Estado Civil: {{ $element->maritalStatus->description }}</td>
+                        <td colspan="2">Estado Civil: {{ $element->maritalStatus ? $element->maritalStatus->description : '' }}</td>
                     </tr>
 
                     <tr>
@@ -219,7 +219,7 @@
                         <td colspan="1">Ciudad: {{ $element->city }}</td>  
                         <td colspan="1">Estado: {{ $element->state }}</td> 
                         <td colspan="1">Cod Posta: {{ $element->postal_code }}</td>  
-                        <td colspan="1">Pais : {{ $element->country->description }}</td> 
+                        <td colspan="1">Pais : {{ $element->country ? $element->country->description : '' }}</td> 
                     </tr>
 
                     <tr>
