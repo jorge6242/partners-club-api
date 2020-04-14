@@ -36,7 +36,7 @@ class ShareMovementRepository  {
     }
     
     public function all($perPage) {
-      return $this->model->query()->with([
+      $shareMovements = $this->model->query()->with([
         'share' => function($query){
             $query->select('id', 'share_number'); 
         }, 
@@ -48,8 +48,16 @@ class ShareMovementRepository  {
         },
         'titular' => function($query){
           $query->select('id', 'name', 'last_name');
-      }
-     ])->paginate($perPage);
+      },
+      'currency' => function($query){
+        $query->select('id', 'description');
+    }
+     ])->orderBy('created', 'DESC')->paginate($perPage);
+     
+     foreach ($shareMovements as $key => $value) {
+      $shareMovements[$key]->number_sale_price = number_format((float)$shareMovements[$key]->number_sale_price,2);
+     }
+     return $shareMovements;
     }
 
     public function getList() {
@@ -106,7 +114,10 @@ class ShareMovementRepository  {
           },
           'titular' => function($query){
             $query->select('id', 'name', 'last_name');
-        }
+        },
+        'currency' => function($query){
+          $query->select('id', 'description');
+      }
        ])->where(function($q) use($requestData, $searchQuery) {
             foreach ($requestData as $field) {
               $q->orWhere($field, 'like', "{$searchQuery}%");
@@ -142,8 +153,11 @@ class ShareMovementRepository  {
                 $q->orWhere('transaction_type_id', $value->id);
               }
             }
-        })->paginate(8);
+        })->orderBy('created', 'DESC')->paginate(8);
       }
+      foreach ($search as $key => $value) {
+        $search[$key]->number_sale_price = number_format((float)$search[$key]->number_sale_price,2);
+       }
      return $search;
     }
 
