@@ -23,7 +23,7 @@ class CardPersonService {
 		if($checkCard) {
 			return response()->json([
                 'success' => false,
-                'message' => 'Tarjeta '.$request['orderDetail'].' ha sido tomada'
+                'message' => 'Tarjeta '.$request['orderDetail'].' ha sido registrada'
             ])->setStatusCode(400);
 		}
 		$body = array('card_people'.$request["order"] => $cardPerson->id);
