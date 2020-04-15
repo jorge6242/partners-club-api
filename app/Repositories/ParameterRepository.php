@@ -66,7 +66,7 @@ class ParameterRepository  {
     public function getLogo() {
       $parameter = $this->model->where('parameter', 'CLIENT_LOGO')->first();
       if($parameter) {
-        $image = url('images/'.$parameter->description);
+        $image = url('images/'.$parameter->value);
         return array( 'image' => $image);
       }
       return array( 'image' => '');
