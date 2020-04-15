@@ -19,6 +19,13 @@ class CardPersonService {
 
 	public function create($request) {
 		$cardPerson = $this->repository->create($request);
+		$checkCard = $this->shareRepository->checkOrderCard($request['share'], 'card_people'.$request["order"]);
+		if($checkCard) {
+			return response()->json([
+                'success' => false,
+                'message' => 'Tarjeta '.$request['orderDetail'].' ha sido tomada'
+            ])->setStatusCode(400);
+		}
 		$body = array('card_people'.$request["order"] => $cardPerson->id);
 		$this->shareRepository->update($request['share'], $body);
 		return $cardPerson;

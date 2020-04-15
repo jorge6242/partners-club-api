@@ -372,4 +372,8 @@ class ShareRepository  {
         }
         ])->first();
     }
+
+    public function checkOrderCard($share, $column) {
+      return $this->model->where('id', $share)->where($column, '>',0)->first();
+    }
 }

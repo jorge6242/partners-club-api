@@ -40,6 +40,20 @@ class ParameterController extends Controller
         ]);
     }
 
+        /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getLogo(Request $request)
+    {
+        $data = $this->service->getLogo();
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      *

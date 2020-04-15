@@ -47,5 +47,9 @@ class ParameterService {
 	*/
 	public function search($queryFilter) {
 		return $this->repository->search($queryFilter);
- 	}
+	 }
+	 
+	public function getLogo() {
+      return $this->repository->getLogo();
+	}
 }

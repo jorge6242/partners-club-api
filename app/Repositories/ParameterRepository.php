@@ -62,4 +62,13 @@ class ParameterRepository  {
     public function findByParameter($parameter) {
       return $this->model->query()->select(['id', 'description', 'parameter', 'value'])->where('parameter', $parameter)->first();
     }
+
+    public function getLogo() {
+      $parameter = $this->model->where('parameter', 'CLIENT_LOGO')->first();
+      if($parameter) {
+        $image = url('images/'.$parameter->description);
+        return array( 'image' => $image);
+      }
+      return array( 'image' => '');
+    }
 }
