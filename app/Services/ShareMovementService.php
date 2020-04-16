@@ -47,7 +47,7 @@ class ShareMovementService {
 		return $this->model->search($queryFilter);
 	 }
 	 
-	public function getLastMovement(int $share) {
+	public function getLastMovement($share) {
 		$data = $this->shareRepository->findByShare($share);
 		return $this->model->getLastMovement($data->id);
 	}
