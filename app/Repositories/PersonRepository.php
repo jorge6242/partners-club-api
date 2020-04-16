@@ -21,7 +21,8 @@ class PersonRepository  {
       RelationTypeRepository $relationTypeRepository,
       ShareRepository $shareRepository,
       AccessControlRepository $accessControlRepository,
-      Share $shareModel
+      Share $shareModel,
+      PersonRelation $personRelationModel
       )
       {
       $this->model = $model;
@@ -30,6 +31,7 @@ class PersonRepository  {
       $this->shareRepository = $shareRepository;
       $this->accessControlRepository = $accessControlRepository;
       $this->shareModel = $shareModel;
+      $this->personRelationModel = $personRelationModel;
     }
 
     public function find($id) {
@@ -271,22 +273,38 @@ class PersonRepository  {
     */
     public function searchFamilyByPerson($queryFilter) {
       $search;
-      if($queryFilter->query('term') === null) {
-        $person = $this->model->query()->where('id', $queryFilter->query('id'))->with('family')->first();
-        $familys = $person->family()->get();
-        foreach ( $familys as $key => $family) {
-          $currentPerson = PersonRelation::query()->where('base_id', $queryFilter->query('id'))->where('related_id', $family->id)->first();
-          $relation = $this->relationTypeRepository->find($currentPerson->relation_type_id);
-          $familys[$key]->relationType = $relation;
-          $familys[$key]->id = $currentPerson->id;
-          $familys[$key]->status = $currentPerson->status;
+      if($queryFilter->query('term') !== '') {
+        $data = \DB::select("SELECT r.id, r.base_id, r.status, r.related_id   , p.name, p.last_name, p.rif_ci, p.card_number, r.relation_type_id,  t.description 
+                            FROM person_relations r, people p, relation_types t
+                            WHERE r.base_id=".$queryFilter->query('id')."
+                            AND r.related_id=p.id 
+                            AND t.id=r.relation_type_id");
+        if(count($data)) {
+          return $data;
         }
-       return $person->family = $familys;
-      } else {
-        $search = $this->model->where('id', '!=', 1)->where('type_person', 1)->where('name', 'like', '%'.$queryFilter->query('term').'%')->paginate($queryFilter->query('perPage'));
-      }
-     return $search;
+        return [];
+        // return $this->personRelationModel->where('base_id',$queryFilter->query('id'))->with([
+        //   'relationType',
+        //   'person'
+        //   ])->get();
+      // return  \DB::table('person_relations r , people p , ')
+      // ->select()
+      // ->join('people', 'people.id', '=', 'person_relations.related_id')
+      // ->join('relation_types', 'relation_types.id', '=', 'person_relations.relation_type_id')
+      // ->where('person_relations.base_id ',1)->get();
+      //   $person = $this->model->query()->where('id', $queryFilter->query('id'))->with('family')->first();
+      //   $familys = $person->family()->get();
+      //   foreach ( $familys as $key => $family) {
+      //     $currentPerson = PersonRelation::query()->where('base_id', $queryFilter->query('id'))->where('related_id', $family->id)->first();
+      //     $relation = $this->relationTypeRepository->find($currentPerson->relation_type_id);
+      //     $familys[$key]->relationType = $relation;
+      //     $familys[$key]->id = $currentPerson->id;
+      //     $familys[$key]->status = $currentPerson->status;
+      //   }
+      //  return $person->family = $familys;
     }
+    return [];
+  }
 
     public function assignPerson($attributes) {
       return $this->personRelationRepository->create($attributes);

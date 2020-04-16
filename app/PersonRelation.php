@@ -20,4 +20,12 @@ class PersonRelation extends Model
     {
         return $this->hasOne('App\RelationType', 'id', 'relation_type_id');
     }
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function person()
+    {
+        return $this->hasOne('App\Person', 'id', 'related_id');
+    }
 }
