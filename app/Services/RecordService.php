@@ -29,6 +29,27 @@ class RecordService {
 		// $file = -$other->file('file1')->getClientOriginalName();
 		// $other->file('file1')->move(public_path('storage/partners/') . $file);
 		// $request['file1'] = 'test';
+
+
+// if ($this->repository->checkRecord($request['description'])) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Record already exist'
+        //     ])->setStatusCode(400);
+		// }
+		// if ($files = $other['file1']) {
+		// 	$nombre = $files->getClientOriginalName();
+		// 	// $destinationPath = public_path('storage/doc/'); // upload path
+		// 	// $profilefile = date('YmdHis') . "." . $files->getClientOriginalExtension();
+		// 	// $files->move($destinationPath, $profilefile);
+		// 	// $insert['file'] = "$profilefile";
+		// 	\Storage::disk('local')->put('file.txt', 'Contents');
+		//  }
+		// $file = -$other->file('file1')->getClientOriginalName();
+		// $other->file('file1')->move(public_path('storage/partners/') . $file);
+		// $request['file1'] = 'test';
+		// return '';
+
 		return $this->repository->create($request);
 	}
 

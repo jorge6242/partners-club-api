@@ -4,13 +4,20 @@ namespace App\Services;
 
 use App\Repositories\ShareMovementRepository;
 use App\Repositories\ShareRepository;
+use App\Repositories\PersonRepository;
 use Illuminate\Http\Request;
 
 class ShareMovementService {
 
-	public function __construct(ShareMovementRepository $model, ShareRepository $shareRepository) {
+	public function __construct(
+		ShareMovementRepository $model, 
+		ShareRepository $shareRepository,
+		PersonRepository $personRepository
+
+		) {
 		$this->model = $model ;
 		$this->shareRepository = $shareRepository ;
+		$this->personRepository = $personRepository ;
 	}
 
 	public function index($perPage) {
@@ -22,8 +29,11 @@ class ShareMovementService {
 	}
 
 	public function create($request) {
+		//$oldPersons = $this->shareRepostory->findByShareId($request['share_id']);
 		$body = array('id_persona' => $request['people_id'], 'id_titular_persona' => $request['id_titular_persona'] );
 		$this->shareRepository->update($request['share_id'], $body);
+		$attr = array('isPartner' => 1);
+		$this->personRepository->update($request['people_id'],$attr);
 		return $this->model->create($request);
 	}
 
