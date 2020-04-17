@@ -279,12 +279,10 @@ class PersonController extends Controller
      */
     public function searchFamilyByPerson(Request $request) {
         $person = $this->service->searchFamilyByPerson($request);
-        if($person) {
             return response()->json([
                 'success' => true,
                 'data' => $person
             ]);
-        }
     }
 
         /**

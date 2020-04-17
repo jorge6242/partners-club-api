@@ -272,17 +272,14 @@ class PersonRepository  {
      * @param  object $queryFilter
     */
     public function searchFamilyByPerson($queryFilter) {
-      $search;
-      if($queryFilter->query('term') !== '') {
-        $data = \DB::select("SELECT r.id, r.base_id, r.status, r.related_id   , p.name, p.last_name, p.rif_ci, p.card_number, r.relation_type_id,  t.description 
-                            FROM person_relations r, people p, relation_types t
-                            WHERE r.base_id=".$queryFilter->query('id')."
-                            AND r.related_id=p.id 
-                            AND t.id=r.relation_type_id");
-        if(count($data)) {
-          return $data;
-        }
-        return [];
+       if($queryFilter->query('id') !== null) {
+        return \DB::select("SELECT r.id, r.base_id, r.status, r.related_id   , p.name, p.last_name, p.rif_ci, p.card_number, r.relation_type_id,  t.description 
+        FROM person_relations r, people p, relation_types t
+        WHERE r.base_id=".$queryFilter->query('id')."
+        AND r.related_id=p.id 
+        AND t.id=r.relation_type_id");
+       }
+       return [];
         // return $this->personRelationModel->where('base_id',$queryFilter->query('id'))->with([
         //   'relationType',
         //   'person'
@@ -302,8 +299,6 @@ class PersonRepository  {
       //     $familys[$key]->status = $currentPerson->status;
       //   }
       //  return $person->family = $familys;
-    }
-    return [];
   }
 
     public function assignPerson($attributes) {
