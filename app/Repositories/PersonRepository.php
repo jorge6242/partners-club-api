@@ -350,7 +350,7 @@ class PersonRepository  {
       $person = $this->model->query()->select('id', 'isPartner', 'name', 'last_name')->where('card_number', $cardNumber)->first();
       if($person && $person->isPartner == 2) {
         $partner = $this->personRelationRepository->findPartner($person->id);
-        $partner = $this->model->query()->select('id', 'card_number')->where('id', $partner->id)->first();
+        $partner = $this->model->query()->select('id', 'card_number')->where('id', $partner->base_id)->first();
         $cardNumber = $partner->card_number;
       }
       $person = $this->model->query()->select('id', 'name', 'last_name', 'card_number', 'picture')
