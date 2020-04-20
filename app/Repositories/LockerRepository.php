@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Locker;
+use App\PersonLocker;
 use App\LockerLocation;
 
 class LockerRepository  {
@@ -11,10 +12,12 @@ class LockerRepository  {
 
     public function __construct(
       Locker $model,
-      LockerLocation $lockerLocationModel
+      LockerLocation $lockerLocationModel,
+      PersonLocker $personLockerModel
       ) {
       $this->model = $model;
       $this->lockerLocationModel = $lockerLocationModel;
+      $this->personLockerModel = $personLockerModel;
     }
 
     public function find($id) {
@@ -88,6 +91,14 @@ class LockerRepository  {
         $lockerLocation = $this->lockerLocationModel->first();
         $lockerLocation = $lockerLocation->id;
       }
-      return $this->model->query()->select(['id', 'description', 'locker_location_id'])->where('locker_location_id',$id)->get();
+      $array = array();
+      $lockers = $this->model->query()->select(['id', 'description', 'locker_location_id'])->where('locker_location_id',$id)->get();
+      foreach ($lockers as $key => $value) {
+       $personLocker = $this->personLockerModel->where('locker_id',$value->id)->first();
+       if(!$personLocker) {
+         array_push($array,$value);
+       }
+      }
+      return $array;
     }
 }

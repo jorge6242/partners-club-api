@@ -132,11 +132,9 @@ class LockerController extends Controller
      */
     public function getByLocation(Request $request) {
         $data = $this->service->getByLocation($request['id']);
-        if($data) {
             return response()->json([
                 'success' => true,
                 'data' => $data
             ]);
-        }
     }
 }
