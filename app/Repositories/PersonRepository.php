@@ -45,10 +45,10 @@ class PersonRepository  {
         'company',
         'relationship',
         ])->first();
-      // if($person->picture !== null){
-      //   $person->picture = url('storage/partners/'.$person->picture);
-      // }
-      $person->relations = [];
+      if($person->picture !== null || $person->picture !== ''){
+        $person->picture = url('storage/partners/'.$person->picture);
+      }
+      
       if($person->isPartner === "2") {
         $relations = $this->personRelationModel->where('related_id', $person->id)->with(['base','relationType'])->get();
           foreach ($relations as $key => $value) {
@@ -57,6 +57,8 @@ class PersonRepository  {
             $relations[$key]->shares = $this->parseShares($partner->shares()->get());
         }
         $person->relations = $relations;
+      } else {
+        $person->relations = [];
       }
       return $person;
     }
