@@ -52,7 +52,7 @@ class RecordRepository  {
     }
   
     public function all($perPage) {
-      return $this->model->query()->select([
+      $records = $this->model->query()->select([
         'id',
         'description',
         'created',
@@ -71,6 +71,7 @@ class RecordRepository  {
             $query->select(['id', 'description']);
         },
         ])->paginate($perPage);
+      return $records;
     }
 
     public function getList() {
@@ -139,9 +140,11 @@ class RecordRepository  {
         },
         ])->where('people_id', $queryFilter->query('id'))->paginate($queryFilter->query('perPage'));
         foreach ($records as $key => $value) {
-          if($value->file1 !== '') {
-            $records[$key]->file1 = url('records/'.$value->file1);
-          }
+          if($value->file1 !== null) $records[$key]->file1 = url('records/'.$value->file1);
+          if($value->file2 !== null) $records[$key]->file2 = url('records/'.$value->file2);
+          if($value->file3 !== null) $records[$key]->file3 = url('records/'.$value->file3);
+          if($value->file4 !== null) $records[$key]->file4 = url('records/'.$value->file4);
+          if($value->file5 !== null) $records[$key]->file5 = url('records/'.$value->file5);
         }
      return $records;
     }

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddFieldRelationTypesTable extends Migration
+class AddFieldNoteTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class AddFieldRelationTypesTable extends Migration
      */
     public function up()
     {
-        // Schema::table('relation_types', function(Blueprint $table) {
-        //     $table->integer('item_order')->default(0);
-        // });
+        Schema::table('notes', function(Blueprint $table) {
+            $table->bigInteger('user_id')->nullable();
+        });
     }
 
     /**
@@ -25,8 +25,8 @@ class AddFieldRelationTypesTable extends Migration
      */
     public function down()
     {
-        // Schema::table('relation_types', function(Blueprint $table) {
-        //     $table->dropColumn('item_order');
-        // });
+        Schema::table('notes', function(Blueprint $table) {
+            $table->dropColumn('user_id');
+        });
     }
 }

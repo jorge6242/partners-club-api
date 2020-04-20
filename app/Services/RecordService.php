@@ -57,6 +57,7 @@ class RecordService {
             ])->setStatusCode(400);
 		}		
 		// $file = url('records/test9.docx');'
+		$request['user_id'] = auth()->user()->id;
 		$data = $this->repository->create($request);
 
 		if($request['exp1'] !== null) $this->updateFile($data->id, $request['exp1'], '1');

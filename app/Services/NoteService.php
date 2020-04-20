@@ -25,7 +25,8 @@ class NoteService {
                 'success' => false,
                 'message' => 'Record already exist'
             ])->setStatusCode(400);
-        }
+		}
+		$request['user_id'] = auth()->user()->id;
 		return $this->repository->create($request);
 	}
 

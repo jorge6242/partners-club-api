@@ -15,8 +15,8 @@ class Note extends Model
         'note_type_id',
         'subject',
         'is_sent',
+        'user_id',
     ];
-
 
     public function department()
     {

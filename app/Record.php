@@ -19,6 +19,7 @@ class Record extends Model
         'file5',
         'record_type_id',
         'people_id',
+        'user_id',
     ];
 
     /**
