@@ -45,7 +45,7 @@ class PersonRepository  {
         'company',
         'relationship',
         ])->first();
-      if($person->picture !== null || $person->picture !== ''){
+      if($person->picture && $person->picture !== null){
         $person->picture = url('storage/partners/'.$person->picture);
       }
       
