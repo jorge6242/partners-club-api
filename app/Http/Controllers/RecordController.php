@@ -48,9 +48,9 @@ class RecordController extends Controller
      */
     public function store(Request $request)
     {
-        $bankRequest = $request->all();
-        $bank = $this->service->create($bankRequest, $request);
-        return $bank;
+        $data = $request->all();
+        $data = $this->service->create($data);
+        return $data;
     }
 
     /**

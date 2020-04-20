@@ -46,6 +46,16 @@ class PersonRepository  {
         'relationship',
         ])->first();
       $person->picture = url('storage/partners/'.$person->picture);
+      $person->relations = [];
+      if($person->isPartner === "2") {
+        $relations = $this->personRelationModel->where('related_id', $person->id)->with(['base','relationType'])->get();
+          foreach ($relations as $key => $value) {
+            $partner = $value->base()->with('shares')->first();
+            $relations[$key]->id = $partner->id;
+            $relations[$key]->shares = $this->parseShares($partner->shares()->get());
+        }
+        $person->relations = $relations;
+      }
       return $person;
     }
 
@@ -277,7 +287,8 @@ class PersonRepository  {
         FROM person_relations r, people p, relation_types t
         WHERE r.base_id=".$queryFilter->query('id')."
         AND r.related_id=p.id 
-        AND t.id=r.relation_type_id");
+        AND t.id=r.relation_type_id
+        ORDER  BY t.item_order ASC");
        }
        return [];
         // return $this->personRelationModel->where('base_id',$queryFilter->query('id'))->with([
@@ -378,7 +389,8 @@ class PersonRepository  {
         FROM person_relations r, people p, relation_types t
         WHERE r.base_id=".$person->id."
         AND r.related_id=p.id 
-        AND t.id=r.relation_type_id");
+        AND t.id=r.relation_type_id
+        ORDER  BY t.item_order ASC");
 
         foreach ($familyMembers as $key => $value) {
           if($familyMembers[$key]->card_number === $card ) {

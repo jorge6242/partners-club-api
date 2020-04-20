@@ -14,7 +14,7 @@ class AddFieldRelationTypesTable extends Migration
     public function up()
     {
         Schema::table('relation_types', function(Blueprint $table) {
-            $table->integer('item_order')->nullable();
+            $table->integer('item_order')->default(0);
         });
     }
 

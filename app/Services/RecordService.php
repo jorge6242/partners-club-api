@@ -5,6 +5,9 @@ namespace App\Services;
 use App\Repositories\RecordRepository;
 use Illuminate\Http\Request;
 
+use Storage;
+use Carbon\Carbon;
+
 class RecordService {
 
 	public function __construct(RecordRepository $repository) {
@@ -19,38 +22,49 @@ class RecordService {
 		return $this->repository->getList();
 	}
 
-	public function create($request, $other) {
+	public function validateFile($file) {
+
+		$fileToParse = preg_replace('/^data:application\/\w+;base64,/', '', $file);
+		$ext = explode(';', $file)[0];
+		$ext = explode('/', $ext)[1];
+
+		$find = 'data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,';
+		$pos = strpos($file, $find);
+		if($pos !== false) {
+			$fileToParse = str_replace('data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,', '', $file);
+			$ext = 'docx';
+		}
+		$base64File = base64_decode($fileToParse);
+		
+		return (object)['ext' => $ext, 'content' => $base64File];
+	}
+
+	public function updateFile($id, $exp, $column) {
+		$date = Carbon::now();
+		$parseFile = $this->validateFile($exp);
+		$filename = $id.'-'.$column.'-'.$date->year.'.'.$parseFile->ext;
+		Storage::disk('records')->put($filename,$parseFile->content);
+		$attr = [ 'file'.$column => $filename];
+		$this->repository->update($id, $attr);
+	}
+	
+	public function create($request) {
+		
 		if ($this->repository->checkRecord($request['description'])) {
             return response()->json([
                 'success' => false,
                 'message' => 'Record already exist'
             ])->setStatusCode(400);
-		}
-		// $file = -$other->file('file1')->getClientOriginalName();
-		// $other->file('file1')->move(public_path('storage/partners/') . $file);
-		// $request['file1'] = 'test';
+		}		
+		// $file = url('records/test9.docx');'
+		$data = $this->repository->create($request);
 
-
-// if ($this->repository->checkRecord($request['description'])) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'Record already exist'
-        //     ])->setStatusCode(400);
-		// }
-		// if ($files = $other['file1']) {
-		// 	$nombre = $files->getClientOriginalName();
-		// 	// $destinationPath = public_path('storage/doc/'); // upload path
-		// 	// $profilefile = date('YmdHis') . "." . $files->getClientOriginalExtension();
-		// 	// $files->move($destinationPath, $profilefile);
-		// 	// $insert['file'] = "$profilefile";
-		// 	\Storage::disk('local')->put('file.txt', 'Contents');
-		//  }
-		// $file = -$other->file('file1')->getClientOriginalName();
-		// $other->file('file1')->move(public_path('storage/partners/') . $file);
-		// $request['file1'] = 'test';
-		// return '';
-
-		return $this->repository->create($request);
+		if($request['exp1'] !== null) $this->updateFile($data->id, $request['exp1'], '1');
+		if($request['exp2'] !== null) $this->updateFile($data->id, $request['exp2'], '2');
+		if($request['exp3'] !== null) $this->updateFile($data->id, $request['exp3'], '3');
+		if($request['exp4'] !== null) $this->updateFile($data->id, $request['exp4'], '4');
+		if($request['exp5'] !== null) $this->updateFile($data->id, $request['exp5'], '5');
+		return $data;
 	}
 
 	public function update($request, $id) {

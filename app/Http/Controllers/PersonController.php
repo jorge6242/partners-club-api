@@ -472,4 +472,18 @@ class PersonController extends Controller
             ]);
     }
 
+            /**
+     * Get the specified partner by card.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getInverseRelationById(Request $request) {
+        $data = $this->service->getInverseRelationById($request['id']);
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+    }
+
 }

@@ -15,7 +15,7 @@ class RecordRepository  {
     }
 
     public function find($id) {
-      return $this->model->find($id, [
+      $record = $this->model->query()->select([
         'description',
         'created',
         'days',
@@ -28,7 +28,19 @@ class RecordRepository  {
         'file5',
         'record_type_id',
         'people_id',
-    ]);
+    ])->where('id', $id)
+    ->with([
+      'type' => function($q){
+        $q->select('id', 'description');
+      }
+      ])
+    ->first();
+    if($record->file1 !== null) $record->file1 = url('records/'.$record->file1);
+    if($record->file2 !== null) $record->file2 = url('records/'.$record->file2);
+    if($record->file3 !== null) $record->file3 = url('records/'.$record->file3);
+    if($record->file4 !== null) $record->file4 = url('records/'.$record->file4);
+    if($record->file5 !== null) $record->file5 = url('records/'.$record->file5);
+    return $record;
     }
 
     public function create($attributes) {
@@ -107,7 +119,7 @@ class RecordRepository  {
     }
 
     public function getByPerson($queryFilter) {
-      return $this->model->query()->select([
+      $records = $this->model->query()->select([
         'id',
         'description',
         'created',
@@ -126,6 +138,12 @@ class RecordRepository  {
             $query->select(['id', 'description']);
         },
         ])->where('people_id', $queryFilter->query('id'))->paginate($queryFilter->query('perPage'));
+        foreach ($records as $key => $value) {
+          if($value->file1 !== '') {
+            $records[$key]->file1 = url('records/'.$value->file1);
+          }
+        }
+     return $records;
     }
 
     public function getBlockedRecord($id){
