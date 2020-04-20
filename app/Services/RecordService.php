@@ -69,6 +69,7 @@ class RecordService {
 	}
 
 	public function update($request, $id) {
+      $request['userupdate_id'] = auth()->user()->id;
       return $this->repository->update($id, $request);
 	}
 

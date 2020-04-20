@@ -16,6 +16,9 @@ class AddFieldRecordTable extends Migration
         Schema::table('records', function(Blueprint $table) {
             $table->bigInteger('user_id')->nullable();
         });
+        Schema::table('records', function(Blueprint $table) {
+            $table->bigInteger('userupdate_id')->nullable();
+        });
     }
 
     /**
@@ -27,6 +30,9 @@ class AddFieldRecordTable extends Migration
     {
         Schema::table('records', function(Blueprint $table) {
             $table->dropColumn('user_id');
+        });
+        Schema::table('records', function(Blueprint $table) {
+            $table->dropColumn('userupdate_id');
         });
     }
 }
