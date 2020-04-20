@@ -45,9 +45,9 @@ class PersonRepository  {
         'company',
         'relationship',
         ])->first();
-      if($person->picture !== null){
-        $person->picture = url('storage/partners/'.$person->picture);
-      }
+      // if($person->picture !== null){
+      //   $person->picture = url('storage/partners/'.$person->picture);
+      // }
       $person->relations = [];
       if($person->isPartner === "2") {
         $relations = $this->personRelationModel->where('related_id', $person->id)->with(['base','relationType'])->get();
