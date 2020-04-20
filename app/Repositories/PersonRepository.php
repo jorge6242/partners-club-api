@@ -45,7 +45,7 @@ class PersonRepository  {
         'company',
         'relationship',
         ])->first();
-      if($person->picture && $person->picture !== null){
+      if($person->picture !== null){
         $person->picture = url('storage/partners/'.$person->picture);
       }
       
@@ -287,7 +287,7 @@ class PersonRepository  {
     */
     public function searchFamilyByPerson($queryFilter) {
        if($queryFilter->query('id') !== null) {
-        return \DB::select("SELECT r.id, r.base_id, r.status, r.related_id   , p.name, p.last_name, p.rif_ci, p.card_number, r.relation_type_id,  t.description 
+        return \DB::select("SELECT p.id, r.base_id, r.status, r.related_id , p.name, p.last_name, p.rif_ci, p.card_number, r.relation_type_id,  t.description 
         FROM person_relations r, people p, relation_types t
         WHERE r.base_id=".$queryFilter->query('id')."
         AND r.related_id=p.id 
