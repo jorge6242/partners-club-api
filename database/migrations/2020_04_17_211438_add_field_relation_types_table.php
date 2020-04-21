@@ -13,9 +13,9 @@ class AddFieldRelationTypesTable extends Migration
      */
     public function up()
     {
-        // Schema::table('relation_types', function(Blueprint $table) {
-        //     $table->integer('item_order')->default(0);
-        // });
+        Schema::table('relation_types', function(Blueprint $table) {
+            $table->integer('item_order')->default(0);
+        });
     }
 
     /**
@@ -25,8 +25,8 @@ class AddFieldRelationTypesTable extends Migration
      */
     public function down()
     {
-        // Schema::table('relation_types', function(Blueprint $table) {
-        //     $table->dropColumn('item_order');
-        // });
+        Schema::table('relation_types', function(Blueprint $table) {
+            $table->dropColumn('item_order');
+        });
     }
 }
