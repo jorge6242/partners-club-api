@@ -20,6 +20,7 @@ class Record extends Model
         'record_type_id',
         'people_id',
         'user_id',
+        'userupdate_id',
     ];
 
     /**
@@ -28,5 +29,13 @@ class Record extends Model
     public function type()
     {
         return $this->hasOne('App\RecordType', 'id', 'record_type_id');
+    }
+
+        /**
+     * The sports that belong to the share.
+     */
+    public function user()
+    {
+        return $this->hasOne('App\User', 'id', 'user_id');
     }
 }

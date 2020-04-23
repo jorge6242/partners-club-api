@@ -35,11 +35,11 @@ class RecordRepository  {
       }
       ])
     ->first();
-    if($record->file1 !== null) $record->file1 = url('records/'.$record->file1);
-    if($record->file2 !== null) $record->file2 = url('records/'.$record->file2);
-    if($record->file3 !== null) $record->file3 = url('records/'.$record->file3);
-    if($record->file4 !== null) $record->file4 = url('records/'.$record->file4);
-    if($record->file5 !== null) $record->file5 = url('records/'.$record->file5);
+    if($record->file1 !== null) $record->file1 = url('storage/records/'.$record->file1);
+    if($record->file2 !== null) $record->file2 = url('storage/records/'.$record->file2);
+    if($record->file3 !== null) $record->file3 = url('storage/records/'.$record->file3);
+    if($record->file4 !== null) $record->file4 = url('storage/records/'.$record->file4);
+    if($record->file5 !== null) $record->file5 = url('storage/records/'.$record->file5);
     return $record;
     }
 
@@ -133,18 +133,20 @@ class RecordRepository  {
         'file4',
         'file5',
         'record_type_id',
-        'people_id'
+        'people_id',
+        'user_id'
     ])->with([
         'type' => function($query) {
             $query->select(['id', 'description']);
         },
+        'user'
         ])->where('people_id', $queryFilter->query('id'))->paginate($queryFilter->query('perPage'));
         foreach ($records as $key => $value) {
-          if($value->file1 !== null) $records[$key]->file1 = url('records/'.$value->file1);
-          if($value->file2 !== null) $records[$key]->file2 = url('records/'.$value->file2);
-          if($value->file3 !== null) $records[$key]->file3 = url('records/'.$value->file3);
-          if($value->file4 !== null) $records[$key]->file4 = url('records/'.$value->file4);
-          if($value->file5 !== null) $records[$key]->file5 = url('records/'.$value->file5);
+          if($value->file1 !== null) $records[$key]->file1 = url('storage/records/'.$value->file1);
+          if($value->file2 !== null) $records[$key]->file2 = url('storage/records/'.$value->file2);
+          if($value->file3 !== null) $records[$key]->file3 = url('storage/records/'.$value->file3);
+          if($value->file4 !== null) $records[$key]->file4 = url('storage/records/'.$value->file4);
+          if($value->file5 !== null) $records[$key]->file5 = url('storage/records/'.$value->file5);
         }
      return $records;
     }

@@ -27,4 +27,12 @@ class Note extends Model
     {
         return $this->hasOne('App\NoteType','id', 'note_type_id');
     }
+
+            /**
+     * The sports that belong to the share.
+     */
+    public function user()
+    {
+        return $this->hasOne('App\User', 'id', 'user_id');
+    }
 }

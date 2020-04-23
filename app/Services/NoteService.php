@@ -27,6 +27,7 @@ class NoteService {
             ])->setStatusCode(400);
 		}
 		$request['user_id'] = auth()->user()->id;
+		$request['userupdate_id'] = auth()->user()->id;
 		return $this->repository->create($request);
 	}
 

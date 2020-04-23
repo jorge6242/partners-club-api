@@ -65,7 +65,7 @@ return [
         ],
         'records' => [
             'driver' => 'local',
-            'root' => public_path('records'),
+            'root' => public_path('storage/records'),
         ],
 
     ],

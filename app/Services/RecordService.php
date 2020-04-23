@@ -43,6 +43,10 @@ class RecordService {
 		$date = Carbon::now();
 		$parseFile = $this->validateFile($exp);
 		$filename = $id.'-'.$column.'-'.$date->year.'.'.$parseFile->ext;
+		$indice = rand(1,5);
+		$filename = str_pad($id,10,"0",STR_PAD_LEFT).'-'.str_pad($indice,2,"0",STR_PAD_LEFT).".".$parseFile->ext;
+
+
 		Storage::disk('records')->put($filename,$parseFile->content);
 		$attr = [ 'file'.$column => $filename];
 		$this->repository->update($id, $attr);
@@ -58,6 +62,7 @@ class RecordService {
 		}		
 		// $file = url('records/test9.docx');'
 		$request['user_id'] = auth()->user()->id;
+		$request['userupdate_id'] = auth()->user()->id;
 		$data = $this->repository->create($request);
 
 		if($request['exp1'] !== null) $this->updateFile($data->id, $request['exp1'], '1');

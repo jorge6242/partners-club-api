@@ -108,6 +108,7 @@ class NoteRepository  {
         'note_type_id',
         'subject',
         'is_sent',
+        'user_id'
         ])
         ->with([
           'department' => function($query) {
@@ -116,6 +117,7 @@ class NoteRepository  {
           'type' => function($query) {
             $query->select(['id', 'description']);
           },
+          'user',
         ])->where('people_id', $queryFilter->query('id'))
         ->paginate($queryFilter->query('perPage'));
     }
