@@ -70,6 +70,8 @@ class AclRolesSeeder extends Seeder
 // // $user->assignRole($admin->id);
 // // $user->revokeRole('administrador');
 // dd($user->getRoles());
+$database = \DB::connection()->getDatabaseName();
+dd(env('APP_URL'));
 
     }
 }

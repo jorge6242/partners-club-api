@@ -33,10 +33,14 @@ class ParameterController extends Controller
      */
     public function getList(Request $request)
     {
+        $db = \DB::connection()->getDatabaseName();
+        $dbHost = env('DB_HOST');
         $data = $this->service->getList();
         return response()->json([
             'success' => true,
-            'data' => $data
+            'data' => $data,
+            'db' => $db,
+            'dbHost' => $dbHost,
         ]);
     }
 

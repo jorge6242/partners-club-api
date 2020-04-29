@@ -53,20 +53,21 @@ class CreateDefaultSystemParamsSeeder extends Seeder
                 [
                     'description' => 'Endpoint API URL',
                     'parameter' => 'ENDPOINT_API_URL',
-                    'value' => 'http://192.168.0.252:9002',
+                    'value' => 'http://192.168.0.252:9003',
                     'eliminable' => 1,
                 ],
-                [
-                    'description' => 'Nombre de Base de Datos',
-                    'parameter' => 'DB_NAME',
-                    'value' => 'partnersControl',
-                    'eliminable' => 1,
-                ],                [
-                    'description' => 'Servidor de Base de datos',
-                    'parameter' => 'DB_SERVER',
-                    'value' => 'http://192.168.0.11',
-                    'eliminable' => 1,
-                ]
+                // [
+                //     'description' => 'Nombre de Base de Datos',
+                //     'parameter' => 'DB_NAME',
+                //     'value' => 'partnersControl',
+                //     'eliminable' => 1,
+                // ],                
+                //  [
+                //      'description' => 'Servidor de Base de datos',
+                //      'parameter' => 'DB_SERVER',
+                //      'value' => 'http://192.168.0.11',
+                //      'eliminable' => 1,
+                //  ]
         ];
         foreach ($data as $element) {
             Parameter::create([

@@ -107,7 +107,11 @@
                         <td>Carnet: {{ $data->card_number }}</td> 
                         <td>Vence: {{ $data->expiration_date }}</td> 
                         <td rowspan="8" width="100" align="center">
-                            <img src={{ public_path() . '/storage/partners/'. $data->picture }} width="120" height="120">
+                            @if($data->picture && $data->picture !== '')
+                                <img src={{ public_path() . '/storage/partners/'. $data->picture }} width="120" height="120">
+                            @else
+                                <img src={{ public_path() . '/images/partner-empty.png' }} width="120" height="120">
+                            @endif
                         </td>
                     </tr>
 
@@ -191,7 +195,11 @@
                         <td>Carnet: {{ $element->card_number }}</td> 
                         <td>Vence: {{ $element->expiration_date }}</td> 
                         <td rowspan="8" width="100" align="center">
-                            <img src={{ public_path() . '/storage/partners/'. $element->picture }} width="120" height="120">
+                            @if($element->picture && $element->picture !== '')
+                                <img src={{ public_path() . '/storage/partners/'. $element->picture }} width="120" height="120">
+                            @else
+                                <img src={{ public_path() . '/images/partner-empty.png' }} width="120" height="120">
+                            @endif
                         </td>
                     </tr>
 
