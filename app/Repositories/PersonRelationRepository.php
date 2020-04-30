@@ -19,7 +19,13 @@ class PersonRelationRepository  {
     }
 
     public function update($id, array $attributes) {
-      return $this->model->find($id)->update($attributes);
+      $attr = [ 'status' => $attributes['status']];
+      return $this->model->query()->where('related_id',$id)->update($attr);
+    }
+
+    public function updateRelation($id, array $attributes) {
+      $attr = [ 'status' => $attributes['status']];
+      return $this->model->query()->where('related_id',$id)->update($attr);
     }
   
     public function all() {

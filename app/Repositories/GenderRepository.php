@@ -23,7 +23,7 @@ class GenderRepository  {
     }
   
     public function all() {
-      return $this->model->all();
+      return $this->model->query()->select(['id', 'description'])->get();
     }
 
     public function delete($id) {

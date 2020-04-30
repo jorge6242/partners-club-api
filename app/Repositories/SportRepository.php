@@ -23,7 +23,7 @@ class SportRepository  {
     }
   
     public function all() {
-      return $this->sport->all();
+      return $this->sport->query()->select(['id', 'description'])->get();
     }
 
     public function delete($id) {
