@@ -38,6 +38,17 @@ class PersonRelationController extends Controller
     }
 
     /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function removeRelation(Request $request)
+    {
+        return $this->service->removeRelation($request);
+    }
+
+    /**
      * Display the specified resource.
      *
      * @param  int  $id

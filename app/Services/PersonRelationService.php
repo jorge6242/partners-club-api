@@ -23,9 +23,13 @@ class PersonRelationService {
      return $this->repository->find($id);
 	}
 
-	public function delete($id) {
-      return $this->repository->delete($id);
+	public function removeRelation($request) {
+      return $this->repository->removeRelation($request);
 	}
+
+	public function delete($id) {
+		return $this->repository->delete($id);
+	  }
 
 	/**
 	 *  Search resource from repository

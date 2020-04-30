@@ -62,6 +62,7 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/card-type-search', 'CardTypeController@search');
 
         Route::resource('/person-relation', 'PersonRelationController');
+        Route::post('/person-relation-remove', 'PersonRelationController@removeRelation');
         Route::resource('/person', 'PersonController');
 
         Route::resource('/currency', 'CurrencyController');

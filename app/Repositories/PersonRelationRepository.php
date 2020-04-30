@@ -36,6 +36,10 @@ class PersonRelationRepository  {
      return $this->model->find($id)->delete();
     }
 
+    public function removeRelation($request) {
+      return $this->model->where('base_id', $request['base'])->where('related_id', $request['id'])->delete();
+     }
+
     public function checkRecord($name)
     {
       $response = $this->model->where('description', $name)->first();
