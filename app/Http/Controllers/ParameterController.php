@@ -27,7 +27,7 @@ class ParameterController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource.ddd
      *
      * @return \Illuminate\Http\Response
      */
