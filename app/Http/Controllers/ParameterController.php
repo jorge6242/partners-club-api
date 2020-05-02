@@ -35,12 +35,14 @@ class ParameterController extends Controller
     {
         $db = \DB::connection()->getDatabaseName();
         $dbHost = env('DB_HOST');
+        $api = env('APP_URL');
         $data = $this->service->getList();
         return response()->json([
             'success' => true,
             'data' => $data,
             'db' => $db,
             'dbHost' => $dbHost,
+            'api' => $api,
         ]);
     }
 

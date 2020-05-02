@@ -22,6 +22,8 @@ class SoapController
   public function __construct(SoapWrapper $soapWrapper)
   {
     $this->soapWrapper = $soapWrapper;
+    $this->url = env('WS_SOCIO_URL');
+		$this->domain = env('WS_SOCIO_DOMAIN_ID');
   }
 
   /**
@@ -29,7 +31,7 @@ class SoapController
    */
   public function show() 
   {
-    $domain_id = "CCC";
+    $domain_id =$this->domain;
     $date = date('Ymd');
     $calculatedToken = base64_encode(strtoupper(md5($domain_id.$date)));
 
