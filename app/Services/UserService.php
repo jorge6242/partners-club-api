@@ -73,4 +73,8 @@ class UserService {
 				}
 			return false;
 		}
+
+		public function search($query) {
+			return $this->repository->search($query);
+		}
 }

@@ -53,4 +53,20 @@ class UserRepository  {
     {
       return $this->model->where('username', $username)->first(); 
     }
+
+    /**
+     * get persons by query params
+     * @param  object $queryFilter
+    */
+    public function search($queryFilter) {
+      $searchQuery = trim($queryFilter->query('term'));
+      $this->share = $queryFilter->query('term');
+      $requestData = ['name', 'username', 'email'];
+      $search = $this->model->where(function($q) use($requestData, $searchQuery) {
+                  foreach ($requestData as $field) {
+                     $q->orWhere($field, 'like', "%{$searchQuery}%");
+                  }
+                })->with('roles')->get();
+      return $search;
+  }
 }
