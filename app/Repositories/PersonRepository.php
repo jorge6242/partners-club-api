@@ -421,6 +421,16 @@ class PersonRepository  {
         AND t.id=r.relation_type_id
         ORDER  BY t.item_order ASC");
 
+        $partner = \DB::select("SELECT p.id, r.base_id, r.status, r.related_id   , p.name, p.last_name, p.rif_ci, p.picture, p.card_number, r.relation_type_id,  t.description as relation 
+        FROM person_relations r, people p, relation_types t
+        WHERE r.base_id=".$person->id."
+        AND r.base_id=p.id 
+        AND t.id=r.relation_type_id
+        ORDER  BY t.item_order ASC");
+        $partner  = $partner[0];
+        unset($partner->relation);
+        $partner->relation = 'Socio';
+        array_unshift($familyMembers,$partner);
         foreach ($familyMembers as $key => $value) {
           if($familyMembers[$key]->card_number === $card ) {
             $familyMembers[$key]->selectedFamily = true;
