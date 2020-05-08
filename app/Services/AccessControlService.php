@@ -7,6 +7,7 @@ use App\Repositories\ShareRepository;
 use App\Repositories\AccessControlRepository;
 use App\Repositories\ParameterRepository;
 use App\Repositories\RecordRepository;
+use App\Services\SoapService;
 use Illuminate\Http\Request;
 
 class AccessControlService {
@@ -16,7 +17,8 @@ class AccessControlService {
 		Person $personModel,
 		ShareRepository $shareRepository,
 		ParameterRepository $parameterRepository,
-		RecordRepository $recordRepository
+		RecordRepository $recordRepository,
+		SoapService $soapService
 		) 
 		{
 		$this->repository = $repository;
@@ -24,6 +26,7 @@ class AccessControlService {
 		$this->shareRepository = $shareRepository;
 		$this->parameterRepository = $parameterRepository;
 		$this->recordRepository = $recordRepository;
+		$this->soapService = $soapService;
 	}
 
 	public function index($perPage) {
@@ -62,11 +65,20 @@ class AccessControlService {
 				$message .= '* Presenta bloqueo activo por expediente :'.$value->id.',  hasta la fecha  '.$value->expiration_date.'<br>';
 			}
 		}
+
+
+
 		$share = $this->shareRepository->find($request['share_id']);
 		if($share->status === 0) {
 			$message .= '* Accion Inactiva <br>';
 			$status = $status -4;
 		}
+
+		// $saldo = $this->soapService->getSaldo($share->share_number);
+		// if($saldo[0]->status < 1) {
+		// 	$message .= '* Accion no tiene saldo <br>';
+		// 	$status = $status -4;
+		// }
 
 		$personStatus = $this->checkPersonStatus($request['people_id']);
 
