@@ -5,6 +5,8 @@ namespace App\Repositories;
 use App\Person;
 use App\Share;
 use App\PersonRelation;
+use App\PersonProfession;
+use App\PersonSport;
 use App\Repositories\ShareRepository;
 use App\Repositories\RelationTypeRepository;
 use App\Repositories\PersonRelationRepository;
@@ -90,7 +92,7 @@ class PersonRepository  {
 
 
     public function delete($id) {
-     return $this->model->find($id)->delete();
+     return $this->model->find($id)->update(['status_person_id' => 0]);
     }
 
     public function checkPerson($name)
@@ -163,51 +165,74 @@ class PersonRepository  {
       'relationship' => function($query){
         $query->select('id', 'related_id', 'base_id', 'relation_type_id')->with('relationType');
     },]);
-      if ($queryFilter->query('isPartner')) {
+      if ($queryFilter->query('isPartner') !== NULL) {
         $search->where('isPartner', $queryFilter->query('isPartner'));
       }
-      if ($queryFilter->query('name')) {
+      if ($queryFilter->query('name') !== NULL) {
         $search->where('name', 'like', '%'.$queryFilter->query('name').'%');
         $search->orWhere('last_name', 'like', '%'.$queryFilter->query('name').'%');
       }
-      if ($queryFilter->query('rif_ci')) {
+      if ($queryFilter->query('rif_ci') !== NULL) {
         $search->orWhere('rif_ci', 'like', '%'.$queryFilter->query('rif_ci').'%');
       }
-      if ($queryFilter->query('passport')) {
+      if ($queryFilter->query('passport') !== NULL) {
         $search->orWhere('passport', 'like', '%'.$queryFilter->query('passport').'%');
       }
-      if ($queryFilter->query('type_person')) {
+      if ($queryFilter->query('type_person') !== NULL) {
         $search->where('type_person', $queryFilter->query('type_person'));
       }
-      if ($queryFilter->query('gender_id')) {
+      if ($queryFilter->query('gender_id') !== NULL) {
         $search->where('gender_id', $queryFilter->query('gender_id'));
       }
       if ($queryFilter->query('status_person_id')) {
         $search->where('status_person_id', $queryFilter->query('status_person_id'));
       }
-      if ($queryFilter->query('card_number')) {
+      if ($queryFilter->query('card_number') !== NULL) {
         $search->orWhere('card_number', 'like', '%'.$queryFilter->query('card_number').'%');
       }
-      if ($queryFilter->query('primary_email')) {
+      if ($queryFilter->query('primary_email') !== NULL) {
         $search->orWhere('primary_email', 'like', '%'.$queryFilter->query('primary_email').'%');
       }
-      if ($queryFilter->query('telephone1')) {
+      if ($queryFilter->query('telephone1') !== NULL) {
         $search->orWhere('telephone1', 'like', '%'.$queryFilter->query('telephone1').'%');
       }
-      if ($queryFilter->query('phone_mobile1')) {
+      if ($queryFilter->query('phone_mobile1') !== NULL) {
         $search->orWhere('phone_mobile1', 'like', '%'.$queryFilter->query('phone_mobile1').'%');
       }
-      if ($queryFilter->query('expiration_start') && $queryFilter->query('expiration_end')) {
+      if ($queryFilter->query('expiration_start') !== NULL && $queryFilter->query('expiration_end') !== NULL) {
         $search->orWhereBetween('expiration_date', [$queryFilter->query('expiration_start'), $queryFilter->query('expiration_end')]);
       }
-      if ($queryFilter->query('birth_start') && $queryFilter->query('birth_end')) {
+      if ($queryFilter->query('birth_start') !== NULL && $queryFilter->query('birth_end') !== NULL) {
         $search->orWhereBetween('birth_date', [$queryFilter->query('birth_start'), $queryFilter->query('birth_end')]);
       }
-      if ($queryFilter->query('age_start') && $queryFilter->query('age_end')) {
-        $birth_start = Carbon::today()->subYears($queryFilter->query('age_start'))->year.'-01-01-';
-        $birth_end = Carbon::today()->subYears($queryFilter->query('age_end'))->year.'-01-01-';
+      if ($queryFilter->query('age_start') !== NULL && $queryFilter->query('age_end') !== NULL) {
+        $birth_start = Carbon::today()->subYears($queryFilter->query('age_start'))->year.'-01-01';
+        $birth_end = Carbon::today()->subYears($queryFilter->query('age_end'))->year.'-01-01';
         $search->orWhereBetween('birth_date', [$birth_end, $birth_start]);
       }
+
+      if ($queryFilter->query('relation_type_id') !== NULL) {
+        $persons = PersonRelation::where('relation_type_id', $queryFilter->query('relation_type_id'))->get();
+        foreach ($persons as $key => $value) {
+          $search->orWhere('id', $value->related_id);
+        }
+      }
+
+      if ($queryFilter->query('profession_id') !== NULL) {
+        $persons = PersonProfession::where('profession_id', $queryFilter->query('profession_id'))->get();
+        foreach ($persons as $key => $value) {
+          $search->orWhere('id', $value->people_id);
+        }
+      }
+
+      if ($queryFilter->query('sport_id') !== NULL) {
+        $persons = PersonSport::where('sports_id', $queryFilter->query('sport_id'))->get();
+        foreach ($persons as $key => $value) {
+          $search->orWhere('id', $value->people_id);
+        }
+      }
+
+
       if($isPDF) {
         $persons = $search->get();
           foreach ($persons as $key => $person) {
@@ -437,7 +462,11 @@ class PersonRepository  {
   }
 
   public function getGuestByPartner($identification){
-    $person = $this->model->query()->select('id','name','last_name', 'picture', 'primary_email', 'telephone1')->where('rif_ci', $identification)->first();
+    $person = $this->model->query()
+    ->select('id','name','last_name', 'picture', 'primary_email', 'telephone1')
+    ->where('isPartner', 3)
+    ->where('rif_ci', $identification)
+    ->first();
     if($person) {
       $person->picture = url('storage/partners/'.$person->picture);
       return $person;

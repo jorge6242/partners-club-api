@@ -74,7 +74,9 @@ class AccessControlService {
 			$message .= '* Socio Inactivo <br>';
 			$status = $status -4;
 		}
-		$data = $this->repository->create($request);
+		if($request['selectedPartner'] === true) {
+			$data = $this->repository->create($request);
+		}
 		return $message;
 	}
 
@@ -114,15 +116,6 @@ class AccessControlService {
 			$this->legacyAccesControlIngration($request['people_id'], 1);
 		}
 
-		if($request['family'] !== null) {
-			$status = 1;
-			foreach ($request['family'] as $element) {
-				$request['people_id'] = $element;
-				$request['status'] = $status;
-				$this->repository->create($request);
-			}
-		}
-
 		if($request['guest_id'] !== null) {
 			$validateGuestMessage = $this->validateGuest($request);
 			if($validateGuestMessage !== '') {
@@ -132,6 +125,16 @@ class AccessControlService {
 		} else {
 			$this->legacyAccesControlIngration($request['guest_id'], 3);
 		}
+		}
+
+		if($request['family'] !== null) {
+			$status = 1;
+			foreach ($request['family'] as $element) {
+				$request['people_id'] = $element;
+				$request['status'] = $status;
+				$request['guest_id'] = NULL;
+				$this->repository->create($request);
+			}
 		}
 
 		if($message !== '') {

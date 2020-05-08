@@ -74,61 +74,85 @@ class AccessControlRepository  {
           }
         ]);
 
-        if ($queryFilter->query('share')) {
+        if ($queryFilter->query('share') !== NULL) {
           $shares = $this->shareModel->query()->where('share_number','like', '%'.$queryFilter->query('share').'%')->get();
-            foreach ($shares as $key => $share) {
-              $data->where('share_id', $share->id);
+            if(count($shares)) {
+              foreach ($shares as $key => $share) {
+                $data->orWhere('share_id', $share->id);
+              }
+            } else {
+              $data->where('share_id', '');
             }
         }
-
-        if ($queryFilter->query('partner_name')) {
-          $persons = $this->personModel->query()->where('isPartner', 1)->where('name','like', '%'.$queryFilter->query('partner_name').'%')->get();
+        
+        if ($queryFilter->query('partner_name') !== NULL) {
+          $persons = $this->personModel->where('isPartner', 1)->where('name','like', '%'.$queryFilter->query('partner_name').'%')->get();
+          if(count($persons)) {
             foreach ($persons as $key => $person) {
-              $data->where('people_id', $person->id);
+              $data->orWhere('people_id', $person->id);
             }
+          } else {
+            $data->where('people_id','');
+          }
         }
   
-        if ($queryFilter->query('partner_rif_ci')) {
+        if ($queryFilter->query('partner_rif_ci') !== NULL) {
           $persons = $this->personModel->query()->where('isPartner', 1)->where('rif_ci','like', '%'.$queryFilter->query('partner_rif_ci').'%')->get();
+          if(count($persons)) {
             foreach ($persons as $key => $person) {
-              $data->where('people_id', $person->id);
+              $data->orWhere('people_id', $person->id);
             }
+          } else {
+            $data->where('people_id','');
+          }
         }
   
-        if ($queryFilter->query('partner_card_number')) {
+        if ($queryFilter->query('partner_card_number') !== NULL) {
           $persons = $this->personModel->query()->where('isPartner', 1)->where('card_number','like', '%'.$queryFilter->query('partner_card_number').'%')->get();
+          if(count($persons)) {
             foreach ($persons as $key => $person) {
-              $data->where('people_id', $person->id);
+              $data->orWhere('people_id', $person->id);
             }
-        }
-
-        if ($queryFilter->query('guest_name')) {
-          $persons = $this->personModel->query()->where('name','like', '%'.$queryFilter->query('guest_name').'%')->get();
-          foreach ($persons as $key => $person) {
-            $data->where('guest_id', $person->id);
+          } else {
+            $data->where('people_id','');
           }
         }
 
-        if ($queryFilter->query('guest_rif_ci')) {
-          $persons = $this->personModel->query()->where('rif_ci','like', '%'.$queryFilter->query('guest_rif_ci').'%')->get();
-          foreach ($persons as $key => $person) {
-            $data->where('guest_id', $person->id);
+        if ($queryFilter->query('guest_name') !== NULL) {
+          $persons = $this->personModel->query()->where('isPartner', 3)->where('name','like', '%'.$queryFilter->query('guest_name').'%')->get();
+          if(count($persons)) {
+            foreach ($persons as $key => $person) {
+              $data->orWhere('guest_id', $person->id);
+            }
+          } else {
+            $data->where('guest_id','');
           }
         }
 
-        if ($queryFilter->query('location_id')) {
+        if ($queryFilter->query('guest_rif_ci') !== NULL) {
+          $persons = $this->personModel->query()->where('isPartner', 3)->where('rif_ci','like', '%'.$queryFilter->query('guest_rif_ci').'%')->get();
+          if(count($persons)) {
+            foreach ($persons as $key => $person) {
+              $data->orWhere('guest_id', $person->id);
+            }
+          } else {
+            $data->where('guest_id','');
+          }
+        }
+
+        if ($queryFilter->query('location_id') !== NULL) {
           $data->where('location_id', $queryFilter->query('location_id'));
         }
 
-        if ($queryFilter->query('status')) {
+        if ($queryFilter->query('status') !== NULL) {
           $data->where('status', $queryFilter->query('status'));
         }
 
-        if ($queryFilter->query('created_start') && $queryFilter->query('created_end')) {
+        if ($queryFilter->query('created_start') !== NULL && $queryFilter->query('created_end') !== NULL) {
           $data->orWhereBetween('created', [$queryFilter->query('created_start'), $queryFilter->query('created_end')]);
         }
 
-        if ($queryFilter->query('created_order')) {
+        if ($queryFilter->query('created_order') !== NULL) {
           $data->orderBy('created', $queryFilter->query('created_order'));
         }
 

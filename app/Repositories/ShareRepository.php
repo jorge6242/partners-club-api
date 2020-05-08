@@ -24,7 +24,8 @@ class ShareRepository  {
         'id_titular_persona',
         'id_factura_persona',
         'id_fiador_persona',
-        'share_type_id'
+        'share_type_id',
+        'status'
         )->with([
           'fatherShare' => function($query){
           $query->select('id', 'share_number'); 
@@ -43,6 +44,18 @@ class ShareRepository  {
           }, 
      ])->paginate($perPage);
     }
+
+        // $search = $this->model->with('shares')->where(function($q) use($requestData, $searchQuery) {
+    //   foreach ($requestData as $field) {
+    //      $q->orWhere($field, 'like', "%{$searchQuery}%");
+    //   }
+    //   $persons = $this->shareModel->query()->where('share_number','like', '%'.$this->share.'%')->get();
+    //   if(count($persons)) {
+    //     foreach ($persons as $key => $value) {
+    //       $q->orWhere('id', $value->id_persona);
+    //     }
+    //   }
+    // })->whereIn('isPartner', [1,2])->paginate(8);
 
     public function filter($queryFilter, $isPDF = false) {
       $shares = $this->model->query()->select(
@@ -101,42 +114,50 @@ class ShareRepository  {
             $query->select('id', 'description', 'code'); 
           }, 
       ]);
-      if ($queryFilter->query('share')) {
+      if ($queryFilter->query('share') !== NULL) {
         $shares->where('share_number', 'like', '%'.$queryFilter->query('share').'%');
       }
-      if ($queryFilter->query('father_share')) {
-        $shares->where('share_number', 'like', '%'.$queryFilter->query('father_share').'%')
-        ->where('father_share_id',0);
+      if ($queryFilter->query('father_share') !== NULL) {
+        $shareFathers = Share::where('share_number', 'like', '%'.$queryFilter->query('father_share').'%')
+        ->where('father_share_id',0)->get();
+        foreach ($shareFathers as $key => $value) {
+          $shares->orWhere('id', $value->id);
+        }
       }
-      if ($queryFilter->query('payment_method_id')) {
+      if ($queryFilter->query('payment_method_id') !== NULL) {
         $shares->where('payment_method_id', $queryFilter->query('payment_method_id'));
       }
-      if ($queryFilter->query('share_type')) {
+
+      if ($queryFilter->query('share_type') !== NULL) {
         $shares->where('share_type', $queryFilter->query('share_type'));
       }
+      
+      if ($queryFilter->query('status') !== NULL) {
+        $shares->where('status', $queryFilter->query('status'));
+      }
 
-      if ($queryFilter->query('persona')) {
+      if ($queryFilter->query('persona') !== NULL) {
           $persons = $this->personModel->query()->where('name','like', '%'.$queryFilter->query('persona').'%')->get();
           foreach ($persons as $key => $person) {
             $shares->where('id_persona', $person->id);
           }
       }
 
-      if ($queryFilter->query('titular')) {
+      if ($queryFilter->query('titular') !== NULL) {
         $persons = $this->personModel->query()->where('name','like', '%'.$queryFilter->query('titular').'%')->get();
         foreach ($persons as $key => $person) {
           $shares->where('id_titular_persona', $person->id);
         }
       }
 
-      if ($queryFilter->query('facturador')) {
+      if ($queryFilter->query('facturador') !== NULL) {
         $persons = $this->personModel->query()->where('name','like', '%'.$queryFilter->query('facturador').'%')->get();
         foreach ($persons as $key => $person) {
           $shares->where('id_factura_persona', $person->id);
         }
       }
 
-      if ($queryFilter->query('fiador')) {
+      if ($queryFilter->query('fiador') !== NULL) {
         $persons = $this->personModel->query()->where('name','like', '%'.$queryFilter->query('fiador').'%')->get();
         foreach ($persons as $key => $person) {
           $shares->where('id_fiador_persona', $person->id);
