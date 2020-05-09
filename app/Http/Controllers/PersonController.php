@@ -349,6 +349,12 @@ class PersonController extends Controller
      */
     public function getGuestByPartner(Request $request) {
         $data = $this->service->getGuestByPartner($request['identification']);
+        if($data === 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'La cedula no pertenece a un invitado, intente con otra'
+            ])->setStatusCode(400);
+        }
         if($data) {
             return response()->json([
                 'success' => true,

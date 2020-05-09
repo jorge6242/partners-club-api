@@ -473,13 +473,17 @@ class PersonRepository  {
 
   public function getGuestByPartner($identification){
     $person = $this->model->query()
-    ->select('id','name','last_name', 'picture', 'primary_email', 'telephone1')
-    ->where('isPartner', 3)
-    ->where('rif_ci', $identification)
+    ->select('id','name','last_name', 'picture', 'primary_email', 'telephone1', 'isPartner')->where('rif_ci', $identification)
     ->first();
     if($person) {
-      $person->picture = url('storage/partners/'.$person->picture);
-      return $person;
+      if($person->isPartner == 3) {
+        $person->picture = url('storage/partners/'.$person->picture);
+        return $person;
+      }
+      if($person->isPartner !== 3) {
+        return 1;
+      }
+
     }
     return $person;
   }
