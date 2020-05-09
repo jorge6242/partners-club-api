@@ -23,7 +23,7 @@ class LockerLocationService {
 		if ($this->repository->checkRecord($request['description'])) {
             return response()->json([
                 'success' => false,
-                'message' => 'Record already exist'
+                'message' => 'El registro ya existe'
             ])->setStatusCode(400);
         }
 		return $this->repository->create($request);

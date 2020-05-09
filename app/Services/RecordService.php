@@ -57,7 +57,7 @@ class RecordService {
 		if ($this->repository->checkRecord($request['description'])) {
             return response()->json([
                 'success' => false,
-                'message' => 'Record already exist'
+                'message' => 'El registro ya existe'
             ])->setStatusCode(400);
 		}		
 		// $file = url('records/test9.docx');'
