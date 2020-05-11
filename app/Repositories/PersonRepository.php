@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Person;
 use App\Share;
+use App\AccessControl;
 use App\PersonRelation;
 use App\PersonProfession;
 use App\PersonSport;
@@ -13,6 +14,7 @@ use App\Repositories\PersonRelationRepository;
 use App\Repositories\AccessControlRepository;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Builder;
 
 class PersonRepository  {
@@ -161,77 +163,93 @@ class PersonRepository  {
      * @param  object $queryFilter
     */
     public function filter($queryFilter, $isPDF = false) {
+      $searchQuery = $queryFilter;
       $search = $this->model->query()->with(['statusPerson', 'maritalStatus', 'gender', 'country','professions', 'shares',
       'relationship' => function($query){
         $query->select('id', 'related_id', 'base_id', 'relation_type_id')->with('relationType');
-    },]);
-      if ($queryFilter->query('isPartner') !== NULL) {
-        $search->where('isPartner', $queryFilter->query('isPartner'));
-      }
-      if ($queryFilter->query('name') !== NULL) {
-        $search->where('name', 'like', '%'.$queryFilter->query('name').'%');
-        $search->orWhere('last_name', 'like', '%'.$queryFilter->query('name').'%');
-      }
-      if ($queryFilter->query('rif_ci') !== NULL) {
-        $search->orWhere('rif_ci', 'like', '%'.$queryFilter->query('rif_ci').'%');
-      }
-      if ($queryFilter->query('passport') !== NULL) {
-        $search->orWhere('passport', 'like', '%'.$queryFilter->query('passport').'%');
-      }
-      if ($queryFilter->query('type_person') !== NULL) {
-        $search->where('type_person', $queryFilter->query('type_person'));
-      }
-      if ($queryFilter->query('gender_id') !== NULL) {
-        $search->where('gender_id', $queryFilter->query('gender_id'));
-      }
-      if ($queryFilter->query('status_person_id')) {
-        $search->where('status_person_id', $queryFilter->query('status_person_id'));
-      }
-      if ($queryFilter->query('card_number') !== NULL) {
-        $search->orWhere('card_number', 'like', '%'.$queryFilter->query('card_number').'%');
-      }
-      if ($queryFilter->query('primary_email') !== NULL) {
-        $search->orWhere('primary_email', 'like', '%'.$queryFilter->query('primary_email').'%');
-      }
-      if ($queryFilter->query('telephone1') !== NULL) {
-        $search->orWhere('telephone1', 'like', '%'.$queryFilter->query('telephone1').'%');
-      }
-      if ($queryFilter->query('phone_mobile1') !== NULL) {
-        $search->orWhere('phone_mobile1', 'like', '%'.$queryFilter->query('phone_mobile1').'%');
-      }
-      if ($queryFilter->query('expiration_start') !== NULL && $queryFilter->query('expiration_end') !== NULL) {
-        $search->orWhereBetween('expiration_date', [$queryFilter->query('expiration_start'), $queryFilter->query('expiration_end')]);
-      }
-      if ($queryFilter->query('birth_start') !== NULL && $queryFilter->query('birth_end') !== NULL) {
-        $search->orWhereBetween('birth_date', [$queryFilter->query('birth_start'), $queryFilter->query('birth_end')]);
-      }
-      if ($queryFilter->query('age_start') !== NULL && $queryFilter->query('age_end') !== NULL) {
-        $birth_start = Carbon::today()->subYears($queryFilter->query('age_start'))->year.'-01-01';
-        $birth_end = Carbon::today()->subYears($queryFilter->query('age_end'))->year.'-01-01';
-        $search->orWhereBetween('birth_date', [$birth_end, $birth_start]);
-      }
+      },])->where(function($q) use($searchQuery) {
 
-      if ($queryFilter->query('relation_type_id') !== NULL) {
-        $persons = PersonRelation::where('relation_type_id', $queryFilter->query('relation_type_id'))->get();
-        foreach ($persons as $key => $value) {
-          $search->orWhere('id', $value->related_id);
+        if ($searchQuery->query('isPartner') !== NULL) {
+          $q->where('isPartner', $searchQuery->query('isPartner'));
         }
-      }
 
-      if ($queryFilter->query('profession_id') !== NULL) {
-        $persons = PersonProfession::where('profession_id', $queryFilter->query('profession_id'))->get();
-        foreach ($persons as $key => $value) {
-          $search->orWhere('id', $value->people_id);
+        if ($searchQuery->query('name') !== NULL) {
+          $q->where('name', 'like', "%{$searchQuery->query('name')}%")
+          ->orWhere('last_name', 'like', "%{$searchQuery->query('name')}%");
         }
-      }
 
-      if ($queryFilter->query('sport_id') !== NULL) {
-        $persons = PersonSport::where('sports_id', $queryFilter->query('sport_id'))->get();
-        foreach ($persons as $key => $value) {
-          $search->orWhere('id', $value->people_id);
+        if ($searchQuery->query('rif_ci') !== NULL) {
+          $q->where('rif_ci', 'like', "%{$searchQuery->query('rif_ci')}%");
         }
-      }
 
+        if ($searchQuery->query('passport') !== NULL) {
+          $q->where('passport', 'like', "%{$searchQuery->query('passport')}%");
+        }
+
+        if ($searchQuery->query('type_person') !== NULL) {
+          $q->where('type_person', 'like', "%{$searchQuery->query('type_person')}%");
+        }
+
+        if ($searchQuery->query('gender_id') !== NULL) {
+          $q->where('gender_id', 'like', "%{$searchQuery->query('gender_id')}%");
+        }
+
+        if ($searchQuery->query('status_person_id') !== NULL) {
+          $q->where('status_person_id', 'like', "%{$searchQuery->query('status_person_id')}%");
+        }
+
+        if ($searchQuery->query('card_number') !== NULL) {
+          $q->where('card_number', 'like', "%{$searchQuery->query('card_number')}%");
+        }
+
+        if ($searchQuery->query('primary_email') !== NULL) {
+          $q->where('primary_email', 'like', "%{$searchQuery->query('primary_email')}%");
+        }
+
+        if ($searchQuery->query('telephone1') !== NULL) {
+          $q->where('telephone1', 'like', "%{$searchQuery->query('telephone1')}%");
+        }
+
+        if ($searchQuery->query('phone_mobile1') !== NULL) {
+          $q->where('phone_mobile1', 'like', "%{$searchQuery->query('phone_mobile1')}%");
+        }
+
+        if ($searchQuery->query('expiration_start') !== NULL && $searchQuery->query('expiration_end') !== NULL) {
+          $q->whereBetween('expiration_date', [$searchQuery->query('expiration_start'),$searchQuery->query('expiration_end')]);
+        }
+
+        if ($searchQuery->query('birth_start') !== NULL && $searchQuery->query('birth_end') !== NULL) {
+          $q->whereBetween('birth_date', [$searchQuery->query('birth_start'),$searchQuery->query('birth_end')]);
+        }
+
+        if ($searchQuery->query('age_start') !== NULL && $searchQuery->query('age_end') !== NULL) {
+          $birth_start = Carbon::today()->subYears($searchQuery->query('age_start'))->year.'-12-31';
+          $birth_end = Carbon::today()->subYears($searchQuery->query('age_end'))->year.'-01-01';
+          $q->whereBetween('birth_date', [$birth_end, $birth_start]);
+        }
+
+        if ($searchQuery->query('relation_type_id') !== NULL) {
+          $queryId = $searchQuery->query('relation_type_id');
+          $q->whereHas('relationship', function($query) use($queryId) {
+            $query->where('relation_type_id', $queryId);
+          });
+        }
+
+        if ($searchQuery->query('profession_id') !== NULL) {
+          $queryId = $searchQuery->query('profession_id');
+          $q->whereHas('professions', function($query) use($queryId) {
+            $query->where('profession_id', $queryId);
+          });
+        }
+
+        if ($searchQuery->query('sport_id') !== NULL) {
+          $queryId = $searchQuery->query('sport_id');
+          $q->whereHas('sports', function($query) use($queryId) {
+            $query->where('sports_id', $queryId);
+          });
+        }
+
+      });
 
       if($isPDF) {
         $persons = $search->get();
@@ -387,88 +405,101 @@ class PersonRepository  {
 
     public function getFamiliesPartnerByCard($card) {
       $cardNumber = $card;
-      $person = $this->model->query()->select('id', 'isPartner', 'name', 'last_name')->where('card_number', $cardNumber)->first();
-      if($person && $person->isPartner == 2) {
-        $partner = $this->personRelationRepository->findPartner($person->id);
-        $partner = $this->model->query()->select('id', 'card_number')->where('id', $partner->base_id)->first();
-        $cardNumber = $partner->card_number;
-      }
-      $person = $this->model->query()->select('id', 'name', 'last_name', 'card_number', 'picture')
-      ->where('isPartner', 1)
-      ->where('card_number', $cardNumber)->with([
-        'family' => function($query) {
-          $query->with([
-            'statusPerson',
-            'relationship' => function($query){
-              $query->select('id', 'related_id', 'base_id', 'relation_type_id')->with('relationType');
-            },
-          ]);
-        },
-        'statusPerson'
-        ])->first();
+      $person = $this->model->query()->select('id', 'isPartner', 'name', 'last_name')->where('rif_ci', $cardNumber)->orWhere('card_number', $cardNumber)->first();
+
       if($person) {
-        $shares = $this->shareRepository->getListByPartner($person->id);
-        if (count($shares)) {
-          $person['shares'] = $shares;
-        } else {
-          $person['shares'] = null;
-        }
-
-        $familyMembers = \DB::select("SELECT p.id, r.base_id, r.status, r.related_id   , p.name, p.last_name, p.rif_ci, p.picture, p.card_number, r.relation_type_id,  t.description as relation 
-        FROM person_relations r, people p, relation_types t
-        WHERE r.base_id=".$person->id."
-        AND r.related_id=p.id 
-        AND t.id=r.relation_type_id
-        ORDER  BY t.item_order ASC");
-
-        $partner = \DB::select("SELECT p.id, r.base_id, r.status, r.related_id   , p.name, p.last_name, p.rif_ci, p.picture, p.card_number, r.relation_type_id,  t.description as relation 
-        FROM person_relations r, people p, relation_types t
-        WHERE r.base_id=".$person->id."
-        AND r.base_id=p.id 
-        AND t.id=r.relation_type_id
-        ORDER  BY t.item_order ASC");
-        $partner  = $partner[0];
-        unset($partner->relation);
-        $partner->relation = 'Socio';
-        array_unshift($familyMembers,$partner);
-        foreach ($familyMembers as $key => $value) {
-          if($familyMembers[$key]->card_number === $card ) {
-            $familyMembers[$key]->selectedFamily = true;
-          } else {
-            $familyMembers[$key]->selectedFamily = false;
+        if($person->isPartner == 1 || $person->isPartner == 2) {
+          if($person && $person->isPartner == 2) {
+            $partner = $this->personRelationRepository->findPartner($person->id);
+            $partner = $this->model->query()->select('id', 'card_number')->where('id', $partner->base_id)->first();
+            $cardNumber = $partner->card_number;
           }
-          $familyMembers[$key]->profilePicture = url('storage/partners/'.$value->picture);
+          $person = $this->model->query()->select('id', 'name', 'last_name', 'card_number', 'picture')
+          ->where('isPartner', 1)
+          ->where('card_number', $cardNumber)->orWhere('rif_ci', $cardNumber)->with([
+            'family' => function($query) {
+              $query->with([
+                'statusPerson',
+                'relationship' => function($query){
+                  $query->select('id', 'related_id', 'base_id', 'relation_type_id')->with('relationType');
+                },
+              ]);
+            },
+            'statusPerson'
+            ])->first();
+          if($person) {
+            $shares = $this->shareRepository->getListByPartner($person->id);
+            if (count($shares)) {
+              $person['shares'] = $shares;
+            } else {
+              $person['shares'] = null;
+            }
+    
+            $familyMembers = \DB::select("SELECT p.id, r.base_id, r.status, r.related_id   , p.name, p.last_name, p.rif_ci, p.picture, p.card_number, r.relation_type_id,  t.description as relation 
+            FROM person_relations r, people p, relation_types t
+            WHERE r.base_id=".$person->id."
+            AND r.related_id=p.id 
+            AND t.id=r.relation_type_id
+            ORDER  BY t.item_order ASC");
+    
+            $partner = \DB::select("SELECT p.id, r.base_id, r.status, r.related_id   , p.name, p.last_name, p.rif_ci, p.picture, p.card_number, r.relation_type_id,  t.description as relation 
+            FROM person_relations r, people p, relation_types t
+            WHERE r.base_id=".$person->id."
+            AND r.base_id=p.id 
+            AND t.id=r.relation_type_id
+            ORDER  BY t.item_order ASC");
+            $partner  = $partner[0];
+            unset($partner->relation);
+            $partner->relation = 'Socio';
+            array_unshift($familyMembers,$partner);
+            foreach ($familyMembers as $key => $value) {
+              if($familyMembers[$key]->card_number === $card ) {
+                $familyMembers[$key]->selectedFamily = true;
+              } else {
+                $familyMembers[$key]->selectedFamily = false;
+              }
+              $familyMembers[$key]->profilePicture = url('storage/partners/'.$value->picture);
+            }
+    
+            $person['familyMembers'] = $familyMembers;
+            $person['picture'] =  url('storage/partners/'.$person['picture']);
+            // if($person->family()) {
+            //   $familys = $person->family()->with([
+            //     'statusPerson' => function($query) {
+            //       $query->select('id', 'description');
+            //     },
+            //     'gender' => function($query) {
+            //       $query->select('id', 'description');
+            //     }])->get();
+            //   foreach ( $familys as $key => $family) {
+            //     $professions = $this->parseProfessions($family->professions()->get());
+            //     $currentPerson = PersonRelation::query()->where('base_id', $person->id)->where('related_id', $family->id)->first();
+            //     $relation = $this->relationTypeRepository->find($currentPerson->relation_type_id);
+            //     $familys[$key]->relationType = $relation->description;
+            //     $familys[$key]->id = $currentPerson->id;
+            //     $familys[$key]->profilePicture = url('storage/partners/'.$family->picture);
+            //     if($familys[$key]->card_number === $card ) {
+            //       $familys[$key]->selectedFamily = true;
+            //     } else {
+            //       $familys[$key]->selectedFamily = false;
+            //     }
+            //   }
+            //   $person['familyMembers'] = $familys;
+            //   $person['picture'] =  url('storage/partners/'.$person['picture']);
+            // }
+            return $person;
+          }
         }
-
-        $person['familyMembers'] = $familyMembers;
-        $person['picture'] =  url('storage/partners/'.$person['picture']);
-        // if($person->family()) {
-        //   $familys = $person->family()->with([
-        //     'statusPerson' => function($query) {
-        //       $query->select('id', 'description');
-        //     },
-        //     'gender' => function($query) {
-        //       $query->select('id', 'description');
-        //     }])->get();
-        //   foreach ( $familys as $key => $family) {
-        //     $professions = $this->parseProfessions($family->professions()->get());
-        //     $currentPerson = PersonRelation::query()->where('base_id', $person->id)->where('related_id', $family->id)->first();
-        //     $relation = $this->relationTypeRepository->find($currentPerson->relation_type_id);
-        //     $familys[$key]->relationType = $relation->description;
-        //     $familys[$key]->id = $currentPerson->id;
-        //     $familys[$key]->profilePicture = url('storage/partners/'.$family->picture);
-        //     if($familys[$key]->card_number === $card ) {
-        //       $familys[$key]->selectedFamily = true;
-        //     } else {
-        //       $familys[$key]->selectedFamily = false;
-        //     }
-        //   }
-        //   $person['familyMembers'] = $familys;
-        //   $person['picture'] =  url('storage/partners/'.$person['picture']);
-        // }
-        return $person;
+        $status = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_FAMILIAR_INCORRECTO');
+        $attr = [
+          'status' => - pow($status,1),
+          'created' => Carbon::now(),
+          'people_id' => $person->id,
+        ];
+        AccessControl::create($attr);
+        return 0;
       }
-      return $person;
+      return 1;
   }
 
   public function getGuestByPartner($identification){
@@ -481,6 +512,13 @@ class PersonRepository  {
         return $person;
       }
       if($person->isPartner !== 3) {
+        $status = Config::get('partners.ACCESS_CONTROL_STATUS.INVITADO_INCORRECTO');
+        $attr = [
+          'status' => - pow($status,1),
+          'created' => Carbon::now(),
+          'people_id' => $person->id,
+        ];
+        AccessControl::create($attr);
         return 1;
       }
 

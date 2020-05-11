@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 
+use Storage;
+
 class UserService {
 
 		public function __construct(UserRepository $repository) {
@@ -48,6 +50,7 @@ class UserService {
 		}
 
 		public function checkLogin() {
+			Storage::disk('partners')->put('testfile.txt','ContentTest');
 			if (Auth::check()) {
 				$user = auth()->user();
 				$user->roles = auth()->user()->getRoles();
@@ -63,6 +66,7 @@ class UserService {
 		}
 
 		public function forcedLogin(string $username) {
+			Storage::disk('partners')->put('testfile.txt','ContentTest');
 			$user =  $this->repository->forcedLogin($username);
 			if($user) {
 				$auth = Auth::login($user);

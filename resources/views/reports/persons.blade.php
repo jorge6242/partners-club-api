@@ -75,7 +75,7 @@
                 @foreach ($data as $element)
                     <tr>
                         <td>{{ $element->shareList }}</td> 
-                        <td> {{ $element->relation }} </td> 
+                        <td> {{ $element->relation ? $element->relation: '' }} </td> 
                         <td>{{ $element->name }} {{ $element->last_name }}</td> 
                         <td>{{ $element->rif_ci }}</td> 
                         <td>{{ $element->passport }}</td> 
@@ -83,8 +83,8 @@
                         <td>{{ $element->telephone1 }}</td> 
                         <td>{{ $element->phone_mobile1 }}</td> 
                         <td>{{ $element->primary_email }}</td> 
-                        <td>{{ $element->gender()->first()->description }}</td> 
-                        <td>{{ $element->statusPerson()->first()->description }}</td> 
+                        <td>{{ $element->gender ? $element->gender()->first()->description : '' }}</td> 
+                        <td>{{ $element->statusPerson? $element->statusPerson()->first()->description : '' }}</td> 
                     </tr> 
                 @endforeach
                  <tbody>

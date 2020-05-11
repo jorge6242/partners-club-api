@@ -75,69 +75,45 @@ class AccessControlRepository  {
         ]);
 
         if ($queryFilter->query('share') !== NULL) {
-          $shares = $this->shareModel->query()->where('share_number','like', '%'.$queryFilter->query('share').'%')->get();
-            if(count($shares)) {
-              foreach ($shares as $key => $share) {
-                $data->orWhere('share_id', $share->id);
-              }
-            } else {
-              $data->where('share_id', '');
-            }
+          $filter = $queryFilter->query('share');
+          $data->whereHas('share', function($q) use($filter) {
+            $q->where('share_number', 'like', "%{$filter}%");
+          }); 
         }
-        
+
         if ($queryFilter->query('partner_name') !== NULL) {
-          $persons = $this->personModel->where('isPartner', 1)->where('name','like', '%'.$queryFilter->query('partner_name').'%')->get();
-          if(count($persons)) {
-            foreach ($persons as $key => $person) {
-              $data->orWhere('people_id', $person->id);
-            }
-          } else {
-            $data->where('people_id','');
-          }
+          $filter = $queryFilter->query('partner_name');
+          $data->whereHas('person', function($q) use($filter) {
+            $q->where('name', 'like', "%{$filter}%");
+          }); 
         }
-  
+
         if ($queryFilter->query('partner_rif_ci') !== NULL) {
-          $persons = $this->personModel->query()->where('isPartner', 1)->where('rif_ci','like', '%'.$queryFilter->query('partner_rif_ci').'%')->get();
-          if(count($persons)) {
-            foreach ($persons as $key => $person) {
-              $data->orWhere('people_id', $person->id);
-            }
-          } else {
-            $data->where('people_id','');
-          }
+          $filter = $queryFilter->query('partner_rif_ci');
+          $data->whereHas('person', function($q) use($filter) {
+            $q->where('rif_ci', 'like', "%{$filter}%");
+          }); 
         }
-  
+
         if ($queryFilter->query('partner_card_number') !== NULL) {
-          $persons = $this->personModel->query()->where('isPartner', 1)->where('card_number','like', '%'.$queryFilter->query('partner_card_number').'%')->get();
-          if(count($persons)) {
-            foreach ($persons as $key => $person) {
-              $data->orWhere('people_id', $person->id);
-            }
-          } else {
-            $data->where('people_id','');
-          }
+          $filter = $queryFilter->query('partner_card_number');
+          $data->whereHas('person', function($q) use($filter) {
+            $q->where('card_number', 'like', "%{$filter}%");
+          }); 
         }
 
         if ($queryFilter->query('guest_name') !== NULL) {
-          $persons = $this->personModel->query()->where('isPartner', 3)->where('name','like', '%'.$queryFilter->query('guest_name').'%')->get();
-          if(count($persons)) {
-            foreach ($persons as $key => $person) {
-              $data->orWhere('guest_id', $person->id);
-            }
-          } else {
-            $data->where('guest_id','');
-          }
+          $filter = $queryFilter->query('guest_name');
+          $data->whereHas('guest', function($q) use($filter) {
+            $q->where('name', 'like', "%{$filter}%");
+          }); 
         }
 
         if ($queryFilter->query('guest_rif_ci') !== NULL) {
-          $persons = $this->personModel->query()->where('isPartner', 3)->where('rif_ci','like', '%'.$queryFilter->query('guest_rif_ci').'%')->get();
-          if(count($persons)) {
-            foreach ($persons as $key => $person) {
-              $data->orWhere('guest_id', $person->id);
-            }
-          } else {
-            $data->where('guest_id','');
-          }
+          $filter = $queryFilter->query('guest_rif_ci');
+          $data->whereHas('guest', function($q) use($filter) {
+            $q->where('rif_ci', 'like', "%{$filter}%");
+          }); 
         }
 
         if ($queryFilter->query('location_id') !== NULL) {
@@ -147,9 +123,9 @@ class AccessControlRepository  {
         if ($queryFilter->query('status') !== NULL) {
           $data->where('status', $queryFilter->query('status'));
         }
-
+        
         if ($queryFilter->query('created_start') !== NULL && $queryFilter->query('created_end') !== NULL) {
-          $data->orWhereBetween('created', [$queryFilter->query('created_start'), $queryFilter->query('created_end')]);
+          $data->whereBetween('created', [$queryFilter->query('created_start'), $queryFilter->query('created_end')]);
         }
 
         if ($queryFilter->query('created_order') !== NULL) {
@@ -196,6 +172,7 @@ class AccessControlRepository  {
     public function getVisitsByMont($id) {
        return $this->model->where('status', 1)
        ->where('guest_id', $id)
+       ->whereYear('created', '=', Carbon::now()->year)
        ->whereMonth('created', '=', date('m'))
        ->get();
     }

@@ -71,17 +71,17 @@
                 <tbody>
                 @foreach ($data as $element)
                     <tr>
-                        <td>{{ $element->created }}</td>
-                        <td>{{ $element->location()->first()->description }}</td>
-                        <td>{{ $element->share()->first()->share_number }}</td>
-                        <td>{{ $element->person()->first()->rif_ci }}</td>
-                        <td>{{ $element->person()->first()->card_number }}</td>
-                        <td>{{ $element->person()->first()->name }} {{ $element->person()->first()->last_name }}</td>
-                        <td>{{ $element->status === 1 ? 'OK' : '' }}</td>
+                        <td>{{ $element->created ? $element->created : '' }}</td>
+                        <td>{{ $element->location ? $element->location()->first()->description : '' }}</td>
+                        <td>{{ $element->share? $element->share()->first()->share_number : '' }}</td>
+                        <td>{{ $element->person ? $element->person()->first()->rif_ci : '' }}</td>
+                        <td>{{ $element->person ? $element->person()->first()->card_number : '' }}</td>
+                        <td>{{ $element->person ? $element->person()->first()->name : '' }} {{ $element->person ? $element->person()->first()->last_name : '' }}</td>
+                        <td>{{ $element->status == 1 ? 'OK' : '' }}</td>
                         <td>
                             @if ($element->guest)
-                                <div>{{ $element->guest()->first()->name }} {{ $element->guest()->first()->last_name }}</div>
-                                <div>CI: {{ $element->guest()->first()->rif_ci }}</div>
+                                <div>{{ $element->guest? $element->guest()->first()->name: '' }} {{ $element->guest ? $element->guest()->first()->last_name : '' }}</div>
+                                <div>CI: {{ $element->guest ? $element->guest()->first()->rif_ci : '' }}</div>
                             @else
                             -
                             @endif 

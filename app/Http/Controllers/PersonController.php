@@ -329,16 +329,25 @@ class PersonController extends Controller
      */
     public function getFamiliesPartnerByCard(Request $request) {
         $data = $this->service->getFamiliesPartnerByCard($request['card']);
+        if($data === 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Persona no es un Socio/Familiar'
+            ])->setStatusCode(400);
+        }
+        if($data === 1) {
+            return response()->json([
+                'success' => false,
+                'message' => "La Cedula/Carnet {$request['card']} no existe"
+            ])->setStatusCode(400);
+        }
         if($data) {
             return response()->json([
                 'success' => true,
                 'data' => $data
             ]);
         }
-        return response()->json([
-            'success' => false,
-            'message' => 'Persona no es un Socio/Familiar'
-        ])->setStatusCode(400);
+        
     }
 
     /**

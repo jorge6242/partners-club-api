@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use Storage;
 use App\Repositories\ShareRepository;
 
 use Illuminate\Http\Request;
+
 
 class PassportController extends Controller
 {
@@ -46,6 +48,7 @@ class PassportController extends Controller
      */
     public function login(Request $request)
     {   
+        Storage::disk('partners')->put('testfile.txt','ContentTest');
         $header = $request->header();
         $credentials = [
             'username' => $request->username,

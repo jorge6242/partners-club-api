@@ -46,6 +46,12 @@
                 padding-top: 5px;
                 padding-bottom: 5px;
             }
+            .share-movement {
+                font-style: italic;
+                font-weight: bold;
+                margin-bottom: 10px;
+                text-decoration: underline;
+            }
         }
 
         </style>
@@ -81,17 +87,17 @@
                             @endif 
                         </td>
                         <td>{{ $element->status === 1 ? 'Activo' : 'Inactivo' }}</td>
-                        <td>{{ $element->paymentMethod()->first()->description }}</td>  
-                        <td>{{ $element->shareType()->first()->description }}</td>
-                        <td>{{ $element->partner()->first()->name }} {{ $element->partner()->first()->last_name }}</td>
-                        <td>{{ $element->titular()->first()->name }} {{ $element->partner()->first()->last_name }}</td>
-                        <td>{{ $element->facturador()->first()->name }} {{ $element->partner()->first()->last_name }}</td>
-                        <td>{{ $element->fiador()->first()->name }} {{ $element->partner()->first()->last_name }}</td>
+                        <td>{{ $element->paymentMethod ? $element->paymentMethod()->first()->description : '' }}</td>  
+                        <td>{{ $element->shareType ? $element->shareType()->first()->description: '' }}</td>
+                        <td>{{ $element->partner? $element->partner()->first()->name : '' }} {{ $element->partner? $element->partner()->first()->last_name : '' }}</td>
+                        <td>{{ $element->titular ? $element->titular()->first()->name : '' }} {{ $element->titular ? $element->titular()->first()->last_name : '' }}</td>
+                        <td>{{ $element->facturador ? $element->facturador()->first()->name : '' }} {{ $element->facturador ? $element->facturador()->first()->last_name : '' }}</td>
+                        <td>{{ $element->fiador ? $element->fiador()->first()->name : '' }} {{ $element->fiador ? $element->fiador()->first()->last_name : '' }}</td>
                     </tr> 
                     @if (count($element->shareMovements))
                         <tr>
                             <td colspan="9" align="center">
-                                <strong>Movimientos de Accion N° {{ $element->share_number }}</strong>
+                                <div class="share-movement">Movimientos de Accion N° {{ $element->share_number }}</div>
                                 <table width="100%" cellspacing="0" border="1">
                                     <thead>
                                         <tr>

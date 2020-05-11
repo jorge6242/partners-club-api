@@ -80,7 +80,15 @@ class TransactionTypeRepository  {
       if($queryFilter->query('term') === null) {
         $search = $this->model->all();  
       } else {
-        $search = $this->model->where('description', 'like', '%'.$queryFilter->query('term').'%')->paginate($queryFilter->query('perPage'));
+        $search = $this->model->query()->select([
+          'id',
+          'description',
+          'rate',
+          'apply_main',
+          'apply_extension',
+          'apply_change_user',
+          'currency_id',
+      ])->with(['currency'])->where('description', 'like', '%'.$queryFilter->query('term').'%')->paginate($queryFilter->query('perPage'));
       }
      return $search;
     }

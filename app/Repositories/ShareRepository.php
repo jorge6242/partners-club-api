@@ -117,13 +117,11 @@ class ShareRepository  {
       if ($queryFilter->query('share') !== NULL) {
         $shares->where('share_number', 'like', '%'.$queryFilter->query('share').'%');
       }
+
       if ($queryFilter->query('father_share') !== NULL) {
-        $shareFathers = Share::where('share_number', 'like', '%'.$queryFilter->query('father_share').'%')
-        ->where('father_share_id',0)->get();
-        foreach ($shareFathers as $key => $value) {
-          $shares->orWhere('id', $value->id);
-        }
+        $shares->where('father_share_id',0)->where('share_number', 'like', '%'.$queryFilter->query('father_share').'%');
       }
+
       if ($queryFilter->query('payment_method_id') !== NULL) {
         $shares->where('payment_method_id', $queryFilter->query('payment_method_id'));
       }
@@ -137,32 +135,33 @@ class ShareRepository  {
       }
 
       if ($queryFilter->query('persona') !== NULL) {
-          $persons = $this->personModel->query()->where('name','like', '%'.$queryFilter->query('persona').'%')->get();
-          foreach ($persons as $key => $person) {
-            $shares->where('id_persona', $person->id);
-          }
+          $filter = $queryFilter->query('persona');
+          $shares->whereHas('partner', function($q) use($filter) {
+            $q->where('name','like',"%{$filter}%");
+          });
       }
 
       if ($queryFilter->query('titular') !== NULL) {
-        $persons = $this->personModel->query()->where('name','like', '%'.$queryFilter->query('titular').'%')->get();
-        foreach ($persons as $key => $person) {
-          $shares->where('id_titular_persona', $person->id);
-        }
+        $filter = $queryFilter->query('titular');
+        $shares->whereHas('titular', function($q) use($filter) {
+          $q->where('name','like',"%{$filter}%");
+        });
       }
 
       if ($queryFilter->query('facturador') !== NULL) {
-        $persons = $this->personModel->query()->where('name','like', '%'.$queryFilter->query('facturador').'%')->get();
-        foreach ($persons as $key => $person) {
-          $shares->where('id_factura_persona', $person->id);
-        }
+        $filter = $queryFilter->query('facturador');
+        $shares->whereHas('facturador', function($q) use($filter) {
+          $q->where('name','like',"%{$filter}%");
+        });
       }
 
       if ($queryFilter->query('fiador') !== NULL) {
-        $persons = $this->personModel->query()->where('name','like', '%'.$queryFilter->query('fiador').'%')->get();
-        foreach ($persons as $key => $person) {
-          $shares->where('id_fiador_persona', $person->id);
-        }
+        $filter = $queryFilter->query('fiador');
+        $shares->whereHas('fiador', function($q) use($filter) {
+          $q->where('name','like',"%{$filter}%");
+        });
       }
+
       if ($isPDF) {
         return  $shares->get();
       }

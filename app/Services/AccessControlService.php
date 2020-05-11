@@ -10,6 +10,8 @@ use App\Repositories\RecordRepository;
 use App\Services\SoapService;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Config;
+
 class AccessControlService {
 
 	public function __construct(
@@ -55,69 +57,73 @@ class AccessControlService {
 		return $person ? $status->description : '';
 	}
 
-	function validatePartner($request) {
-		$status = 1;
-		$message = '';
-		$records = $this->recordRepository->getBlockedRecord($request['people_id']);
-		if(count($records)) {
-			foreach ($records as $key => $value) {
-				$status = $status - 4;
-				$message .= '* Presenta bloqueo activo por expediente :'.$value->id.',  hasta la fecha  '.$value->expiration_date.'<br>';
-			}
-		}
+	// function validatePartner($request) {
+	// 	$status = 1;
+	// 	$message = '';
+	// 	$records = $this->recordRepository->getBlockedRecord($request['people_id']);
+	// 	if(count($records)) {
+	// 		foreach ($records as $key => $value) {
+	// 			$status = $status - 4;
+	// 			$message .= '* Presenta bloqueo activo por expediente :'.$value->id.',  hasta la fecha  '.$value->expiration_date.'<br>';
+	// 		}
+	// 	}
 
 
 
-		$share = $this->shareRepository->find($request['share_id']);
-		if($share->status === 0) {
-			$message .= '* Accion Inactiva <br>';
-			$status = $status -4;
-		}
+	// 	$share = $this->shareRepository->find($request['share_id']);
+	// 	if($share->status === 0) {
+	// 		$message .= '* Accion Inactiva <br>';
+	// 		$status = $status -4;
+	// 	}
 
-		$saldo = $this->soapService->getSaldo($share->share_number);
-		if($saldo[0]->status < 1) {
-			$message .= '* Accion no tiene saldo <br>';
-			$status = $status -2;
-		}
+	// 	$saldo = $this->soapService->getSaldo($share->share_number);
+	// 	if($saldo[0]->status < 1) {
+	// 		$message .= '* Accion no tiene saldo <br>';
+	// 		$status = $status -2;
+	// 	}
 
-		$personStatus = $this->checkPersonStatus($request['people_id']);
+	// 	$personStatus = $this->checkPersonStatus($request['people_id']);
 
-		if($personStatus === "Inactivo"){
-			$message .= '* Socio Inactivo <br>';
-			$status = $status -4;
-		}
-		// if($request['selectedPartner'] === true) {
-		// 	$data = $this->repository->create($request);
-		// }
-		return $message;
-	}
+	// 	if($personStatus === "Inactivo"){
+	// 		$message .= '* Socio Inactivo <br>';
+	// 		$status = $status -4;
+	// 	}
+	// 	// if($request['selectedPartner'] === true) {
+	// 	// 	$data = $this->repository->create($request);
+	// 	// }
+	// 	return $message;
+	// }
 
 	function validateMember($member, $shareId, $balance) {
-		$status = 0;
+		$status = 1;
 		$message = '';
 
 		if($balance < 0) {
-			$status = $status -2;
+			$balanceStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_SALDO_DEUDOR');
+			$status = - pow($balanceStatus,$status);
 		}
 
 		$records = $this->recordRepository->getBlockedRecord($member);
 		if(count($records)) {
 			foreach ($records as $key => $value) {
-				$status = $status - 4;
+				$expStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_BLOQUEO_EXPEDIENTE');
+				$status = - pow($expStatus,$status);
 				$message .= 'Bloqueo activo por expediente :'.$value->id.',  hasta la fecha  '.$value->expiration_date.'<br>';
 			}
 		}
 
 		$share = $this->shareRepository->find($shareId);
 		if($share->status === 0) {
+			$shareStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_INACTIVA');
+			$status = - pow($shareStatus,$status);
 			$message .= '* Accion Inactiva <br>';
-			$status = $status -4;
 		}
 
 		$personStatus = $this->checkPersonStatus($member);
 		if($personStatus === "Inactivo"){
+			$personStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_INACTIVO');
 			$message .= '* Socio Inactivo <br>';
-			$status = $status -4;
+			$status = - pow($personStatus,$status);
 		}
 		if($message !== '') {
 			$currentPerson = $this->personModel->query(['name', 'last_name', 'rif_ci', 'card_number'])->where('id', $member)->first();
@@ -134,22 +140,24 @@ class AccessControlService {
 			$message = '';
 			
 			if($balance < 0) {
-				$status = $status -2;
+				$balanceStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_SALDO_DEUDOR');
+				$status = - pow($balanceStatus,$status);
 			}
 
 			$parameter = $this->parameterRepository->findByParameter('MAX_MONTH_VISITS_GUEST');
 			$visits = $this->repository->getVisitsByMont($request1['guest_id']);
 			$personStatus = $this->checkPersonStatus($request1['guest_id']);
 			if($personStatus === "Inactivo"){
+				$inactiveStatus = Config::get('partners.ACCESS_CONTROL_STATUS.INVITADO_INACTIVO');
+				$status = - pow($inactiveStatus,$status);
 				$message .= '* Invitado Inactivo <br>';
-				$status = $status -2;
 			}
-			if(count($visits) > $parameter->value) {
+			if(count($visits) >= $parameter->value) {
+				$visitStatus = Config::get('partners.ACCESS_CONTROL_STATUS.INVITADO_VISITAS_POR_MES');
+				$status = - pow($visitStatus,$status);
 				$message .= '* Excede cantidad Maxima de visitas por Mes permitida : '.$parameter->value.'<br>';
-				$status = $status - 8;
 			}
 			$request1['people_id'] = $request1['selectedPersonToAssignGuest'];
-			$request1['isPartner'] = 3;
 			$request1['status'] = $status;
 			$this->repository->create($request1);
 			return $message;
@@ -157,10 +165,10 @@ class AccessControlService {
 	}
 
 	public function create($request) {
+		//A-2104 for test
 		$share = $this->shareRepository->find($request['share_id']);
 		$shareBalance = $this->soapService->getSaldo($share->share_number);
 		$message = '';
-
 		// $validatePartnerMessage = $this->validatePartner($request);
 		// if($validatePartnerMessage !== '') {
 		// 	$message.= '<strong>- Socio</strong>: <br>
@@ -184,16 +192,17 @@ class AccessControlService {
 		}
 
 		if(count($request['family'])) {
-			$status = 1;
 			$familyMessage = '';
 			foreach ($request['family'] as $element) {
-
-				$validatePartnerMessage = $this->validateMember($element, $request['share_id'], $shareBalance[0]->status);
-				$familyMessage .= $validatePartnerMessage->message;
-				$request['people_id'] = $element;
-				$request['status'] = $status + $validatePartnerMessage->status;
-				$request['guest_id'] = NULL;
-				$this->repository->create($request);
+				if($request['selectedPersonToAssignGuest'] !== $element) {
+					$validatePartnerMessage = $this->validateMember($element, $request['share_id'], $shareBalance[0]->status);
+					$familyMessage .= $validatePartnerMessage->message;
+					$request['people_id'] = $element;
+					$request['status'] = $validatePartnerMessage->status;
+					$request['guest_id'] = NULL;
+					$this->repository->create($request);
+				}
+				
 			}
 			$message .= $familyMessage;
 		}
