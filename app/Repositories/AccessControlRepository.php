@@ -84,7 +84,7 @@ class AccessControlRepository  {
         if ($queryFilter->query('partner_name') !== NULL) {
           $filter = $queryFilter->query('partner_name');
           $data->whereHas('person', function($q) use($filter) {
-            $q->where('name', 'like', "%{$filter}%");
+            $q->where('name', 'like', "%{$filter}%")->orWhere('last_name', 'like', "%{$filter}%");
           }); 
         }
 
@@ -105,7 +105,7 @@ class AccessControlRepository  {
         if ($queryFilter->query('guest_name') !== NULL) {
           $filter = $queryFilter->query('guest_name');
           $data->whereHas('guest', function($q) use($filter) {
-            $q->where('name', 'like', "%{$filter}%");
+            $q->where('name', 'like', "%{$filter}%")->orWhere('last_name', 'like', "%{$filter}%");
           }); 
         }
 
