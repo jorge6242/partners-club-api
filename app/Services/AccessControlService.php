@@ -116,7 +116,7 @@ class AccessControlService {
 		$share = $this->shareRepository->find($shareId);
 		if($share->status === 0) {
 			$shareStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_INACTIVA');
-			// $status = pow($shareStatus,$status);
+			// $status = - pow($shareStatus,$status);
 			$status = $status - $shareStatus;
 			$status = - $status;
 			$message .= '* Accion Inactiva <br>';
@@ -126,7 +126,7 @@ class AccessControlService {
 		if($personStatus === "Inactivo"){
 			$personStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_INACTIVO');
 			$message .= '* Socio Inactivo <br>';
-			// $status = pow($personStatus,$status);
+			// $status = - pow($personStatus,$status);
 			$status = $status - $personStatus;
 			$status = - $status;
 		}
@@ -146,7 +146,7 @@ class AccessControlService {
 			
 			if($balance < 0) {
 				$balanceStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_SALDO_DEUDOR');
-				// $balanceStatus = pow($status ,$balanceStatus);
+				// $balanceStatus = - pow($status ,$balanceStatus);
 				$status = $status - $balanceStatus;
 			}
 			$parameter = $this->parameterRepository->findByParameter('MAX_MONTH_VISITS_GUEST');
