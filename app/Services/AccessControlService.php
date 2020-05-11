@@ -107,7 +107,8 @@ class AccessControlService {
 		if(count($records)) {
 			foreach ($records as $key => $value) {
 				$expStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_BLOQUEO_EXPEDIENTE');
-				$status = - pow($expStatus,$status);
+				$status = pow($expStatus,$status);
+				$status = - $status;
 				$message .= 'Bloqueo activo por expediente :'.$value->id.',  hasta la fecha  '.$value->expiration_date.'<br>';
 			}
 		}
@@ -115,7 +116,9 @@ class AccessControlService {
 		$share = $this->shareRepository->find($shareId);
 		if($share->status === 0) {
 			$shareStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_INACTIVA');
-			$status = - pow($shareStatus,$status);
+			// $status = pow($shareStatus,$status);
+			$status = $status - $shareStatus;
+			$status = - $status;
 			$message .= '* Accion Inactiva <br>';
 		}
 
@@ -123,7 +126,9 @@ class AccessControlService {
 		if($personStatus === "Inactivo"){
 			$personStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_INACTIVO');
 			$message .= '* Socio Inactivo <br>';
-			$status = - pow($personStatus,$status);
+			// $status = pow($personStatus,$status);
+			$status = $status - $personStatus;
+			$status = - $status;
 		}
 		if($message !== '') {
 			$currentPerson = $this->personModel->query(['name', 'last_name', 'rif_ci', 'card_number'])->where('id', $member)->first();
@@ -141,24 +146,27 @@ class AccessControlService {
 			
 			if($balance < 0) {
 				$balanceStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_SALDO_DEUDOR');
-				$status = - pow($balanceStatus,$status);
+				// $balanceStatus = pow($status ,$balanceStatus);
+				$status = $status - $balanceStatus;
 			}
-
 			$parameter = $this->parameterRepository->findByParameter('MAX_MONTH_VISITS_GUEST');
 			$visits = $this->repository->getVisitsByMont($request1['guest_id']);
 			$personStatus = $this->checkPersonStatus($request1['guest_id']);
 			if($personStatus === "Inactivo"){
 				$inactiveStatus = Config::get('partners.ACCESS_CONTROL_STATUS.INVITADO_INACTIVO');
-				$status = - pow($inactiveStatus,$status);
+				// $status = - pow($status , $inactiveStatus);
+				$status = $status - $inactiveStatus;
 				$message .= '* Invitado Inactivo <br>';
 			}
 			if(count($visits) >= $parameter->value) {
 				$visitStatus = Config::get('partners.ACCESS_CONTROL_STATUS.INVITADO_VISITAS_POR_MES');
-				$status = - pow($visitStatus,$status);
+				// $status = - pow($status , $visitStatus);
+				$status = $status - $visitStatus;
 				$message .= '* Excede cantidad Maxima de visitas por Mes permitida : '.$parameter->value.'<br>';
 			}
 			$request1['people_id'] = $request1['selectedPersonToAssignGuest'];
 			$request1['status'] = $status;
+			$request1['isPartner'] = 3;
 			$this->repository->create($request1);
 			return $message;
 		}
