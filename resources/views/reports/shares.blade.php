@@ -117,14 +117,14 @@
                                         @foreach ($element->shareMovements as $element)
                                             <tr>
                                                 <td>{{ $element->created }}</td>
-                                                <td>{{ $element->transaction()->first()->description }}</td>
+                                                <td>{{ $element->transaction ? $element->transaction()->first()->description : '' }}</td>
                                                 <td>{{ $element->description }}</td>
-                                                <td>{{ $element->rateCurrency()->first()->description }}</td>
+                                                <td>{{ $element->rateCurrency ? $element->rateCurrency()->first()->description : '' }}</td>
                                                 <td>{{ $element->rate }}</td>
-                                                <td>{{ $element->saleCurrency()->first()->description }}</td>
+                                                <td>{{ $element->saleCurrency ? $element->saleCurrency()->first()->description : '' }}</td>
                                                 <td>{{ $element->number_sale_price }}</td>
-                                                <td>{{ $element->partner()->first()->name }} {{ $element->partner()->first()->last_name }}</td>
-                                                <td>{{ $element->titular()->first()->name }} {{ $element->partner()->first()->last_name }}</td>
+                                                <td>{{ $element->partner ? $element->partner()->first()->name : '' }} {{ $element->partner ? $element->partner()->first()->last_name : '' }}</td>
+                                                <td>{{ $element->titular ? $element->titular()->first()->name : '' }} {{ $element->titular ? $element->titular()->first()->last_name : '' }}</td>
                                                 <td>{{ $element->number_procesed === 1 ? 'SI' : 'NO' }}</td>
                                             </tr>
                                         @endforeach
