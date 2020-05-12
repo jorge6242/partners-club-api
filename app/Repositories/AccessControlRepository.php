@@ -127,6 +127,7 @@ class AccessControlRepository  {
           $data->where('location_id', $queryFilter->query('location_id'));
         }
 
+        // Este es el filtro de estatus
         if ($queryFilter->query('status') !== NULL) {
         // Aqui puedes usar la funcion para buscar el estatus
         //$status = $this->accessControlHelper->accessControl($queryFilter->query('status')); // esta es la funcion que me pedistes para hacer el calculo;
