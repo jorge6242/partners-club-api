@@ -57,58 +57,28 @@ class AccessControlService {
 		return $person ? $status->description : '';
 	}
 
-	// function validatePartner($request) {
-	// 	$status = 1;
-	// 	$message = '';
-	// 	$records = $this->recordRepository->getBlockedRecord($request['people_id']);
-	// 	if(count($records)) {
-	// 		foreach ($records as $key => $value) {
-	// 			$status = $status - 4;
-	// 			$message .= '* Presenta bloqueo activo por expediente :'.$value->id.',  hasta la fecha  '.$value->expiration_date.'<br>';
-	// 		}
-	// 	}
+	function getAccesControlStatus(int $status, array $list) {
+		return $status;
+	}
 
-
-
-	// 	$share = $this->shareRepository->find($request['share_id']);
-	// 	if($share->status === 0) {
-	// 		$message .= '* Accion Inactiva <br>';
-	// 		$status = $status -4;
-	// 	}
-
-	// 	$saldo = $this->soapService->getSaldo($share->share_number);
-	// 	if($saldo[0]->status < 1) {
-	// 		$message .= '* Accion no tiene saldo <br>';
-	// 		$status = $status -2;
-	// 	}
-
-	// 	$personStatus = $this->checkPersonStatus($request['people_id']);
-
-	// 	if($personStatus === "Inactivo"){
-	// 		$message .= '* Socio Inactivo <br>';
-	// 		$status = $status -4;
-	// 	}
-	// 	// if($request['selectedPartner'] === true) {
-	// 	// 	$data = $this->repository->create($request);
-	// 	// }
-	// 	return $message;
-	// }
-
+	//Funcion para validar a el miembro familiar incluyendo el socio
 	function validateMember($member, $shareId, $balance) {
 		$status = 1;
 		$message = '';
 
 		if($balance < 0) {
-			$balanceStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_SALDO_DEUDOR');
-			$status = - pow($balanceStatus,$status);
+			$balanceStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_SALDO_DEUDOR'); // Archivo config
+			$status = pow($expStatus,$status);
+			$status = $status - $balanceStatus;
 		}
 
 		$records = $this->recordRepository->getBlockedRecord($member);
 		if(count($records)) {
 			foreach ($records as $key => $value) {
 				$expStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_BLOQUEO_EXPEDIENTE');
-				$status = pow($expStatus,$status);
-				$status = - $status;
+				//Config::get('partners.ACCESS_CONTROL_STATUS')
+				// $status = pow($expStatus,$status);
+				$status = $status - $expStatus;
 				$message .= 'Bloqueo activo por expediente :'.$value->id.',  hasta la fecha  '.$value->expiration_date.'<br>';
 			}
 		}
@@ -186,6 +156,8 @@ class AccessControlService {
 		// 	$this->legacyAccesControlIngration($request['people_id'], 1);
 		// }
 
+
+		//Registro de Invitado
 		if($request['guest_id'] !== null) {
 			$validateGuestMessage = $this->validateGuest($request, $shareBalance[0]->status);
 			$currentGuestPerson = $this->personModel->query(['name', 'last_name', 'rif_ci'])->where('id',$request['guest_id'])->first();
@@ -199,6 +171,7 @@ class AccessControlService {
 		}
 		}
 
+		//Reguistro de familiares incluyendo el socio
 		if(count($request['family'])) {
 			$familyMessage = '';
 			foreach ($request['family'] as $element) {
