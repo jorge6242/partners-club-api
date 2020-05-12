@@ -104,7 +104,7 @@ class AccessControlService {
 
 	public function validateGuest($request, $balance) {
 		if($request['guest_id'] !== "") {
-			$request1 = $request;
+			$guestRequest = $request;
 			$status = 1; // se inicializa el status y luego cambia si entra en las condiciones de bloqueo
 			$message = '';
 			
@@ -113,7 +113,7 @@ class AccessControlService {
 				// $status = $this->accessControlHelper->getAccesControlStatus($balanceStatus,$status);
 			}
 
-			$personStatus = $this->checkPersonStatus($request1['guest_id']);
+			$personStatus = $this->checkPersonStatus($guestRequest['guest_id']);
 			if($personStatus === "Inactivo"){
 				$inactiveStatus = Config::get('partners.ACCESS_CONTROL_STATUS.INVITADO_INACTIVO');
 				// $status = $this->accessControlHelper->getAccesControlStatus($inactiveStatus,$status);
@@ -121,17 +121,17 @@ class AccessControlService {
 			}
 
 			$parameter = $this->parameterRepository->findByParameter('MAX_MONTH_VISITS_GUEST');
-			$visits = $this->repository->getVisitsByMont($request1['guest_id']);
+			$visits = $this->repository->getVisitsByMont($guestRequest['guest_id']);
 			if(count($visits) >= $parameter->value) {
 				$visitStatus = Config::get('partners.ACCESS_CONTROL_STATUS.INVITADO_VISITAS_POR_MES');
 				// $status = $this->accessControlHelper->getAccesControlStatus($visitStatus,$status);
 				$message .= '* Excede cantidad Maxima de visitas por Mes permitida : '.$parameter->value.'<br>';
 			}
 
-			$request1['people_id'] = $request1['selectedPersonToAssignGuest'];
-			$request1['status'] = $status;
+			$guestRequest['people_id'] = $guestRequest['selectedPersonToAssignGuest'];
+			$guestRequest['status'] = $status;
 			// En el caso del invitado solo se hace un solo registro por esta razon no esta dentro del arreglo como los miembros familiares
-			$this->repository->create($request1);
+			$this->repository->create($guestRequest);
 			return $message;
 		}
 	}
