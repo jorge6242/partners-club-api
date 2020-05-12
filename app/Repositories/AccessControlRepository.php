@@ -128,8 +128,11 @@ class AccessControlRepository  {
         }
 
         if ($queryFilter->query('status') !== NULL) {
-          $data->where('status', $queryFilter->query('status'));
-        }
+        // Aqui puedes usar la funcion para buscar el estatus
+        //$status = $this->accessControlHelper->accessControl($queryFilter->query('status')); // esta es la funcion que me pedistes para hacer el calculo;
+      
+        //$data->where('status', $status);
+      }
         
         if ($queryFilter->query('created_start') !== NULL && $queryFilter->query('created_end') !== NULL) {
           $data->whereBetween('created', [$queryFilter->query('created_start'), $queryFilter->query('created_end')]);
@@ -143,13 +146,7 @@ class AccessControlRepository  {
         return  $data->get();
       }
       
-      $search = $data->paginate($queryFilter->query('perPage'));
-      foreach ($search as $key => $value) {
-        // Aqui puedes usar la funcion que quieres para renombrar el estatus antes de mostrar el filtro en el frontend
-        //$this->accessControlHelper->accessControl(); // esta es la funcion que me pedistes para hacer el calculo antes de mostrar el resultado del filtro
-        //$search[$key]->status // aqui se puede renombrar el status de cada registro
-      }
-      return $search;
+      return $data->paginate($queryFilter->query('perPage'));
     }
 
     public function getList() {
