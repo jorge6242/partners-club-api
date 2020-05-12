@@ -8,6 +8,8 @@ use App\Repositories\AccessControlRepository;
 use App\Repositories\ParameterRepository;
 use App\Repositories\RecordRepository;
 use App\Services\SoapService;
+use App\Helpers\AccessControlHelper;
+
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Config;
@@ -20,7 +22,8 @@ class AccessControlService {
 		ShareRepository $shareRepository,
 		ParameterRepository $parameterRepository,
 		RecordRepository $recordRepository,
-		SoapService $soapService
+		SoapService $soapService,
+		AccessControlHelper $accessControlHelper
 		) 
 		{
 		$this->repository = $repository;
@@ -29,6 +32,7 @@ class AccessControlService {
 		$this->parameterRepository = $parameterRepository;
 		$this->recordRepository = $recordRepository;
 		$this->soapService = $soapService;
+		$this->accessControlHelper = $accessControlHelper;
 	}
 
 	public function index($perPage) {
@@ -57,28 +61,21 @@ class AccessControlService {
 		return $person->statusPerson ? $status->description : '';
 	}
 
-	function getAccesControlStatus(int $status, array $list) {
-		return $status;
-	}
-
 	//Funcion para validar a el miembro familiar incluyendo el socio
 	function validateMember($member, $shareId, $balance) {
-		$status = 1;
+		$status = 1; // se inicializa el status y luego cambia si entra en las condiciones de bloqueo
 		$message = '';
 
 		if($balance < 0) {
 			$balanceStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_SALDO_DEUDOR'); // Archivo config
-			$status = pow($balanceStatus,$status);
-			$status = $status - $balanceStatus;
+			// $status = $this->accessControlHelper->getAccesControlStatus($balanceStatus,$status);
 		}
 
 		$records = $this->recordRepository->getBlockedRecord($member);
 		if(count($records)) {
 			foreach ($records as $key => $value) {
-				$expStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_BLOQUEO_EXPEDIENTE');
-				//Config::get('partners.ACCESS_CONTROL_STATUS')
-				// $status = pow($expStatus,$status);
-				$status = $status - $expStatus;
+				$recordStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_BLOQUEO_EXPEDIENTE');
+				// $status = $this->accessControlHelper->getAccesControlStatus($recordStatus,$status);
 				$message .= 'Bloqueo activo por expediente :'.$value->id.',  hasta la fecha  '.$value->expiration_date.'<br>';
 			}
 		}
@@ -86,9 +83,7 @@ class AccessControlService {
 		$share = $this->shareRepository->find($shareId);
 		if($share->status === 0) {
 			$shareStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_INACTIVA');
-			// $status = - pow($shareStatus,$status);
-			$status = $status - $shareStatus;
-			$status = - $status;
+			// $status = $this->accessControlHelper->getAccesControlStatus($shareStatus,$status);
 			$message .= '* Accion Inactiva <br>';
 		}
 
@@ -96,54 +91,53 @@ class AccessControlService {
 		if($personStatus === "Inactivo"){
 			$personStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_INACTIVO');
 			$message .= '* Socio Inactivo <br>';
-			// $status = - pow($personStatus,$status);
-			$status = $status - $personStatus;
-			$status = - $status;
+			// $status = $this->getAccesControlStatus($personStatus,$status);
 		}
 		if($message !== '') {
 			$currentPerson = $this->personModel->query(['name', 'last_name', 'rif_ci', 'card_number'])->where('id', $member)->first();
 			$name = '<strong>'.$currentPerson->name.' '.$currentPerson->last_name.'</strong> Carnet: '.$currentPerson->card_number;
 			$message = '<br><div><div>'.$name.'</div><div>'.$message.'</div></div>';
 		}
+		// se retorna el mensaje de error y el estatus , estos valores son usados para el registro final de cada miembro
 		return (object)[ 'message' => $message, 'status' => $status ];
 	}
 
 	public function validateGuest($request, $balance) {
 		if($request['guest_id'] !== "") {
 			$request1 = $request;
-			$status = 1;
+			$status = 1; // se inicializa el status y luego cambia si entra en las condiciones de bloqueo
 			$message = '';
 			
 			if($balance < 0) {
 				$balanceStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_SALDO_DEUDOR');
-				// $balanceStatus = - pow($status ,$balanceStatus);
-				$status = $status - $balanceStatus;
+				// $status = $this->accessControlHelper->getAccesControlStatus($balanceStatus,$status);
 			}
-			$parameter = $this->parameterRepository->findByParameter('MAX_MONTH_VISITS_GUEST');
-			$visits = $this->repository->getVisitsByMont($request1['guest_id']);
+
 			$personStatus = $this->checkPersonStatus($request1['guest_id']);
 			if($personStatus === "Inactivo"){
 				$inactiveStatus = Config::get('partners.ACCESS_CONTROL_STATUS.INVITADO_INACTIVO');
-				// $status = - pow($status , $inactiveStatus);
-				$status = $status - $inactiveStatus;
+				// $status = $this->accessControlHelper->getAccesControlStatus($inactiveStatus,$status);
 				$message .= '* Invitado Inactivo <br>';
 			}
+
+			$parameter = $this->parameterRepository->findByParameter('MAX_MONTH_VISITS_GUEST');
+			$visits = $this->repository->getVisitsByMont($request1['guest_id']);
 			if(count($visits) >= $parameter->value) {
 				$visitStatus = Config::get('partners.ACCESS_CONTROL_STATUS.INVITADO_VISITAS_POR_MES');
-				// $status = - pow($status , $visitStatus);
-				$status = $status - $visitStatus;
+				// $status = $this->accessControlHelper->getAccesControlStatus($visitStatus,$status);
 				$message .= '* Excede cantidad Maxima de visitas por Mes permitida : '.$parameter->value.'<br>';
 			}
+
 			$request1['people_id'] = $request1['selectedPersonToAssignGuest'];
 			$request1['status'] = $status;
-			$request1['isPartner'] = 3;
+			// En el caso del invitado solo se hace un solo registro por esta razon no esta dentro del arreglo como los miembros familiares
 			$this->repository->create($request1);
 			return $message;
 		}
 	}
 
 	public function create($request) {
-		//A-2104 for test
+		//A-2104 esta accion es para hacer pruebas con el WS de produccion
 		$share = $this->shareRepository->find($request['share_id']);
 		$shareBalance = $this->soapService->getSaldo($share->share_number);
 		$message = '';

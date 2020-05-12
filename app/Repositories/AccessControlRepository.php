@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Person;
 use App\Share;
 use App\AccessControl;
+use App\Helpers\AccessControlHelper;
 
 use Carbon\Carbon;
 
@@ -15,11 +16,13 @@ class AccessControlRepository  {
     public function __construct(
       AccessControl $model, 
       Person $personModel,
-      Share $shareModel
+      Share $shareModel,
+      AccessControlHelper $accessControlHelper
       ) {
       $this->model = $model;
       $this->personModel = $personModel;
       $this->shareModel = $shareModel;
+      $this->accessControlHelper = $accessControlHelper;
     }
 
     public function find($id) {
@@ -74,8 +77,12 @@ class AccessControlRepository  {
           }
         ]);
 
+
+        // Esta es la lista de cada filtro condicionado si existe
         if ($queryFilter->query('share') !== NULL) {
           $filter = $queryFilter->query('share');
+          //Los que dicen whereHas realizan la consulta dentro de esa relacion en este caso, la logica que observas 
+          // buscar es father_share_id.share_number = 1234;
           $data->whereHas('share', function($q) use($filter) {
             $q->where('share_number', 'like', "%{$filter}%");
           }); 
@@ -135,7 +142,14 @@ class AccessControlRepository  {
       if ($isPDF) {
         return  $data->get();
       }
-      return $data->paginate($queryFilter->query('perPage'));
+      
+      $search = $data->paginate($queryFilter->query('perPage'));
+      foreach ($search as $key => $value) {
+        // Aqui puedes usar la funcion que quieres para renombrar el estatus antes de mostrar el filtro en el frontend
+        //$this->accessControlHelper->accessControl(); // esta es la funcion que me pedistes para hacer el calculo antes de mostrar el resultado del filtro
+        //$search[$key]->status // aqui se puede renombrar el status de cada registro
+      }
+      return $search;
     }
 
     public function getList() {
