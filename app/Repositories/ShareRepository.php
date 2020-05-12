@@ -119,7 +119,10 @@ class ShareRepository  {
       }
 
       if ($queryFilter->query('father_share') !== NULL) {
-        $shares->whereNull('father_share_id')->where('share_number', 'like', '%'.$queryFilter->query('father_share').'%');
+        $filter = $queryFilter->query('father_share');
+        $shares->whereHas('fatherShare', function($q) use($filter) {
+          $q->where('share_number','like',"%{$filter}%");
+        }); 
       }
 
       if ($queryFilter->query('payment_method_id') !== NULL) {

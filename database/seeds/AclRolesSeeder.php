@@ -65,13 +65,12 @@ class AclRolesSeeder extends Seeder
 
 //dd($activity);
 
-// $user = User::where('username', 'A-1713')->first();
-// // $admin = Role::where('slug', 'administrador')->first();
-// // $user->assignRole($admin->id);
-// // $user->revokeRole('administrador');
+// $user = User::where('username', 'admin')->first();
+// $admin = Role::where('slug', 'administrador')->first();
+// $user->assignRole($admin->id);
 // dd($user->getRoles());
-$database = \DB::connection()->getDatabaseName();
-dd(env('APP_URL'));
+// $database = \DB::connection()->getDatabaseName();
+// dd(env('APP_URL'));
 
     }
 }
