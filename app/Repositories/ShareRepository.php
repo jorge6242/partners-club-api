@@ -119,7 +119,7 @@ class ShareRepository  {
       }
 
       if ($queryFilter->query('father_share') !== NULL) {
-        $shares->where('father_share_id', null)->where('share_number', 'like', '%'.$queryFilter->query('father_share').'%');
+        $shares->whereNull('father_share_id')->where('share_number', 'like', '%'.$queryFilter->query('father_share').'%');
       }
 
       if ($queryFilter->query('payment_method_id') !== NULL) {
@@ -137,28 +137,28 @@ class ShareRepository  {
       if ($queryFilter->query('persona') !== NULL) {
           $filter = $queryFilter->query('persona');
           $shares->whereHas('partner', function($q) use($filter) {
-            $q->where('name','like',"%{$filter}%");
+            $q->where('name','like',"%{$filter}%")->orWhere('last_name','like',"%{$filter}%");
           });
       }
 
       if ($queryFilter->query('titular') !== NULL) {
         $filter = $queryFilter->query('titular');
         $shares->whereHas('titular', function($q) use($filter) {
-          $q->where('name','like',"%{$filter}%");
+          $q->where('name','like',"%{$filter}%")->orWhere('last_name','like',"%{$filter}%");
         });
       }
 
       if ($queryFilter->query('facturador') !== NULL) {
         $filter = $queryFilter->query('facturador');
         $shares->whereHas('facturador', function($q) use($filter) {
-          $q->where('name','like',"%{$filter}%");
+          $q->where('name','like',"%{$filter}%")->orWhere('last_name','like',"%{$filter}%");
         });
       }
 
       if ($queryFilter->query('fiador') !== NULL) {
         $filter = $queryFilter->query('fiador');
         $shares->whereHas('fiador', function($q) use($filter) {
-          $q->where('name','like',"%{$filter}%");
+          $q->where('name','like',"%{$filter}%")->orWhere('last_name','like',"%{$filter}%");
         });
       }
 

@@ -54,7 +54,7 @@ class AccessControlService {
 	public function checkPersonStatus($id) {
 		$person = $this->personModel->where('id', $id)->with(['statusPerson'])->first();
 		$status = $person->statusPerson()->first();
-		return $person ? $status->description : '';
+		return $person->statusPerson ? $status->description : '';
 	}
 
 	function getAccesControlStatus(int $status, array $list) {
@@ -68,7 +68,7 @@ class AccessControlService {
 
 		if($balance < 0) {
 			$balanceStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_SALDO_DEUDOR'); // Archivo config
-			$status = pow($expStatus,$status);
+			$status = pow($balanceStatus,$status);
 			$status = $status - $balanceStatus;
 		}
 
