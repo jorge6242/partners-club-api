@@ -37,10 +37,10 @@ class WidgetService {
 			$roles = $request['roles'];
 			if(count($roles['itemsToAdd'])) {
 				foreach ($roles['itemsToAdd'] as $itemsToAdd) {
-					$locker = $this->widgetRoleRepository->find($data->id, $itemsToAdd['id']);
-					if(!$locker) {
-						$data = ['widget_id' => $data->id, 'role_id' => $itemsToAdd['id']];
-						$this->widgetRoleRepository->create($data);
+					$widgetRole = $this->widgetRoleRepository->find($data->id, $itemsToAdd['id']);
+					if(!$widgetRole) {
+						$attr = ['widget_id' => $data->id, 'role_id' => $itemsToAdd['id']];
+						$this->widgetRoleRepository->create($attr);
 					}
 				}
 			}
