@@ -69,6 +69,7 @@ class AccessControlService {
 		if($balance < 0) {
 			$balanceStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_SALDO_DEUDOR'); // Archivo config
 			// $status = $this->accessControlHelper->getAccesControlStatus($balanceStatus,$status);
+			$status = $status - $balanceStatus;
 		}
 
 		$records = $this->recordRepository->getBlockedRecord($member);
@@ -76,6 +77,7 @@ class AccessControlService {
 			foreach ($records as $key => $value) {
 				$recordStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_BLOQUEO_EXPEDIENTE');
 				// $status = $this->accessControlHelper->getAccesControlStatus($recordStatus,$status);
+				$status = $status - $recordStatus;
 				$message .= 'Bloqueo activo por expediente :'.$value->id.',  hasta la fecha  '.$value->expiration_date.'<br>';
 			}
 		}
@@ -84,14 +86,16 @@ class AccessControlService {
 		if($share->status === 0) {
 			$shareStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_INACTIVA');
 			// $status = $this->accessControlHelper->getAccesControlStatus($shareStatus,$status);
+			$status = $status - $shareStatus;
 			$message .= '* Accion Inactiva <br>';
 		}
 
 		$personStatus = $this->checkPersonStatus($member);
 		if($personStatus === "Inactivo"){
 			$personStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_INACTIVO');
-			$message .= '* Socio Inactivo <br>';
 			// $status = $this->getAccesControlStatus($personStatus,$status);
+			$status = $status - $personStatus;
+			$message .= '* Socio Inactivo <br>';
 		}
 		if($message !== '') {
 			$currentPerson = $this->personModel->query(['name', 'last_name', 'rif_ci', 'card_number'])->where('id', $member)->first();
@@ -111,12 +115,14 @@ class AccessControlService {
 			if($balance < 0) {
 				$balanceStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_SALDO_DEUDOR');
 				// $status = $this->accessControlHelper->getAccesControlStatus($balanceStatus,$status);
+				$status = $status - $balanceStatus;
 			}
 
 			$personStatus = $this->checkPersonStatus($guestRequest['guest_id']);
 			if($personStatus === "Inactivo"){
 				$inactiveStatus = Config::get('partners.ACCESS_CONTROL_STATUS.INVITADO_INACTIVO');
 				// $status = $this->accessControlHelper->getAccesControlStatus($inactiveStatus,$status);
+				$status = $status - $inactiveStatus;
 				$message .= '* Invitado Inactivo <br>';
 			}
 
@@ -125,6 +131,7 @@ class AccessControlService {
 			if(count($visits) >= $parameter->value) {
 				$visitStatus = Config::get('partners.ACCESS_CONTROL_STATUS.INVITADO_VISITAS_POR_MES');
 				// $status = $this->accessControlHelper->getAccesControlStatus($visitStatus,$status);
+				$status = $status - $visitStatus;
 				$message .= '* Excede cantidad Maxima de visitas por Mes permitida : '.$parameter->value.'<br>';
 			}
 
