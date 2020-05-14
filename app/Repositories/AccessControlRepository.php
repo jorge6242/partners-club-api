@@ -276,8 +276,8 @@ class AccessControlRepository  {
     $data = \DB::select("SELECT month(c.created) as month ,  count(*) as cant 
     FROM access_controls c , people p
     where c.guest_id IS NOT NULL
-    and p.isPartner in (3)
-    and p.id= c.people_id
+    and p.isPartner = 3
+    and p.id= c.guest_id
     and  c.status= 1 and year(c.created)= year(getdate())  
     group by  month(c.created)
     order by month(c.created)
