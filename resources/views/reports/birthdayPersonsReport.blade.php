@@ -52,7 +52,7 @@
     </head>
     <body>
 
-            <header>Reporte de Cumpleaños {{ $month }}</header>
+            <header>Reporte de Cumpleaños para el mes de {{ ucwords($month) }}</header>
             <footer>
                 <div class="page-number"></div> 
             </footer>

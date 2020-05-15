@@ -665,7 +665,9 @@ class PersonRepository  {
     }
 
     function getMonthName($monthNumber) {
-      return date("F", mktime(0, 0, 0, $monthNumber, 1));
+      setlocale(LC_TIME, 'es_ES');
+      $fecha = \DateTime::createFromFormat('!m', $monthNumber);
+      return strftime("%B", $fecha->getTimestamp());
     }
 
     public function birthdayPersonsReportPDF($queryFilter) {
