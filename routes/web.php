@@ -126,6 +126,8 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/get-guest-by-partner', 'PersonController@getGuestByPartner');
         Route::get('/person-filter', 'PersonController@filter');
         Route::get('/person-filter-report', 'PersonController@filterReport');
+        Route::get('/person-filter-birthday', 'PersonController@birthdayPersons');
+        Route::get('/person-filter-birthday-report', 'PersonController@birthdayPersonsReport');
         Route::get('/person-lockers-by-location', 'PersonController@getLockersByLocation');
         Route::get('/person-lockers', 'PersonController@getLockersByPartner');
         Route::get('/person-count-by-ispartner', 'PersonController@getCountPersonByIsPartner');

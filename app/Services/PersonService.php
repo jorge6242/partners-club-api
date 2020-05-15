@@ -274,4 +274,11 @@ class PersonService {
 		return $this->person->getFamilyByPartner($person->partner->id);
 	}
 
+	public function birthdayPersonsReport($month, $isPdf) {
+		return $this->person->birthdayPersonsReport($month, $isPdf);
+	}
+
+	public function birthdayPersonsReportPDF($queryFiltef) {
+		return $this->person->birthdayPersonsReportPDF($queryFiltef);
+	}
 }

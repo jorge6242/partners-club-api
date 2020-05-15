@@ -639,5 +639,58 @@ class PersonRepository  {
       }
      return $search;
     }
+
+    public function birthdayPersonsReport($queryFilter, $isPdf) {
+     $persons = $this->model->query()
+     ->whereIn('isPartner', [1, 2])
+     ->whereMonth('birth_date',$queryFilter->query('month'))
+     ->with([
+       'shares', 
+       'relationship' => function($query){
+          $query->select('id', 'related_id', 'base_id', 'relation_type_id')->with('relationType');
+        },
+       ])
+     ->orderBy('birth_date', 'asc')
+     ->paginate($queryFilter->query('perPage'));
+      foreach ($persons as $key => $value) {
+        if($value->shares) {
+          $persons[$key]->shareList = $this->parseShares($value->shares()->get());
+        }
+        if($value->relationship) {
+          $relation = $value->relationship()->first();
+          $persons[$key]->relation = $relation->relationType()->first()->description;     
+        }
+      }
+      return $persons;
+    }
+
+    function getMonthName($monthNumber) {
+      return date("F", mktime(0, 0, 0, $monthNumber, 1));
+    }
+
+    public function birthdayPersonsReportPDF($queryFilter) {
+
+      $persons = $this->model->query()
+      ->whereIn('isPartner', [1, 2])
+      ->whereMonth('birth_date',$queryFilter->query('month'))
+      ->with([
+        'shares', 
+        'relationship' => function($query){
+           $query->select('id', 'related_id', 'base_id', 'relation_type_id')->with('relationType');
+         },
+        ])
+      ->orderBy('birth_date', 'asc')
+      ->get();
+       foreach ($persons as $key => $value) {
+         if($value->shares) {
+           $persons[$key]->shareList = $this->parseShares($value->shares()->get());
+         }
+         if($value->relationship) {
+           $relation = $value->relationship()->first();
+           $persons[$key]->relation = $relation->relationType()->first()->description;     
+         }
+       }
+       return (object) ['data' => $persons, 'month' => $this->getMonthName($queryFilter->query('month'))];
+     }
   
 }

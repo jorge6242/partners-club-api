@@ -501,4 +501,31 @@ class PersonController extends Controller
             ]);
     }
 
+        /**
+     * Get the specified resource by search.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function birthdayPersons(Request $request) {
+       return $this->service->birthdayPersonsReport($request,false);
+    }
+
+    /**
+     * Get the specified resource by search.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function birthdayPersonsReport(Request $request) {
+         $data = $this->service->birthdayPersonsReportPDF($request);
+         $data = [
+             'data' => $data->data,
+             'month' => $data->month,
+         ];
+         $pdf = PDF::loadView('reports/birthdayPersonsReport', $data);
+         return $pdf->download('birthdayPersonsReport.pdf');
+     }
+ 
+
 }
