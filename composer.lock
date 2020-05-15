@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f095f78f8beb8235f110f36606f690ea",
+    "content-hash": "44bd3f79b2c15bd2766bd4c6d9b172e8",
     "packages": [
         {
             "name": "anahkiasen/underscore-php",
@@ -56,59 +56,6 @@
             ],
             "abandoned": true,
             "time": "2015-05-16T19:24:58+00:00"
-        },
-        {
-            "name": "artisaninweb/laravel-soap",
-            "version": "0.3.0.9",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/artisaninweb/laravel-soap.git",
-                "reference": "48f16b0d56c565bbe776d3242865e4b5c47d53e4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/artisaninweb/laravel-soap/zipball/48f16b0d56c565bbe776d3242865e4b5c47d53e4",
-                "reference": "48f16b0d56c565bbe776d3242865e4b5c47d53e4",
-                "shasum": ""
-            },
-            "require": {
-                "ext-soap": "*",
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Artisaninweb\\SoapWrapper\\ServiceProvider"
-                    ],
-                    "aliases": {
-                        "SoapWrapper": "Artisaninweb\\SoapWrapper\\Facade"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Artisaninweb\\SoapWrapper": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael van de Rijt",
-                    "email": "me@mvdrijt.com"
-                }
-            ],
-            "description": "A SoapClient wrapper integration for Laravel",
-            "keywords": [
-                "client",
-                "laravel",
-                "soap",
-                "wrapper"
-            ],
-            "time": "2018-05-28T08:54:07+00:00"
         },
         {
             "name": "asm89/stack-cors",
@@ -1378,6 +1325,7 @@
                     "email": "jakub.onderka@gmail.com"
                 }
             ],
+            "abandoned": "php-parallel-lint/php-console-color",
             "time": "2018-09-29T17:23:10+00:00"
         },
         {
@@ -1424,6 +1372,7 @@
                 }
             ],
             "description": "Highlight PHP code in terminal",
+            "abandoned": "php-parallel-lint/php-console-highlighter",
             "time": "2018-09-29T18:48:56+00:00"
         },
         {
@@ -1484,6 +1433,39 @@
                 "security"
             ],
             "time": "2018-02-12T05:58:25+00:00"
+        },
+        {
+            "name": "koolreport/laravel",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/koolreport/laravel.git",
+                "reference": "b6918a3ae7c72d4a4c814691f716f257c9d2a784"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/koolreport/laravel/zipball/b6918a3ae7c72d4a4c814691f716f257c9d2a784",
+                "reference": "b6918a3ae7c72d4a4c814691f716f257c9d2a784",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Allow to use KoolReport seamlessly in Laravel",
+            "homepage": "https://www.koolreport.com",
+            "keywords": [
+                "Data Report",
+                "KooLReport Laravel",
+                "Laravel Report",
+                "Reporting Tools",
+                "laravel",
+                "laravel reporting",
+                "laravel reporting tool",
+                "php"
+            ],
+            "time": "2020-01-21T07:25:24+00:00"
         },
         {
             "name": "laravel/framework",
@@ -4919,6 +4901,59 @@
         }
     ],
     "packages-dev": [
+        {
+            "name": "artisaninweb/laravel-soap",
+            "version": "0.3.0.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/artisaninweb/laravel-soap.git",
+                "reference": "48f16b0d56c565bbe776d3242865e4b5c47d53e4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/artisaninweb/laravel-soap/zipball/48f16b0d56c565bbe776d3242865e4b5c47d53e4",
+                "reference": "48f16b0d56c565bbe776d3242865e4b5c47d53e4",
+                "shasum": ""
+            },
+            "require": {
+                "ext-soap": "*",
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Artisaninweb\\SoapWrapper\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "SoapWrapper": "Artisaninweb\\SoapWrapper\\Facade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Artisaninweb\\SoapWrapper": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael van de Rijt",
+                    "email": "me@mvdrijt.com"
+                }
+            ],
+            "description": "A SoapClient wrapper integration for Laravel",
+            "keywords": [
+                "client",
+                "laravel",
+                "soap",
+                "wrapper"
+            ],
+            "time": "2018-05-28T08:54:07+00:00"
+        },
         {
             "name": "beyondcode/laravel-dump-server",
             "version": "1.3.0",
