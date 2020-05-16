@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\PersonService;
 use Barryvdh\DomPDF\Facade as PDF;
+use App\Reports\MyReport;
 
 class PersonController extends Controller
 {
@@ -527,5 +528,23 @@ class PersonController extends Controller
          return $pdf->download('birthdayPersonsReport.pdf');
      }
  
+
+
+    /**
+     * Get the specified resource by search.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function koolReportTest(Request $request) {
+        $report = new MyReport;
+        // $report->run();
+        // return view("reports.koolreport",["report"=>$report]);
+
+        $report->run()->export()->pdf(array(
+            "format" => "A4",
+            "orientation" => "portrait"
+        ))->saveAs("testReport.pdf", true);
+    }
 
 }

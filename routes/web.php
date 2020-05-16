@@ -194,7 +194,7 @@ Route::prefix('api/v1')->group(function () {
 });
 
 /* Reports */
-Route::get('/person-report', 'PersonController@report');
+Route::get('/person-report', 'PersonController@koolReportTest');
 Route::get('/partner-report', 'PersonController@getReportByPartner');
 Route::get('/person-filter-report', 'PersonController@filterReport');
 Route::get('/forced-login', 'UserController@forcedLogin');
