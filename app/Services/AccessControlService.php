@@ -234,4 +234,16 @@ class AccessControlService {
 	public function getGuestStatistics() {
 		return $this->repository->getGuestStatistics();
 	}
+
+	public function getMonthlyIncomeStatistics() {
+		return $this->repository->getMonthlyIncomeStatistics();
+	}
+
+	public function getPartnerAgeStatistics() {
+		return $this->repository->getPartnerAgeStatistics();
+	}
+
+	public function getSonsMoreThan30Statistics() {
+		return $this->repository->getSonsMoreThan30Statistics();
+	}
 }

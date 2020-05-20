@@ -172,6 +172,9 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/access-control-filter-report', 'AccessControlController@filterReport');
         Route::get('/access-control-partner-family-statistics', 'AccessControlController@getPartnersFamilyStatistics');
         Route::get('/access-control-guest-statistics', 'AccessControlController@getGuestStatistics');
+        Route::get('/monthly-income-statistics', 'AccessControlController@getMonthlyIncomeStatistics');
+        Route::get('/partners-ages-statistics', 'AccessControlController@getPartnerAgeStatistics');
+        Route::get('/partners-sons-30', 'AccessControlController@getSonsMoreThan30Statistics');
 
         Route::get('/soap-test', 'WebServiceController@show');
 

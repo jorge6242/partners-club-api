@@ -284,4 +284,81 @@ class AccessControlRepository  {
     ");
     return $data;
   }
+
+
+public function getMonthlyIncomeStatistics() {
+    $data = \DB::select("SELECT month(c.created) as month ,  count(*) as cant 
+                          FROM access_controls c , people p
+                            WHERE p.id= c.people_id
+                            AND  c.status= 1 
+                            AND year(c.created)= year(getdate())  
+                            group by  month(c.created)
+                          order by month(c.created)
+    ");
+    return $data;
+  }
+  // Calcular entre edades
+  public function getPartnerBetweenAges($ageStart, $ageEnd) {
+    $birth_start = Carbon::today()->subYears($ageStart)->year.'-12-31';
+    $birth_end = Carbon::today()->subYears($ageEnd)->year.'-01-01';
+    return $this->shareModel->query()->whereHas('partner', function($q) use($birth_start, $birth_end) {
+        $q->whereBetween('birth_date', [$birth_end, $birth_start]);
+    })->count();
+  }
+  // Calcular por edad
+  public function getPartnersAge($age) {
+    $start = Carbon::today()->subYears($age)->year.'-01-01';
+    return $this->shareModel->query()->whereHas('partner', function($q) use($start) {
+        $q->whereDate('birth_date', '>=', $start);
+    })->count();
+  }
+  //Funcion para calculo de edades de socios
+  public function getPartnerAgeStatistics(){
+    $data = \DB::select("SELECT  count(*) as data, 'Menores 20' as label
+                            FROM people p
+                            where isPartner in (1,2) and
+                            DATEDIFF(yy, p.birth_date, GETDATE()) < 20
+                            
+                            UNION
+                            
+                            select count(*) as data,'Entre 20 y 30' as label
+                            FROM people p
+                            where isPartner in (1,2) and
+                            DATEDIFF(yy, p.birth_date, GETDATE()) >= 20 and DATEDIFF(yy, p.birth_date, GETDATE()) <= 30
+                            
+                            UNION
+                            
+                            select count(*) as data,'Entre 30 y 50' as label
+                            FROM people p
+                            where isPartner in (1,2) and
+                            DATEDIFF(yy, p.birth_date, GETDATE()) >= 30 and DATEDIFF(yy, p.birth_date, GETDATE()) <= 50
+                            
+                            UNION
+                            
+                            select count(*) as data,'Entre 51 y 65' as label
+                            FROM people p
+                            where isPartner in (1,2) and
+                            DATEDIFF(yy, p.birth_date, GETDATE()) > 50 and DATEDIFF(yy, p.birth_date, GETDATE()) <= 65
+                            
+                            UNION
+                            
+                            select count(*) as data,'Mayores de 65' as label
+                            FROM people p
+                            where isPartner in (1,2) and
+                            DATEDIFF(yy, p.birth_date, GETDATE()) > 65
+  ");
+    return $data;
+  }
+
+  public function getSonsMoreThan30Statistics() {
+    $data = \DB::select(" SELECT *
+      from people p, person_relations pr 
+      where p.isPartner =2
+      AND p.gender_id = 1
+      AND p.id = pr.related_id 
+      AND pr.relation_type_id = 2
+      and DATEDIFF(yy, p.birth_date, GETDATE()) >= 30
+    ");
+    return $data;
+  }
 }

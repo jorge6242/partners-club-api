@@ -185,4 +185,53 @@ class AccessControlController extends Controller
             ]);
         }
     }
+
+    /**
+     * Get count monthly income per year
+     *
+     * @param  string $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getMonthlyIncomeStatistics() {
+        $data = $this->service->getMonthlyIncomeStatistics();
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
+
+
+    /**
+     * Get count monthly income per year
+     *
+     * @param  string $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getPartnerAgeStatistics() {
+        $data = $this->service->getPartnerAgeStatistics();
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
+
+    /**
+     * Get count monthly income per year
+     *
+     * @param  string $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getSonsMoreThan30Statistics() {
+        $data = $this->service->getSonsMoreThan30Statistics();
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
 }
