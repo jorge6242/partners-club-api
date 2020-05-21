@@ -89,8 +89,8 @@ class MenuItemController extends Controller
 				foreach ($roles['itemsToAdd'] as $itemsToAdd) {
 					$itemRole = $this->menuItemRoleRepository->find($data->id, $itemsToAdd['id']);
 					if(!$itemRole) {
-						$data = ['menu_item_id' => $data->id, 'role_id' => $itemsToAdd['id']];
-						$this->menuItemRoleRepository->create($data);
+						$attr = ['menu_item_id' => $data->id, 'role_id' => $itemsToAdd['id']];
+						$this->menuItemRoleRepository->create($attr);
 					}
 				}
 			}

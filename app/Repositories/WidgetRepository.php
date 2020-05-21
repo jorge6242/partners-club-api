@@ -77,7 +77,10 @@ class WidgetRepository  {
     }
 
     public function delete($id) {
-     return $this->model->find($id)->delete();
+      $data = $this->model->find($id);
+      $data->widgetRole()->delete();
+      $data->delete();
+     return $data;
     }
 
     public function checkRecord($name)
