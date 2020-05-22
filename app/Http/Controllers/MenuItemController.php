@@ -178,13 +178,13 @@ class MenuItemController extends Controller
     //  */
     public function destroy($id)
     {
-        $data = $this->model->find($id)->delete();
-        if($data) {
-            return response()->json([
-                'success' => true,
-                'data' => $data
-            ]);
-        }
+        $menuItem = $this->model->find($id);
+        $menuItem->roleMenu()->delete();
+        $menuItem->delete();
+        return response()->json([
+            'success' => true,
+            'data' => $menuItem
+        ]);
     }
 
     // /**
