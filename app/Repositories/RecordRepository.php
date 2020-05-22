@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Record;
 
 use Carbon\Carbon;
+use Storage;
 
 class RecordRepository  {
   
@@ -93,7 +94,14 @@ class RecordRepository  {
     }
 
     public function delete($id) {
-     return $this->model->find($id)->delete();
+      $record = $this->model->find($id);
+      if($record->file1 !== null) Storage::disk('records')->delete($record->file1);
+      if($record->file2 !== null) Storage::disk('records')->delete($record->file2);
+      if($record->file3 !== null) Storage::disk('records')->delete($record->file3);
+      if($record->file4 !== null) Storage::disk('records')->delete($record->file4);
+      if($record->file5 !== null) Storage::disk('records')->delete($record->file5);
+      $record->delete();
+      return $record;
     }
 
     public function checkRecord($name)

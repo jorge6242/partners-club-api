@@ -27,7 +27,10 @@ class PermissionRepository  {
     }
 
     public function delete($id) {
-     return $this->model->find($id)->delete();
+      $permission = $this->model->find($id);
+      $permission->permissionRoles()->delete();
+      $permission->delete();
+     return $permission;
     }
 
     public function checkRecord($name)

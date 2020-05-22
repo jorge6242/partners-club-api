@@ -34,7 +34,13 @@ class RoleRepository  {
     }
 
     public function delete($id) {
-     return $this->model->find($id)->delete();
+      $role = $this->find($id);
+      $role->userRoles()->delete();
+      $role->widgetRoles()->delete();
+      $role->menuItemRoles()->delete();
+      $role->revokeAllPermissions();
+      $role->delete();
+     return $role;
     }
 
     public function checkRecord($name)

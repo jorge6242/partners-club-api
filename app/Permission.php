@@ -14,4 +14,12 @@ class Permission extends Model
         'description',
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\hasMany
+     */
+    public function permissionRoles()
+    {
+        return $this->hasMany('App\PermissionRole', 'permission_id', 'id');
+    }
+
 }

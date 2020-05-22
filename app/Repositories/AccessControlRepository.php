@@ -351,14 +351,7 @@ public function getMonthlyIncomeStatistics() {
   }
 
   public function getSonsMoreThan30Statistics() {
-    $data = \DB::select(" SELECT *
-      from people p, person_relations pr 
-      where p.isPartner =2
-      AND p.gender_id = 1
-      AND p.id = pr.related_id 
-      AND pr.relation_type_id = 2
-      and DATEDIFF(yy, p.birth_date, GETDATE()) >= 30
-    ");
+    $data = \DB::select(" SELECT * FROM HijosMayores30 ");
     return $data;
   }
 }

@@ -43,8 +43,8 @@ class RecordService {
 		$date = Carbon::now();
 		$parseFile = $this->validateFile($exp);
 		$filename = $id.'-'.$column.'-'.$date->year.'.'.$parseFile->ext;
-		$indice = rand(1,5);
-		$filename = str_pad($id,10,"0",STR_PAD_LEFT).'-'.str_pad($indice,2,"0",STR_PAD_LEFT).".".$parseFile->ext;
+		$indice = rand(1,10);
+		$filename = str_pad($id,10,"0",STR_PAD_LEFT).'-'.$column.'-'.str_pad($indice,2,"0",STR_PAD_LEFT).".".$parseFile->ext;
 
 
 		Storage::disk('records')->put($filename,$parseFile->content);
