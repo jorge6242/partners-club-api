@@ -562,7 +562,7 @@ class PersonRepository  {
     return array('count' => $count, 'months' => $months);
   }
 
-  public function getCountPersonByIsPartner(int $isPartner){
+  public function getCountPersonByIsPartner($isPartner){
     $count = $this->model->where('isPartner', $isPartner)->count();
     $months = $this->accessControlRepository->getMonthsByIsPartner($isPartner);
     return array('count' => $count, 'months' => $months);
