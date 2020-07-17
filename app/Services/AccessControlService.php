@@ -85,14 +85,14 @@ class AccessControlService {
 			}
 		}
 
-		$shareTypeCode = $this->shareRepository->find($shareId);
-		if($shareTypeCode && $shareTypeCode->shareType && $shareTypeCode->shareType()->first()->code == 'AB') {
+		$share = $this->shareRepository->find($shareId);
+
+		if($share && $share->access == 0) {
 			$shareStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_INACTIVA');
 			$status = $status - $shareStatus;
 			$message .= '* La Accion no posee acceso <br>';
 		}
 
-		$share = $this->shareRepository->find($shareId);
 		if($share->status === 0) {
 			$shareStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_INACTIVA');
 			// $status = $this->accessControlHelper->getAccesControlStatus($shareStatus,$status);

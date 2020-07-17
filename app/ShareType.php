@@ -9,5 +9,6 @@ class ShareType extends Model
     protected $fillable = [
         'code',
         'description',
+        'access'
     ];
 }

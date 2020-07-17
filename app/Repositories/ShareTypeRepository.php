@@ -25,11 +25,11 @@ class ShareTypeRepository  {
     }
   
     public function all($perPage) {
-      return $this->model->query()->select(['id', 'description', 'code'])->paginate($perPage);
+      return $this->model->query()->select(['id', 'description', 'code', 'access'])->paginate($perPage);
     }
 
     public function getList() {
-      return $this->model->query()->select(['id', 'description', 'code',])->get();
+      return $this->model->query()->select(['id', 'description', 'code', 'access'])->get();
     }
 
     public function delete($id) {
