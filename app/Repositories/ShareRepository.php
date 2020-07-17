@@ -173,7 +173,7 @@ class ShareRepository  {
 
 
     public function find($id) {
-      return $this->model->query()->where('id', $id)->with(['titular', 'facturador', 'fiador', 'tarjetaPrimaria', 'tarjetaSecundaria', 'tarjetaTerciaria' ])
+      return $this->model->query()->where('id', $id)->with(['titular', 'facturador', 'fiador', 'tarjetaPrimaria', 'tarjetaSecundaria', 'tarjetaTerciaria', 'shareType' ])
       ->with(['tarjetaPrimaria' => function($query){
           $query->with(['bank','card']);
         }

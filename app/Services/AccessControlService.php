@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Person;
 use App\Repositories\ShareRepository;
+use App\Repositories\ShareTypeRepository;
 use App\Repositories\AccessControlRepository;
 use App\Repositories\ParameterRepository;
 use App\Repositories\RecordRepository;
@@ -23,7 +24,8 @@ class AccessControlService {
 		ParameterRepository $parameterRepository,
 		RecordRepository $recordRepository,
 		SoapService $soapService,
-		AccessControlHelper $accessControlHelper
+		AccessControlHelper $accessControlHelper,
+		ShareTypeRepository $shareTypeRepository
 		) 
 		{
 		$this->repository = $repository;
@@ -33,6 +35,7 @@ class AccessControlService {
 		$this->recordRepository = $recordRepository;
 		$this->soapService = $soapService;
 		$this->accessControlHelper = $accessControlHelper;
+		$this->shareTypeRepository = $shareTypeRepository;
 	}
 
 	public function index($perPage) {
@@ -80,6 +83,13 @@ class AccessControlService {
 				$status = $status - $recordStatus;
 				$message .= 'Bloqueo activo por expediente :'.$value->id.',  hasta la fecha  '.$value->expiration_date.'<br>';
 			}
+		}
+
+		$shareTypeCode = $this->shareRepository->find($shareId);
+		if($shareTypeCode && $shareTypeCode->shareType && $shareTypeCode->shareType()->first()->code == 'AB') {
+			$shareStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_INACTIVA');
+			$status = $status - $shareStatus;
+			$message .= '* La Accion no posee acceso <br>';
 		}
 
 		$share = $this->shareRepository->find($shareId);
