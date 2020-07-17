@@ -87,7 +87,7 @@ class AccessControlService {
 
 		$share = $this->shareRepository->find($shareId);
 
-		if($share && $share->access == 0) {
+		if($share && $share->shareType && $share->shareType()->first()->access == 0) {
 			$shareStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_INACTIVA');
 			$status = $status - $shareStatus;
 			$message .= '* La Accion no posee acceso <br>';

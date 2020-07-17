@@ -13,7 +13,7 @@ class ShareTypeRepository  {
     }
 
     public function find($id) {
-      return $this->model->find($id, ['id', 'description', 'code']);
+      return $this->model->find($id, ['id', 'description', 'code', 'access']);
     }
 
     public function create($attributes) {
