@@ -81,4 +81,25 @@ class UserService {
 		public function search($query) {
 			return $this->repository->search($query);
 		}
+
+		public function updatePassword($request) {
+
+			$user = auth()->user();
+			$check = \Hash::check($request['prevPassword'],$user->password);
+			
+			if(!$check) {
+				return response()->json([
+					'success' => false,
+					'message' => 'Los datos de usuario no coinciden, intente de nuevo'
+				])->setStatusCode(400);
+			}
+
+			$attr = [ 'password' => $request['password'] ];
+			$data = $this->repository->update($user->id, $attr);
+			return response()->json([
+				'success' => true,
+				'data' => $data
+			]);
+
+		}
 }
