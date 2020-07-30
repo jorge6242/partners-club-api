@@ -4,14 +4,23 @@ namespace App\Repositories;
 
 use App\Share;
 use App\Person;
+use App\ShareMovement;
+use App\ShareType;
 
 class ShareRepository  {
   
     protected $post;
 
-    public function __construct(Share $model, Person $personModel) {
+    public function __construct(
+      Share $model, 
+      Person $personModel,
+      ShareMovement $shareMovementModel,
+      ShareType $shareTypeModel
+      ) {
       $this->model = $model;
       $this->personModel = $personModel;
+      $this->shareMovementModel = $shareMovementModel;
+      $this->shareTypeModel = $shareTypeModel;
     }
 
     public function all($perPage) {
@@ -25,7 +34,8 @@ class ShareRepository  {
         'id_factura_persona',
         'id_fiador_persona',
         'share_type_id',
-        'status'
+        'status',
+        'permit'
         )->with([
           'fatherShare' => function($query){
           $query->select('id', 'share_number'); 
@@ -68,7 +78,8 @@ class ShareRepository  {
         'id_titular_persona',
         'id_factura_persona',
         'id_fiador_persona',
-        'share_type_id'
+        'share_type_id',
+        'permit'
         )->with([
           'shareMovements' => function($query) {
             $query->with([
@@ -173,7 +184,7 @@ class ShareRepository  {
 
 
     public function find($id) {
-      return $this->model->query()->where('id', $id)->with(['titular', 'facturador', 'fiador', 'tarjetaPrimaria', 'tarjetaSecundaria', 'tarjetaTerciaria', 'shareType' ])
+      return $this->model->query()->where('id', $id)->with(['titular', 'facturador', 'fiador', 'tarjetaPrimaria', 'tarjetaSecundaria', 'tarjetaTerciaria', 'shareType', 'permit' ])
       ->with(['tarjetaPrimaria' => function($query){
           $query->with(['bank','card']);
         }
@@ -278,10 +289,10 @@ class ShareRepository  {
     */
     public function singleSearch($queryFilter) {
       if($queryFilter->query('term') === null) {
-        return  $this->model->get();  
+        return  $this->model->with('titular')->get();  
       } else {
         $search = $this->model->query();
-        $search->where('share_number', 'like', '%'.$queryFilter->query('term').'%');
+        $search->where('share_number', 'like', '%'.$queryFilter->query('term').'%')->with('titular');
         $fathers = $this->model->where('father_share_id', '>',0)->where('share_number', 'like', '%'.$queryFilter->query('term').'%')->get();
         if(count($fathers)) {
           foreach ($fathers as $key => $value) {
@@ -305,6 +316,97 @@ class ShareRepository  {
       }
     }
 
+    
+            /**
+     * get banks by query params
+     * @param  object $queryFilter
+    */
+    public function singleShareSearch($queryFilter) {
+      if($queryFilter->query('term') === null) {
+        return  $this->model->with('titular')->get();  
+      } else {      
+        $searchQuery = $queryFilter->query('term');
+        $search = $this->model->query()->where(function($q) use($searchQuery) {
+          $q->orWhere('share_number','like', '%'.$searchQuery.'%');
+          $q->orWhereHas('fatherShare', function($query) use($searchQuery) {
+            $query->where('share_number','like', '%'.$searchQuery.'%');
+          });
+
+          $q->orWhereHas('partner', function($query) use($searchQuery) {
+            $query->where('name','like', '%'.$searchQuery.'%');
+          });
+
+          $q->orWhereHas('titular', function($query) use($searchQuery) {
+            $query->where('name','like', '%'.$searchQuery.'%');
+          });
+
+        })->where('status',1)->with('titular')->get();
+
+        return $search;
+      }
+    }
+
+                /**
+     * get banks by query params
+     * @param  object $queryFilter
+    */
+    public function getSharesBySearch($queryFilter) {
+      if($queryFilter->query('term') === null) {
+        return  $this->model->with('titular')->get();  
+      } else {      
+        $searchQuery = $queryFilter->query('term');
+        $search = $this->model->query()->where(function($q) use($searchQuery) {
+          $q->orWhere('share_number','like', '%'.$searchQuery.'%');
+          $q->orWhereHas('fatherShare', function($query) use($searchQuery) {
+            $query->where('share_number','like', '%'.$searchQuery.'%');
+          });
+
+          $q->orWhereHas('partner', function($query) use($searchQuery) {
+            $query->where('name','like', '%'.$searchQuery.'%');
+          });
+
+          $q->orWhereHas('titular', function($query) use($searchQuery) {
+            $query->where('name','like', '%'.$searchQuery.'%');
+          });
+
+        })->where('status',1)->whereHas('shareType', function($q){
+          $q->where('code','!=', 'B');
+        })->with('titular')->get();
+
+        return $search;
+      }
+    }
+
+    /**
+     * get banks by query params
+     * @param  object $queryFilter
+    */
+    public function getDisableShares($queryFilter) {
+      if($queryFilter->query('term') === null) {
+        return  $this->model->with('titular')->get();  
+      } else {      
+        $searchQuery = $queryFilter->query('term');
+        $search = $this->model->query()->where(function($q) use($searchQuery) {
+          $q->orWhere('share_number','like', '%'.$searchQuery.'%');
+          $q->orWhereHas('fatherShare', function($query) use($searchQuery) {
+            $query->where('share_number','like', '%'.$searchQuery.'%');
+          });
+
+          $q->orWhereHas('partner', function($query) use($searchQuery) {
+          $query->where('name','like', $searchQuery.'%');
+          });
+
+          $q->orWhereHas('titular', function($query) use($searchQuery) {
+            $query->where('name','like', '%'.$searchQuery.'%');
+          });
+
+        })->whereHas('shareType', function($q) {
+          $q->where('code', 'B');
+        })->where('status', 1)->with('titular')->get();
+
+        return $search;
+      }
+    }
 
     public function getByPartner($id) {
       return $this->model->query()->select([
@@ -321,6 +423,7 @@ class ShareRepository  {
         'id_factura_persona',
         'id_fiador_persona',
         'share_type_id',
+        'permit',
     ])->where('id_persona', $id)->with(['titular', 'facturador', 'fiador','paymentMethod'])->with([ 'tarjetaPrimaria' => function($query){
         $query->with(['bank','card']);
         }
@@ -416,5 +519,101 @@ class ShareRepository  {
 
     public function checkOrderCard($share, $column) {
       return $this->model->where('id', $share)->where($column, '>',0)->first();
+    }
+
+    public function buildDisableShare($share) {
+      if($share === null) {
+        return 'B-0001';
+      } else {
+        $number = str_replace('B-','', $share);
+        $number = str_replace('0','', $number);
+        $number = (int)$number + 1;
+        $number = sprintf("%'.04d", $number);
+        return 'B-'.$number;
+      }
+    }
+
+    public function disableShare($request) {
+      $currentShare = $this->model->query()->where('id', $request['share_id'])->with(['partner'])->first();
+      $user = auth()->user();
+      $currentDisableShare = \DB::select("SELECT MAX(share_number) AS share from shares where share_type_id = (SELECT TOP 1 id from share_types where code='B')");
+      
+      if($currentDisableShare && $currentDisableShare[0]->share) {
+        $newShare = $this->buildDisableShare($currentDisableShare[0]->share);
+      } else {
+        $newShare = $this->buildDisableShare(null);
+      }
+
+      // Se desactiva la actual accion
+      $this->model->find($request['share_id'])->update([ 'status' => 0 ]);
+
+      $shareType = $this->shareTypeModel->query()->where('code','B')->first();
+
+      // Se crea la nueva accion tipo Baja
+
+      $newShareBody = [
+        'share_number' => $newShare,
+        'father_share_id' => $request['share_id'],
+        'status' => 1,
+        'payment_method_id' => null, 
+        'card_people1' => null, 
+        'card_people2' => null, 
+        'card_people3' => null, 
+        'id_persona' => $currentShare->id_persona, 
+        'id_titular_persona' => $currentShare->id_persona,
+        'id_factura_persona' => null,
+        'id_fiador_persona' => null,
+        'share_type_id' => $shareType->id,
+        'permit' => null,
+      ];
+
+     $createShare = $this->model->create($newShareBody);
+
+      // Se crea el movimiento para la accion que se creo
+      $body = [
+        'description'  => "Dar de baja accion por ".$user->id."  ".$user->name." ",
+        'currency_rate_id' => 1,
+        'rate' => 0,
+        'currency_sale_price_id' => 1,
+        'number_sale_price' => 0 ,
+        'currencie_id' => 1,
+        'share_id' => $request['share_id'],
+        'transaction_type_id' =>  $request['transaction_type_id'],
+        'people_id' => $currentShare->id_persona,
+        'id_titular_persona' => $currentShare->id_persona,
+      ];
+
+      return [
+        'data' => $this->shareMovementModel->create($body),
+        'message' => "La accion ".$createShare->share_number." fue asignada al socio ".$currentShare->partner->name." ".$currentShare->partner->last_name.""
+      ];
+    }
+
+    public function backupShare($request) {
+      $user = auth()->user();
+      $currentShare = $this->model->query()->where('id', $request['share_id'])->with(['partner','fatherShare'])->first();
+
+      // Se activa la actual accion
+      $this->model->find($request['share_id'])->update([ 'status' => 0 ]);
+      $this->model->find($currentShare->father_share_id)->update([ 'status' => 1 ]);
+
+      // Se crea el movimiento para la accion que se creo
+      $body = [
+        'description'  => "Activando accion de baja por ".$user->id."  ".$user->name." ",
+        'currency_rate_id' => 1,
+        'rate' => 0,
+        'currency_sale_price_id' => 1,
+        'number_sale_price' => 0 ,
+        'currencie_id' => 1,
+        'share_id' => $currentShare->father_share_id,
+        'transaction_type_id' =>  $request['transaction_type_id'],
+        'people_id' => $currentShare->id_persona,
+        'id_titular_persona' => $currentShare->id_persona,
+      ];
+
+      return [
+        'data' => $this->shareMovementModel->create($body),
+        'message' => "La accion ".$currentShare->fatherShare->share_number." fue activada al socio ".$currentShare->partner->name." ".$currentShare->partner->last_name.""
+      ];
     }
 }

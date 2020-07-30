@@ -19,6 +19,7 @@ class Share extends Model
         'id_factura_persona',
         'id_fiador_persona',
         'share_type_id',
+        'permit',
     ];
 
     /**

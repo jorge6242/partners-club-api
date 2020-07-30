@@ -155,6 +155,10 @@ Route::prefix('api/v1')->group(function () {
         Route::get('/share-filter', 'ShareController@filter');
         Route::get('/share-filter-report', 'ShareController@filterReport');
         Route::get('/share-single-search', 'ShareController@singleSearch');
+        Route::get('/search-share-active', 'ShareController@singleShareSearch');
+        Route::get('/search-share-disable', 'ShareController@getDisableShares');
+        Route::post('/share-disable', 'ShareController@disableShare');
+        Route::get('/get-shares-by-search', 'ShareController@getSharesBySearch');
 
         Route::resource('/card-person', 'CardPersonController');
         Route::get('/card-person-statistics', 'CardPersonController@getCardStatistics');
@@ -194,6 +198,14 @@ Route::prefix('api/v1')->group(function () {
         Route::resource('/note-type', 'NoteTypeController');
         Route::get('/note-type-search', 'NoteTypeControllerController@search');
         Route::get('/note-type-list', 'NoteTypeController@getList');
+
+        Route::resource('/share-permit-movements-types', 'SharePermitMovementsTypeController');
+        Route::get('/share-permit-movements-types-list', 'SharePermitMovementsTypeController@getList');
+        Route::get('/share-permit-movements-types-search', 'SharePermitMovementsTypeController@search');
+
+        Route::resource('/share-permit-movements', 'SharePermitMovementController');
+        Route::get('/share-permit-movements-list', 'SharePermitMovementController@getList');
+        Route::get('/share-permit-movements-search', 'SharePermitMovementController@search');
     });
 });
 

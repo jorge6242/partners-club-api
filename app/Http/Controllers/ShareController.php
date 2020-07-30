@@ -190,4 +190,78 @@ class ShareController extends Controller
             ]);
         }
     }
+
+
+    /**
+     * Get the specified resource by search.
+     *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function singleShareSearch(Request $request) {
+        $bank = $this->service->singleShareSearch($request);
+        if($bank) {
+            return response()->json([
+                'success' => true,
+                'data' => $bank
+            ]);
+        }
+    }
+
+        /**
+     * Get the specified resource by search.
+     *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getSharesBySearch(Request $request) {
+        $data = $this->service->getSharesBySearch($request);
+        if($data) {
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        }
+    }
+
+    /**
+     * Get the specified resource by search.
+     *
+     * @param  string $term
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getDisableShares(Request $request) {
+        $bank = $this->service->getDisableShares($request);
+        if($bank) {
+            return response()->json([
+                'success' => true,
+                'data' => $bank
+            ]);
+        }
+    }
+
+    public function switchCondition($condition, $data) {
+        switch ($condition) {
+            case 'DAR_DE_BAJA':
+               return $this->service->disableShare($data);
+            case 'RECUPERAR_BAJA':
+                return $this->service->backupShare($data);
+        }
+    }
+
+       /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function disableShare(Request $request)
+    {
+        $data = $request->all();
+        $data = $this->switchCondition($data['condition'], $data);
+        return $data;
+    }
 }

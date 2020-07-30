@@ -50,17 +50,37 @@ class ShareService {
 	public function singleSearch($queryFilter) {
 		return $this->repository->singleSearch($queryFilter);
 	 }
+
+	 public function singleShareSearch($queryFilter) {
+		return $this->repository->singleShareSearch($queryFilter);
+	 }
 	 
 	 public function getByPartner($id) {
 		return $this->repository->getByPartner($id);
 	   }
 
-	   	/**
+	/**
 	 *  Search resource from repository
 	 * @param  object $queryFilter
 	*/
 	public function searchToAssign($queryFilter) {
 		return $this->repository->searchToAssign($queryFilter);
 	 }
+
+	 public function getDisableShares($queryFilter) {
+		return $this->repository->getDisableShares($queryFilter);
+	 }
+
+	 public function disableShare($request) {
+		return $this->repository->disableShare($request);
+	}
+
+	public function backupShare($request) {
+		return $this->repository->backupShare($request);
+	}
+
+	public function getSharesBySearch($request) {
+		return $this->repository->getSharesBySearch($request);
+	}
 	 
 }
