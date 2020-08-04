@@ -42,6 +42,13 @@ class SharePermitMovementService {
 
 	public function update($request, $id) {
 		$user = auth()->user();
+		$shareMovement = $this->repository->find($id);
+
+		$user = auth()->user();
+        $request['user_id'] = $user->id;
+        $attr = [ 'permit' => 0 ];
+        $share = $this->shareRepository->update($shareMovement->share_id, $attr);
+		
 	  	$attr = [ 
 		  'status' => $request['status'],
 		  'date_cancelled' => Carbon::now(),
