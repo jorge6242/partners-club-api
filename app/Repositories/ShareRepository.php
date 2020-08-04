@@ -573,13 +573,13 @@ class ShareRepository  {
 
       // Se crea el movimiento para la accion que se creo
       $body = [
-        'description'  => "Dar de baja accion por ".$user->id."  ".$user->name." ",
+        'description'  => 'Dar de baja accion '.$currentShare->share_number.' y asignando accion de baja '.$newShare.' por '.$user->id.'  '.$user->name,
         'currency_rate_id' => 1,
         'rate' => 0,
         'currency_sale_price_id' => 1,
         'number_sale_price' => 0 ,
         'currencie_id' => 1,
-        'share_id' => $request['share_id'],
+        'share_id' => $createShare->id,
         'transaction_type_id' =>  $request['transaction_type_id'],
         'people_id' => $currentShare->id_persona,
         'id_titular_persona' => $currentShare->id_persona,
@@ -602,7 +602,7 @@ class ShareRepository  {
 
       // Se crea el movimiento para la accion que se creo
       $body = [
-        'description'  => "Activando accion de baja por ".$user->id."  ".$user->name." ",
+        'description'  => 'Removiendo accion de baja '.$currentShare->share_number.' y activando accion '.$currentShare->fatherShare->share_number.' por '.$user->id.'  '.$user->name,
         'currency_rate_id' => 1,
         'rate' => 0,
         'currency_sale_price_id' => 1,
@@ -612,6 +612,7 @@ class ShareRepository  {
         'transaction_type_id' =>  $request['transaction_type_id'],
         'people_id' => $currentShare->id_persona,
         'id_titular_persona' => $currentShare->id_persona,
+        'created' => Carbon::now(),
       ];
 
       return [
