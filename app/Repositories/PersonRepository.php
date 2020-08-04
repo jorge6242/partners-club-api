@@ -12,6 +12,7 @@ use App\Repositories\ShareRepository;
 use App\Repositories\RelationTypeRepository;
 use App\Repositories\PersonRelationRepository;
 use App\Repositories\AccessControlRepository;
+use App\Repositories\ParameterRepository;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
@@ -26,7 +27,8 @@ class PersonRepository  {
       ShareRepository $shareRepository,
       AccessControlRepository $accessControlRepository,
       Share $shareModel,
-      PersonRelation $personRelationModel
+      PersonRelation $personRelationModel,
+      ParameterRepository $parameterRepository
       )
       {
       $this->model = $model;
@@ -36,6 +38,7 @@ class PersonRepository  {
       $this->accessControlRepository = $accessControlRepository;
       $this->shareModel = $shareModel;
       $this->personRelationModel = $personRelationModel;
+      $this->parameterRepository = $parameterRepository;
     }
 
     public function find($id) {
@@ -80,10 +83,14 @@ class PersonRepository  {
     }
 
     public function all($perPage) {
+      $parameter = $this->parameterRepository->findByParameter('CODIGO_ACCION_BAJA');
+      $parameter = $parameter ? $parameter ->value : '';
       $persons = $this->model->query()->with('shares')->paginate($perPage);
       foreach ($persons as $key => $value) {
         unset($persons[$key]->shares);
-        $persons[$key]->shares = $this->parseShares($value->shares()->where('status', 1)->get());
+        $persons[$key]->shares = $this->parseShares($value->shares()->where('status', 1)->whereHas('shareType', function($q) use($parameter) {
+          $q->where('code', '!=', $parameter);
+        })->get());
       }
       return $persons;
     }
@@ -112,6 +119,7 @@ class PersonRepository  {
     */
     public function search($queryFilter) {
       $search;
+      
       if($queryFilter->query('term') === null) {
         $search = $this->model->all();
       } else {
@@ -129,11 +137,12 @@ class PersonRepository  {
                       }
                     }
         })->whereIn('isPartner', [1,2])->paginate(8);
-
+        $parameter = $this->parameterRepository->findByParameter('CODIGO_ACCION_BAJA');
+        $parameter = $parameter ? $parameter->value : '';
         foreach ($search as $key => $value) {
           unset($search[$key]->shares);
-          $shares = $value->shares()->whereHas('shareType', function($q) {
-            $q->where('code', '!=', 'B');
+          $shares = $value->shares()->whereHas('shareType', function($q) use($parameter) {
+            $q->where('code', '!=', $parameter);
           })->get();
           $search[$key]->shares = $this->parseShares($shares);
         }

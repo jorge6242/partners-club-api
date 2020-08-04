@@ -6,6 +6,7 @@ use App\Share;
 use App\Person;
 use App\ShareMovement;
 use App\ShareType;
+use App\Repositories\ParameterRepository;
 
 use Carbon\Carbon;
 
@@ -17,12 +18,14 @@ class ShareRepository  {
       Share $model, 
       Person $personModel,
       ShareMovement $shareMovementModel,
-      ShareType $shareTypeModel
+      ShareType $shareTypeModel,
+      ParameterRepository $parameterRepository
       ) {
       $this->model = $model;
       $this->personModel = $personModel;
       $this->shareMovementModel = $shareMovementModel;
       $this->shareTypeModel = $shareTypeModel;
+      $this->parameterRepository = $parameterRepository;
     }
 
     public function all($perPage) {
@@ -354,6 +357,8 @@ class ShareRepository  {
       if($queryFilter->query('term') === null) {
         return  $this->model->with('titular')->get();  
       } else {      
+        $parameter = $this->parameterRepository->findByParameter('CODIGO_ACCION_BAJA');
+        $parameter = $parameter ? $parameter ->value : '';
         $searchQuery = $queryFilter->query('term');
         $search = $this->model->query()->where(function($q) use($searchQuery) {
           $q->orWhere('share_number','like', '%'.$searchQuery.'%');
@@ -369,8 +374,8 @@ class ShareRepository  {
             $query->where('name','like', '%'.$searchQuery.'%');
           });
 
-        })->where('status',1)->whereHas('shareType', function($q){
-          $q->where('code','!=', 'B');
+        })->where('status',1)->whereHas('shareType', function($q) use($parameter){
+          $q->where('code','!=', $parameter);
         })->with('titular')->get();
 
         return $search;
@@ -386,6 +391,8 @@ class ShareRepository  {
         return  $this->model->with('titular')->get();  
       } else {      
         $searchQuery = $queryFilter->query('term');
+        $parameter = $this->parameterRepository->findByParameter('CODIGO_ACCION_BAJA');
+        $parameter = $parameter ? $parameter ->value : '';
         $search = $this->model->query()->where(function($q) use($searchQuery) {
           $q->orWhere('share_number','like', '%'.$searchQuery.'%');
           $q->orWhereHas('fatherShare', function($query) use($searchQuery) {
@@ -400,8 +407,8 @@ class ShareRepository  {
             $query->where('name','like', '%'.$searchQuery.'%');
           });
 
-        })->whereHas('shareType', function($q) {
-          $q->where('code', 'B');
+        })->whereHas('shareType', function($q) use($parameter ) {
+          $q->where('code', $parameter);
         })->where('status', 1)->with('titular')->get();
 
         return $search;
@@ -502,8 +509,10 @@ class ShareRepository  {
     }
 
     public function getListByPartner($id) {
-      return $this->model->query()->select('id', 'share_number')->where('status', 1)->whereHas('shareType', function($q) {
-        $q->where('code', '!=', 'B');
+      $parameter = $this->parameterRepository->findByParameter('CODIGO_ACCION_BAJA');
+      $parameter = $parameter ? $parameter ->value : '';
+      return $this->model->query()->select('id', 'share_number')->where('status', 1)->whereHas('shareType', function($q) use($parameter) {
+        $q->where('code', '!=', $parameter);
       })->where('id_persona', $id)->get();
     }
 
