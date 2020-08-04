@@ -132,7 +132,10 @@ class PersonRepository  {
 
         foreach ($search as $key => $value) {
           unset($search[$key]->shares);
-          $search[$key]->shares = $this->parseShares($value->shares()->get());
+          $shares = $value->shares()->whereHas('shareType', function($q) {
+            $q->where('code', '!=', 'B');
+          })->get();
+          $search[$key]->shares = $this->parseShares($shares);
         }
 
       }
