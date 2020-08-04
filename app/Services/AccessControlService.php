@@ -93,6 +93,12 @@ class AccessControlService {
 			$message .= '* La Accion no posee acceso <br>';
 		}
 
+
+		if($share && $share->permit == 1) {
+			$shareStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_INACTIVA');
+			$status = $status - $shareStatus;
+			$message .= '* La accion '.$share->share_number.' tiene un permiso activo y no puede ingresar <br>';
+		}
 		if($share->status === 0) {
 			$shareStatus = Config::get('partners.ACCESS_CONTROL_STATUS.SOCIO_ACCION_INACTIVA');
 			// $status = $this->accessControlHelper->getAccesControlStatus($shareStatus,$status);

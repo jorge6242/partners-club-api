@@ -7,6 +7,8 @@ use App\Person;
 use App\ShareMovement;
 use App\ShareType;
 
+use Carbon\Carbon;
+
 class ShareRepository  {
   
     protected $post;
@@ -184,7 +186,7 @@ class ShareRepository  {
 
 
     public function find($id) {
-      return $this->model->query()->where('id', $id)->with(['titular', 'facturador', 'fiador', 'tarjetaPrimaria', 'tarjetaSecundaria', 'tarjetaTerciaria', 'shareType', 'permit' ])
+      return $this->model->query()->where('id', $id)->with(['titular', 'facturador', 'fiador', 'tarjetaPrimaria', 'tarjetaSecundaria', 'tarjetaTerciaria', 'shareType' ])
       ->with(['tarjetaPrimaria' => function($query){
           $query->with(['bank','card']);
         }
@@ -242,45 +244,43 @@ class ShareRepository  {
           }, 
      ])->paginate(8);  
       } else {
-        $search = $this->model->query()->with([
-          'fatherShare' => function($query){
-          $query->select('id', 'share_number'); 
-          }, 
-          'partner' => function($query){
-          $query->select('id', 'name', 'last_name'); 
-          }, 
-          'titular' => function($query){
-          $query->select('id', 'name', 'last_name'); 
-          },
-          'paymentMethod' => function($query){
-          $query->select('id', 'description'); 
-          }, 
-          'shareType' => function($query){
-          $query->select('id', 'description', 'code'); 
-          }, 
-     ]);
-        $search->where('share_number', 'like', '%'.$queryFilter->query('term').'%');
-        $fathers = $this->model->where('father_share_id', '>',0)->where('share_number', 'like', '%'.$queryFilter->query('term').'%')->get();
-        if(count($fathers)) {
-          foreach ($fathers as $key => $value) {
-            $search->orWhere('father_share_id', $value->id);
-           }
-        }
+          $requestData = $queryFilter->query('term');
+          $search = $this->model->query()->where(function($q) use($requestData) {
+                      
+            $q->orWhere('share_number','like', '%'.$requestData.'%');
 
-        $persons = $this->personModel->query()->where('isPartner', 1)->where('name', 'like', '%'.$queryFilter->query('term').'%')->get();
-        if(count($persons)) {
-          foreach ($persons as $key => $value) {
-            $search->orWhere('id_persona', $value->id);
-           }
-        }
+            $term = $requestData;
+            $q->orWhereHas('fatherShare', function($query) use($term) {
+              $query->where('share_number','like', '%'.$term.'%');
+            });
 
-        if(count($persons)) {
-          foreach ($persons as $key => $value) {
-            $search->orWhere('id_titular_persona', $value->id);
-           }
-        }
-        return $search->paginate(8);
-      }
+            $q->orWhereHas('partner', function($query) use($term) {
+              $query->where('name', 'like', '%'.$term.'%')->orWhere('last_name', 'like', '%'.$term.'%');
+            });
+
+            $q->orWhereHas('titular', function($query) use($term) {
+              $query->where('name', 'like', '%'.$term.'%')->orWhere('last_name', 'like', '%'.$term.'%');
+            });
+                      
+      })->with([
+        'fatherShare' => function($query){
+        $query->select('id', 'share_number'); 
+        }, 
+        'partner' => function($query){
+        $query->select('id', 'name', 'last_name'); 
+        }, 
+        'titular' => function($query){
+        $query->select('id', 'name', 'last_name'); 
+        },
+        'paymentMethod' => function($query){
+        $query->select('id', 'description'); 
+        }, 
+        'shareType' => function($query){
+        $query->select('id', 'description', 'code'); 
+        }, 
+      ])->paginate(8);
+    }
+    return $search;
     }
 
             /**
@@ -502,7 +502,9 @@ class ShareRepository  {
     }
 
     public function getListByPartner($id) {
-      return $this->model->query()->select('id', 'share_number')->where('id_persona', $id)->get();
+      return $this->model->query()->select('id', 'share_number')->where('status', 1)->whereHas('shareType', function($q) {
+        $q->where('code', '!=', 'B');
+      })->where('id_persona', $id)->get();
     }
 
     public function findByShare($share) {
@@ -581,6 +583,7 @@ class ShareRepository  {
         'transaction_type_id' =>  $request['transaction_type_id'],
         'people_id' => $currentShare->id_persona,
         'id_titular_persona' => $currentShare->id_persona,
+        'created' => Carbon::now(),
       ];
 
       return [

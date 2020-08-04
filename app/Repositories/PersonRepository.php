@@ -83,7 +83,7 @@ class PersonRepository  {
       $persons = $this->model->query()->with('shares')->paginate($perPage);
       foreach ($persons as $key => $value) {
         unset($persons[$key]->shares);
-        $persons[$key]->shares = $this->parseShares($value->shares()->get());
+        $persons[$key]->shares = $this->parseShares($value->shares()->where('status', 1)->get());
       }
       return $persons;
     }
