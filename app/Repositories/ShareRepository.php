@@ -9,6 +9,7 @@ use App\ShareType;
 use App\Repositories\ParameterRepository;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ShareRepository  {
   
@@ -182,8 +183,10 @@ class ShareRepository  {
       }
 
       if ($isPDF) {
+        Log::info('Filters PDF Share Report: '.json_encode($queryFilter->all()).' --- PDF Query Share Report: '.$shares->toSql());
         return  $shares->get();
       }
+      Log::info('Filters Share Report: '.json_encode($queryFilter->all()).' --- Query Share Report: '.$shares->toSql());
       return $shares->paginate($queryFilter->query('perPage'));
     }
 

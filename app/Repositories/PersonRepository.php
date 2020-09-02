@@ -15,6 +15,7 @@ use App\Repositories\AccessControlRepository;
 use App\Repositories\ParameterRepository;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -265,22 +266,24 @@ class PersonRepository  {
 
       if($isPDF) {
         $persons = $search->get();
-          foreach ($persons as $key => $person) {
-            if(count($person->relationship()->get())) {
-              $relation = $person->relationship()->with('relationType')->first();
-              $persons[$key]->relation = $relation->relationType->description;
-            } else {
-              $persons[$key]->relation = '';
-            }
-            if(count($person->shares()->get())) {
-              $shareList = $this->parseShares($person->shares()->get());
-              $persons[$key]->shareList = $shareList;
-            } else {
-              $persons[$key]->shareList = "";
-            }
+        foreach ($persons as $key => $person) {
+          if(count($person->relationship()->get())) {
+            $relation = $person->relationship()->with('relationType')->first();
+            $persons[$key]->relation = $relation->relationType->description;
+          } else {
+            $persons[$key]->relation = '';
           }
+          if(count($person->shares()->get())) {
+            $shareList = $this->parseShares($person->shares()->get());
+            $persons[$key]->shareList = $shareList;
+          } else {
+            $persons[$key]->shareList = "";
+          }
+        }
+        Log::info('Filters PDF General Report: '.json_encode($queryFilter->all()).' --- PDF Query General Report: '.$search->toSql());
         return $persons;
       }
+      Log::info('Filters General Report: '.json_encode($queryFilter->all()).' --- Single Query General Report: '.$search->toSql());
       return $search->paginate($queryFilter->query('perPage'));
   }
 
@@ -460,10 +463,13 @@ class PersonRepository  {
             AND r.base_id=p.id 
             AND t.id=r.relation_type_id
             ORDER  BY t.item_order ASC");
-            $partner  = $partner[0];
-            unset($partner->relation);
-            $partner->relation = 'Socio';
-            array_unshift($familyMembers,$partner);
+            if($partner) {
+              $partner  = $partner[0];
+              unset($partner->relation);
+              $partner->relation = 'Socio';
+              array_unshift($familyMembers,$partner);
+            }
+
             foreach ($familyMembers as $key => $value) {
               if($familyMembers[$key]->card_number === $card ) {
                 $familyMembers[$key]->selectedFamily = true;

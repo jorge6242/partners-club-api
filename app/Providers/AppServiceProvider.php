@@ -27,12 +27,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         // Function para mostrar en logs, los querys que se estan ejecutando.
-        DB::listen(function($query) {
-            Log::info(
-                $query->sql,
-                $query->bindings,
-                $query->time
-            );
-        });
+        // DB::listen(function($query) {
+        //     Log::info(
+        //         $query->sql,
+        //         $query->bindings,
+        //         $query->time
+        //     );
+        // });
     }
 }
