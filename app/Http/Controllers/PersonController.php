@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\PersonService;
 use Barryvdh\DomPDF\Facade as PDF;
+use Maatwebsite\Excel\Facades\Excel;
+
+use App\Services\PersonService;
+use App\Exports\GeneralReportExport;
 
 class PersonController extends Controller
 {
@@ -235,8 +238,16 @@ class PersonController extends Controller
         $data = [
             'data' => $partner
         ];
-        $pdf = PDF::loadView('reports/persons', $data);
-        return $pdf->download('general.pdf');
+
+        if($request['type'] == 'pdf') {
+            $pdf = PDF::loadView('reports/persons', $data);
+            return $pdf->download('general.pdf');
+        }
+
+        if($request['type'] == 'csv') {
+            return Excel::download(new GeneralReportExport($data), 'list.csv');
+        }
+        
     }
 
 

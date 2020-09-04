@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Services\ShareService;
 use Barryvdh\DomPDF\Facade as PDF;
 use App\Http\Requests\BankValidator;
+use App\Exports\ShareReportExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ShareController extends Controller
 {
@@ -52,8 +54,16 @@ class ShareController extends Controller
             $data = [
                 'data' => $data
             ];
-            $pdf = PDF::loadView('reports/shares', $data);
-            return $pdf->download('sharesReport.pdf');
+
+            if($request['type'] == 'pdf') {
+                $pdf = PDF::loadView('reports/shares', $data);
+                return $pdf->download('sharesReport.pdf');
+            }
+    
+            if($request['type'] == 'csv') {
+                return Excel::download(new ShareReportExport($data), 'list.csv');
+            }
+
         }
 
     /**
